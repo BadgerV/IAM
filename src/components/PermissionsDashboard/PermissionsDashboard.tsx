@@ -64,7 +64,8 @@ const PermissionsDashboard = () => {
   ];
 
   const customStyles = {
-    control: (provided: ControlProps) => ({
+    
+    control: (provided: any) => ({
       ...provided,
       border: "1px solid #ececec",
 
@@ -77,11 +78,11 @@ const PermissionsDashboard = () => {
         outline: "none", // Remove outline on focus
       },
     }),
-    indicatorSeparator: (provided: IndicatorSeparatorProps) => ({
+    indicatorSeparator: (provided: any) => ({
       ...provided,
       display: "none", // Remove the vertical line between indicator and text
     }),
-    option: (provided: OptionProps) => ({
+    option: (provided: any) => ({
       ...provided,
       fontSize: "0.85rem", // Set font size of dropdown options
     }),
@@ -149,7 +150,7 @@ const PermissionsDashboard = () => {
           <span>Name</span>
           <span>Role assigned</span>
           <span>Status</span>
-          <div>&nbsp;</div>
+          <div>&nbsp; </div>
         </div>
 
         <div className="permissions-dashboard-table-content">
