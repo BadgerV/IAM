@@ -1,0 +1,11 @@
+.recent-activity {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+}
+
+.recent-activity-right {
+  min-width: fit-content;
+  color: var(--secondary-text-color);
+  font-size: 0.8rem;
+}
