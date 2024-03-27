@@ -54,6 +54,7 @@
   display: flex;
   flex-direction: row;
   gap: 1rem;
+  padding: 0.5em;
 }
 
 .overview-dashboard-bottom-left {
