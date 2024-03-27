@@ -1,10 +1,18 @@
 import "./sidebar.css";
 import { Link } from "react-router-dom";
 
-const Sidebar = () => {
+const Sidebar = ({ setIsSidebarOpen }: any) => {
   return (
     <div className="sidebar">
-      <h1 className="fileshield-text">FileShield</h1>
+      <div className="sidebar-top">
+        <h1 className="fileshield-text">FileShield</h1>
+        <img
+          src="/assets/arrow-left.png"
+          alt="Close"
+          className="arrow-close"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      </div>
 
       <nav className="navigation">
         <ul className="navigation-top-links">

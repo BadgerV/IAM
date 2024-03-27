@@ -18,9 +18,46 @@
   position: fixed;
   top: 0;
   left: 0;
+
+  z-index: 50000;
+
+  transition: 0.2s all ease-in-out;
 }
 
 .layout-outlet {
   margin-left: 18rem;
   min-width: calc(100% - 18rem);
+}
+
+.layout-outlet-image {
+  display: none;
+
+  margin: 2rem;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 1980px) {
+  .layout-sidebar {
+    width: 17em;
+  }
+
+  .layout-outlet {
+    margin-left: 17rem;
+    min-width: calc(100% - 17rem);
+  }
+}
+
+@media screen and (max-width: 1130px) {
+  .layout-outlet-image {
+    display: block;
+  }
+  .layout-sidebar {
+    width: 17em;
+    position: absolute;
+  }
+
+  .layout-outlet {
+    margin-left: 0rem;
+    min-width: 100%;
+  }
 }

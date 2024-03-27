@@ -96,6 +96,7 @@ const Dashboard = () => {
       border: "1px solid #ececec",
 
       minHeight: "2.5rem",
+      minWidth : "6rem",
       borderRadius: "8px",
       fontSize: "0.85rem",
       color: "black",

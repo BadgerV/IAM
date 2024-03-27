@@ -4,11 +4,23 @@
   background-color: var(--bg-color);
 }
 
+.sidebar-top {
+  margin-bottom: 0.5rem;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-top img {
+  display: none;
+  cursor: pointer;
+}
+
 .fileshield-text {
   font-size: 1.3rem;
   font-weight: 500;
-
-  margin-bottom: 1.5rem;
 }
 
 .navigation {
@@ -113,4 +125,10 @@
   flex-direction: row;
   gap: 1rem;
   align-items: center;
+}
+
+@media screen and (max-width: 1130px) {
+  .sidebar-top img {
+    display: block;
+  }
 }
