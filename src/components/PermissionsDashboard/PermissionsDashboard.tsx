@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from "react";
 import "./permissionsDashboard.css";
 
 import Select from "react-select";
-import OverviewFile from "../PermissionsFile/PermissionsFile";
+import PermissionFile from "../PermissionsFile/PermissionsFile";
 
 interface Options {
   value: string;
@@ -65,6 +65,7 @@ const PermissionsDashboard = () => {
       ...provided,
       border: "1px solid #ececec",
 
+      minWidth: "6rem",
       minHeight: "2.5rem",
       borderRadius: "8px",
       fontSize: "0.85rem",
@@ -151,7 +152,7 @@ const PermissionsDashboard = () => {
 
         <div className="permissions-dashboard-table-content">
           {overviewFileData.map((file: PermissionsData) => {
-            return <OverviewFile selectAll={selectAll} {...file} />;
+            return <PermissionFile selectAll={selectAll} {...file} />;
           })}
         </div>
       </div>

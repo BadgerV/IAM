@@ -1,7 +1,31 @@
+import { useEffect, useState } from "react";
 import "./sidebar.css";
 import { Link } from "react-router-dom";
 
 const Sidebar = ({ setIsSidebarOpen }: any) => {
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const newWidth = window.innerWidth;
+      setWindowWidth(newWidth); // Update the windowWidth state
+      if (newWidth >= 1130) {
+        setIsSidebarOpen(true);
+      }
+    };
+
+    // Add event listener for window resize
+    window.addEventListener("resize", handleResize);
+
+    // Call handleResize once on initial mount
+    handleResize();
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <div className="sidebar">
       <div className="sidebar-top">
@@ -16,21 +40,33 @@ const Sidebar = ({ setIsSidebarOpen }: any) => {
 
       <nav className="navigation">
         <ul className="navigation-top-links">
-          <Link to="/overview" className="nav-link">
+          <Link
+            to="/overview"
+            className="nav-link"
+            onClick={() => windowWidth <= 1130 && setIsSidebarOpen(false)}
+          >
             <li>
               <img src="/assets/dashboard.svg" alt="Dashboard" />
               <span>Overview</span>
             </li>
           </Link>
 
-          <Link to="/" className="nav-link">
+          <Link
+            to="/"
+            className="nav-link"
+            onClick={() => windowWidth <= 1130 && setIsSidebarOpen(false)}
+          >
             <li>
               <img src="/assets/folder-management.svg" alt="Dashboard" />
               <span>File Management</span>
             </li>
           </Link>
 
-          <Link to="/permissions" className="nav-link">
+          <Link
+            to="/permissions"
+            className="nav-link"
+            onClick={() => windowWidth <= 1130 && setIsSidebarOpen(false)}
+          >
             <li>
               <img src="/assets/security-icon.svg" alt="Dashboard" />
               <span>Permissions</span>
