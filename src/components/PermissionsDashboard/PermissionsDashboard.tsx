@@ -1,10 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import "./permissionsDashboard.css";
-import Select, {
-  ControlProps,
-  IndicatorSeparatorProps,
-  OptionProps,
-} from "react-select";
+
+import Select from "react-select";
 import OverviewFile from "../PermissionsFile/PermissionsFile";
 
 interface Options {
@@ -64,7 +61,6 @@ const PermissionsDashboard = () => {
   ];
 
   const customStyles = {
-    
     control: (provided: any) => ({
       ...provided,
       border: "1px solid #ececec",
