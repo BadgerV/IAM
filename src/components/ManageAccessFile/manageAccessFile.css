@@ -1,0 +1,32 @@
+.manage-access-file {
+  display: grid;
+  grid-template-columns: minmax(300px, 3.5fr) minmax(120px, 1fr) minmax(
+      120px,
+      1fr
+    );
+
+  gap: 2rem;
+
+  padding: 0.5rem 0;
+}
+
+.manage-access-file span {
+  font-size: 0.95rem;
+}
+
+.manage-access-file div {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+
+  font-size: 0.9rem;
+}
+
+.manage-access-green {
+  color: #22c55e;
+}
+
+.manage-access-red {
+  color: #ef4444;
+}

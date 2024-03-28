@@ -7,16 +7,20 @@ import Home from "./pages/Home/Home";
 import Permissions from "./pages/Permissions/Permissions";
 import Overview from "./pages/Overview/Overview";
 import EditPermissions from "./pages/EditPermissions/EditPermissions";
+import ManageAccess from "./pages/ManageAccess/ManageAccess";
+import UploadFiles from "./pages/UploadFiles/UploadFiles";
 
 const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route path="/" element={<Home />} />
-        <Route path="permissions" element={<Permissions />} />
-        <Route path="overview" element={<Overview />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/permissions" element={<Permissions />} />
+        <Route path="/overview" element={<Overview />} />
+        <Route path="/manage-access" element={<ManageAccess />} />
+        <Route path="/file-upload" element={<UploadFiles />} />
       </Route>
+      <Route path="/login" element={<Login />} />
       <Route path="/edit-permissions" element={<EditPermissions />} />
     </Routes>
   );

@@ -23,6 +23,10 @@
   margin-bottom: 1rem;
 }
 
+.folder-file-img {
+  height: 3rem;
+}
+
 .folder-options {
   cursor: pointer;
 }

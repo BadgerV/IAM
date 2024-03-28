@@ -19,7 +19,7 @@
   top: 0;
   left: 0;
 
-  z-index: 50000;
+  z-index: 500000000;
 
   transition: 0.2s all ease-in-out;
 }
@@ -27,6 +27,7 @@
 .layout-outlet {
   margin-left: 18rem;
   min-width: calc(100% - 18rem);
+  min-height: 100%;
 }
 
 .layout-outlet-image {

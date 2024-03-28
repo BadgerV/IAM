@@ -30,6 +30,7 @@ const Folder = ({ folderName, noOfFiles, fileSize, img }: Folder) => {
         <img
           src={`${img}${isHovered ? "light.png" : "dark.png"}`}
           alt="folder"
+          className="folder-file-img"
         />
         <img
           src={`/assets/options-${isHovered ? "light.png" : "dark.png"}`}

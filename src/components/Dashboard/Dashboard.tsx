@@ -52,6 +52,26 @@ const Dashboard = () => {
       img: "/assets/folder-",
     },
   ];
+  const categories = [
+    {
+      folderName: "Human Resources",
+      noOfFiles: 16,
+      fileSize: "16.3Gb",
+      img: "/assets/folder-open-",
+    },
+    {
+      folderName: "Finance",
+      noOfFiles: 20,
+      fileSize: "0.8Gb",
+      img: "/assets/folder-open-",
+    },
+    {
+      folderName: "Product",
+      noOfFiles: 19,
+      fileSize: "20.89Gb",
+      img: "/assets/folder-open-",
+    },
+  ];
 
   const [selectetdCategory, setSelectedCategory] = useState(1);
 
@@ -96,7 +116,7 @@ const Dashboard = () => {
       border: "1px solid #ececec",
 
       minHeight: "2.5rem",
-      minWidth : "6rem",
+      minWidth: "6rem",
       borderRadius: "8px",
       fontSize: "0.85rem",
       color: "black",
@@ -118,26 +138,46 @@ const Dashboard = () => {
   return (
     <div className="dashboard">
       <div className="dashboard-top">
-        <div className="dashboard-top-upper">
-          <span>Folders</span>
+        <div className="dashboard-folder-collection">
+          <div className="dashboard-top-upper">
+            <span>Folders</span>
 
-          <div className="dashboard-top-upper-right">
-            <div className="show-all-button">
-              <span>Show all</span>
-              <img src="/assets/arrow-down.png" alt="arrow_down" />
-            </div>
+            <div className="dashboard-top-upper-right">
+              <div className="show-all-button">
+                <span>Show all</span>
+                <img src="/assets/arrow-down.png" alt="arrow_down" />
+              </div>
 
-            <div className="uplaod-button">
-              <span>Upload</span>
-              <img src="/assets/cloud-upload.png" alt="cloud_icon" />
+              <div className="uplaod-button">
+                <span>Upload</span>
+                <img src="/assets/cloud-upload.png" alt="cloud_icon" />
+              </div>
             </div>
+          </div>
+
+          <div className="dashboard-folders">
+            {folders.map((folder) => {
+              return <Folder {...folder} />;
+            })}
           </div>
         </div>
 
-        <div className="dashboard-folders">
-          {folders.map((folder) => {
-            return <Folder {...folder} />;
-          })}
+        <div className="dashboard-folder-collection">
+          <div className="dashboard-top-upper">
+            <span>Categories</span>
+
+            <div className="dashboard-top-upper-right">
+              <div className="show-all-button">
+                <span>Show all</span>
+                <img src="/assets/arrow-down.png" alt="arrow_down" />
+              </div>
+            </div>
+          </div>
+          <div className="dashboard-folders">
+            {categories.map((folder) => {
+              return <Folder {...folder} />;
+            })}
+          </div>
         </div>
       </div>
       <div className="dashboard-bottom">

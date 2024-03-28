@@ -18,6 +18,10 @@
   align-items: center;
 }
 
+.dashboard-folder-collection:nth-child(2) {
+  margin-top: 1rem;
+}
+
 .dashboard-top-upper span {
   font-weight: 500;
   font-size: 0.9rem;
@@ -51,13 +55,12 @@
   grid-template-columns: 1fr 1fr 1fr;
   gap: 1.5rem;
 
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .dashboard-bottom {
   flex: 1;
   margin-top: 2rem;
-  overflow-x: auto;
   display: flex;
   flex-direction: column;
 }
@@ -162,6 +165,9 @@
 }
 
 @media screen and (max-width: 760px) {
+  .dashboard-bottom {
+    overflow-x: auto;
+  }
   .dashboard-folders {
     grid-template-columns: 1fr 1fr;
   }
