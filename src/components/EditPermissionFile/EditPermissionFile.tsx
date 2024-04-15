@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./editPermissionFile.css";
 
 const EditPermissionFile = () => {
-  const [isTrue, setIsTrue] = useState(false);
+  const [isTrue, setIsTrue] = useState<boolean>(false);
   return (
     <div className="edit-permission-file">
       <div className="edit-permission-file-left">

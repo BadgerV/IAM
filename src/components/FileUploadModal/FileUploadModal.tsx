@@ -3,8 +3,8 @@ import "./fileUploadModal.css";
 import { useNavigate } from "react-router-dom";
 
 const FileUploadModal = ({ setIsLoading }: any) => {
-  const [encryptionProcess, setEncryptionProcess] = useState(100);
-  const [awsIntro, setAwsIntro] = useState(100);
+  const [encryptionProcess, setEncryptionProcess] = useState<number>(100);
+  const [awsIntro, setAwsIntro] = useState<number>(100);
 
   const navigate = useNavigate();
   

@@ -128,3 +128,12 @@
     gap: 2rem;
   }
 }
+
+.decline-span {
+  width: 100%;
+  display: block;
+  text-align: center;
+  padding: 5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}

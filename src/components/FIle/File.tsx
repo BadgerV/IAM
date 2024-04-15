@@ -1,15 +1,6 @@
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import "./file.css";
-
-interface Data {
-  fileName: string;
-  name: string;
-  email: string;
-  size: string;
-  lastModified: string;
-  img: string;
-  selectAll: boolean;
-}
+import { Data } from "../../utils/types";
 
 const File = ({
   fileName,
@@ -17,9 +8,10 @@ const File = ({
   email,
   size,
   lastModified,
-  img,
+
   selectAll,
 }: Data) => {
+  console.log(fileName, name, email, size);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const optionsRef = useRef<HTMLDivElement>(null);
 
@@ -61,8 +53,6 @@ const File = ({
       </div>
 
       <div className="uploaded-by-cont">
-        <img src={img} alt="Image" />
-
         <div>
           <span className="file-name-text">{name}</span>
           <span className="file-email-text">{email}</span>

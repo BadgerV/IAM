@@ -1,28 +1,29 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { FormEvent, useState } from "react";
-import "./login.css";
-import { LoginCredentials } from "../../utils/types.ts";
+import "./signup.css";
+import { SignupCredentials } from "../../utils/types";
 
 import InputField from "../../components/inputField/inputField.tsx";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { AppDispatch } from "../../redux/store.ts";
-import { LoginUser } from "../../redux/slices/authSlice.ts";
 
-const Login = () => {
-  //credentials
-  const [credentials, setCredentials] = useState<LoginCredentials>({
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store.ts";
+import { SignupUser } from "../../redux/slices/authSlice.ts";
+import { useNavigate } from "react-router-dom";
+
+const Signup = () => {
+  //signup credentials
+  const [credentials, setCredentials] = useState<SignupCredentials>({
     username: "",
     password: "",
+    email: "",
   });
-
-  //loading state
-  const [loadingState, setLoadingState] = useState<boolean>(false);
 
   //declaring useDispatch and useNavigate
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  //handle change
+  //handlechnage
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setCredentials((prevCredentials) => ({
@@ -34,24 +35,20 @@ const Login = () => {
   //submit function
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoadingState(true);
-    const result: any = dispatch(LoginUser(credentials));
+    const result: any = dispatch(SignupUser(credentials));
 
     if (result.type === "/auth/login/fulfilled") {
-      setLoadingState(false);
-      navigate("/");
-    } else {
-      setLoadingState(false);
       navigate("/");
     }
   };
-  return (
-    <div className="login-container">
-      <div className="login-page">
-        {/* <span className="login-title">FileShield</span> */}
-        <span className="login-subtitle">Log in to your account</span>
 
-        <form className="login-form" onSubmit={onSubmit}>
+  return (
+    <div className="signup-container">
+      <div className="signup-page">
+        {/* <span className="signup-title">FileShield</span> */}
+        <span className="signup-subtitle">Sign in to your account</span>
+
+        <form className="signup-form" onSubmit={onSubmit}>
           <InputField
             type="text"
             name="username"
@@ -59,6 +56,15 @@ const Login = () => {
             onChange={handleChange}
             label="Username"
             placeholder="Username"
+            shouldValidate
+          />
+          <InputField
+            type="email"
+            name="email"
+            value={credentials.email}
+            onChange={handleChange}
+            label="Email"
+            placeholder="Email"
             shouldValidate
           />
           <InputField
@@ -71,16 +77,14 @@ const Login = () => {
             shouldValidate
           />
 
-          <span className="login-forgot-password">Forgot password?</span>
+          <span className="signup-forgot-password">Forgot password?</span>
 
-          <button className="login-button" disabled={loadingState}>
-            {loadingState ? "Loading ..." : "Login"}
-          </button>
+          <button className="signup-button">Sign Up</button>
         </form>
 
         <span className="terms-and-conditions-text">
-          By logging in, you are agreeing to our
-          <span className="link-text">Terms of Service</span> and
+          By logging in, you are agreeing to our{" "}
+          <span className="link-text">Terms of Service</span> and{" "}
           <span className="link-text">Privacy</span> Policy.
         </span>
       </div>
@@ -88,4 +92,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

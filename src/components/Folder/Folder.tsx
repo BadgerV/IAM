@@ -1,14 +1,8 @@
 import "./folder.css";
 import { useRef, useState } from "react";
+import { FolderType } from "../../utils/types";
 
-interface Folder {
-  folderName: string;
-  noOfFiles: number;
-  fileSize?: string;
-  img: string;
-}
-
-const Folder = ({ folderName, noOfFiles, fileSize, img }: Folder) => {
+const Folder = ({ folderName, noOfFiles, fileSize, img }: FolderType) => {
   const folderRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
 

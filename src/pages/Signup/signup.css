@@ -1,4 +1,4 @@
-.signup-container {
+.login-container {
   width: 100vw;
   height: 100dvh;
 
@@ -9,7 +9,7 @@
   background-color: var(--bg-color);
 }
 
-.signup-page {
+.login-page {
   margin: auto;
   
 
@@ -24,13 +24,13 @@
   background-color: var(--white);
 }
 
-.signup-title {
+.login-title {
   font-weight: 600;
   font-size: 2.5rem;
   letter-spacing: 1px;
 }
 
-.signup-subtitle {
+.login-subtitle {
   font-weight: 500;
   font-size: 1.3rem;
   margin-bottom: 1.5rem;
@@ -40,7 +40,7 @@
   color: black;
 }
 
-.signup-form {
+.login-form {
   margin-top: 1rem;
   margin-bottom: 1.5rem;
 
@@ -49,7 +49,7 @@
   gap: 0.5rem;
 }
 
-.signup-label-and-input {
+.login-label-and-input {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -57,12 +57,12 @@
   position: relative;
 }
 
-.signup-label-and-input label {
+.login-label-and-input label {
   font-size: 0.9rem;
   font-weight: 400;
 }
 
-.signup-label-and-input input {
+.login-label-and-input input {
   height: 2.5rem;
   border-radius: 5px;
   padding: 0 1rem;
@@ -71,7 +71,7 @@
   border: 1px solid var(--outline-color);
 }
 
-.signup-label-and-input img {
+.login-label-and-input img {
   height: 1.4rem;
   width: 1.4rem;
 
@@ -83,14 +83,14 @@
 
   cursor: pointer;
 }
-.signup-forgot-password {
+.login-forgot-password {
   font-size: 0.85rem;
   cursor: pointer;
 
   margin-left: auto;
 }
 
-.signup-button {
+.login-button {
   height: 2.5rem;
   outline: none;
   border: none;
@@ -106,7 +106,7 @@
   transition: 0.2s all ease-in-out;
 }
 
-.signup-button:hover {
+.login-button:hover {
   background-color: var(--base-color);
 }
 
@@ -121,7 +121,7 @@
 }
 
 @media screen and (max-width: 490px) {
-  .signup-page {
+  .login-page {
     padding: 2rem 1rem;
     border-radius: 15px;
   }

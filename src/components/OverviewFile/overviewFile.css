@@ -4,6 +4,7 @@
       100px,
       1fr
     ) minmax(150px, 3fr);
+    gap: 1rem;
 
   align-items: center;
 }

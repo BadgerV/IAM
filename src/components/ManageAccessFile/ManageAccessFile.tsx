@@ -1,10 +1,5 @@
+import { ManageAccessFileType } from "../../utils/types";
 import "./manageAccessFile.css";
-
-interface ManageAccessFileType {
-  request: string;
-  dateOfRequest: string;
-  statusOfRequest: string;
-}
 
 const ManageAccessFile = ({
   request,

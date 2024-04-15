@@ -1,37 +1,22 @@
 import Folder from "../Folder/Folder";
 import File from "../FIle/File";
 import Select from "react-select";
-import {
-  IndicatorSeparatorProps,
-  ControlProps,
-  OptionProps,
-} from "react-select";
 
 import "./dashboard.css";
 import { ChangeEvent, useState } from "react";
+import { Data, Options } from "../../utils/types";
+import { customStyles } from "../../utils/helpers";
 
-interface Options {
-  value: string;
-  label: string;
-}
-//options
 const options: Options[] = [
   { value: "option1", label: "Option 1" },
   { value: "option2", label: "Option 2" },
   { value: "option3", label: "Option 3" },
 ];
 
-interface Data {
-  fileName: string;
-  name: string;
-  email: string;
-  size: string;
-  lastModified: string;
-  img: string;
-}
-
 const Dashboard = () => {
   const [selectAll, setSelectAll] = useState(false);
+
+  const [sortedArray, setSortedArray] = useState<Data[]>([]);
   const folders = [
     {
       folderName: "Development",
@@ -73,7 +58,7 @@ const Dashboard = () => {
     },
   ];
 
-  const [selectetdCategory, setSelectedCategory] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState(1);
 
   const data: Data[] = [
     {
@@ -82,7 +67,7 @@ const Dashboard = () => {
       email: "emilyradiance94@gmail.com",
       size: "1.3MB",
       lastModified: "2-01-2024",
-      img: "/assets/sample-user.png",
+      type: "pdf",
     },
     {
       fileName: "Resource Management",
@@ -90,15 +75,16 @@ const Dashboard = () => {
       email: "emilyradiance94@gmail.com",
       size: "1.3MB",
       lastModified: "2-01-2024",
-      img: "/assets/sample-user.png",
+      type: "document",
     },
     {
       fileName: "Resource Management",
       name: "Emily Radiance",
       email: "emilyradiance94@gmail.com",
-      img: "/assets/sample-user.png",
+
       size: "1.3MB",
       lastModified: "2-01-2024",
+      type: "pdf",
     },
     {
       fileName: "Resource Management",
@@ -106,33 +92,15 @@ const Dashboard = () => {
       email: "emilyradiance94@gmail.com",
       size: "1.3MB",
       lastModified: "2-01-2024",
-      img: "/assets/sample-user.png",
+      type: "pdf",
     },
   ];
 
-  const customStyles = {
-    control: (provided: ControlProps) => ({
-      ...provided,
-      border: "1px solid #ececec",
-
-      minHeight: "2.5rem",
-      minWidth: "6rem",
-      borderRadius: "8px",
-      fontSize: "0.85rem",
-      color: "black",
-      boxShadow: "none", // Remove box shadow
-      "&:focus": {
-        outline: "none", // Remove outline on focus
-      },
-    }),
-    indicatorSeparator: (provided: IndicatorSeparatorProps) => ({
-      ...provided,
-      display: "none", // Remove the vertical line between indicator and text
-    }),
-    option: (provided: OptionProps) => ({
-      ...provided,
-      fontSize: "0.85rem", // Set font size of dropdown options
-    }),
+  const handleSortBasedOnType = (type: string) => {
+    const filteredArray = data.filter((data: Data) => {
+      return data.type === type;
+    });
+    setSortedArray(filteredArray);
   };
 
   return (
@@ -156,8 +124,8 @@ const Dashboard = () => {
           </div>
 
           <div className="dashboard-folders">
-            {folders.map((folder) => {
-              return <Folder {...folder} />;
+            {folders.map((folder, i) => {
+              return <Folder {...folder} key={i} />;
             })}
           </div>
         </div>
@@ -174,8 +142,8 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="dashboard-folders">
-            {categories.map((folder) => {
-              return <Folder {...folder} />;
+            {categories.map((folder, i) => {
+              return <Folder {...folder} key={i} />;
             })}
           </div>
         </div>
@@ -186,34 +154,38 @@ const Dashboard = () => {
         <div className="dashboard-nav">
           <div className="dashboard-nav-left">
             <span
-              className={
-                selectetdCategory === 1 ? "dashboard-nav-selected" : ""
-              }
-              onClick={() => setSelectedCategory(1)}
+              className={selectedCategory === 1 ? "dashboard-nav-selected" : ""}
+              onClick={() => {
+                setSelectedCategory(1);
+                setSortedArray([]);
+              }}
             >
               View All
             </span>
             <span
-              className={
-                selectetdCategory === 2 ? "dashboard-nav-selected" : ""
-              }
-              onClick={() => setSelectedCategory(2)}
+              className={selectedCategory === 2 ? "dashboard-nav-selected" : ""}
+              onClick={() => {
+                setSelectedCategory(2);
+                handleSortBasedOnType("document");
+              }}
             >
               Documents
             </span>
             <span
-              className={
-                selectetdCategory === 3 ? "dashboard-nav-selected" : ""
-              }
-              onClick={() => setSelectedCategory(3)}
+              className={selectedCategory === 3 ? "dashboard-nav-selected" : ""}
+              onClick={() => {
+                setSelectedCategory(3);
+                handleSortBasedOnType("pdf");
+              }}
             >
               PDFs
             </span>
             <span
-              className={
-                selectetdCategory === 4 ? "dashboard-nav-selected" : ""
-              }
-              onClick={() => setSelectedCategory(4)}
+              className={selectedCategory === 4 ? "dashboard-nav-selected" : ""}
+              onClick={() => {
+                setSelectedCategory(4);
+                handleSortBasedOnType("image");
+              }}
             >
               Images
             </span>
@@ -246,9 +218,29 @@ const Dashboard = () => {
         </div>
 
         <div className="dashboard-table-content">
-          {data.map((propData) => {
-            return <File {...propData} selectAll={selectAll} />;
-          })}
+          {selectedCategory === 1 ? (
+            data.map((file: Data, index) => (
+              <File selectAll={selectAll} {...file} key={index} />
+            ))
+          ) : selectedCategory === 2 && sortedArray.length > 0 ? (
+            sortedArray.map((file: Data, index) => (
+              <File selectAll={selectAll} {...file} key={index} />
+            ))
+          ) : selectedCategory === 3 && sortedArray.length > 0 ? (
+            sortedArray.map((file: Data, index) => (
+              <File selectAll={selectAll} {...file} key={index} />
+            ))
+          ) : selectedCategory === 4 && sortedArray.length > 0 ? (
+            sortedArray.map((file: Data, index) => (
+              <File selectAll={selectAll} {...file} key={index} />
+            ))
+          ) : selectedCategory === 2 ? (
+            <span className="decline-span">There are no documents</span>
+          ) : selectedCategory === 3 ? (
+            <span className="decline-span">There are no PDFs</span>
+          ) : selectedCategory === 4 ? (
+            <span className="decline-span">There are no images</span>
+          ) : null}
         </div>
       </div>
     </div>

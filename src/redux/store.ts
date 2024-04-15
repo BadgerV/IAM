@@ -1,6 +1,9 @@
 //improts from RTK
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
+//imorting reducers
+import authReducer from "./slices/authSlice";
+
 //imports from redux persist
 
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
@@ -22,7 +25,7 @@ export type RootState = ReturnType<typeof rootReducer>;
 
 //root reducer
 const rootReducer = combineReducers({
-  //   auth: authReducer,
+  auth: authReducer,
   //   file: fileReducer,
   //add the reducres
 });

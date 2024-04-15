@@ -9,11 +9,17 @@ import Overview from "./pages/Overview/Overview";
 import EditPermissions from "./pages/EditPermissions/EditPermissions";
 import ManageAccess from "./pages/ManageAccess/ManageAccess";
 import UploadFiles from "./pages/UploadFiles/UploadFiles";
+import Signup from "./pages/Signup/Signup";
+import WithAuth from "./HOCs/WithAuth";
 
 const App = () => {
+  //secure routes usingg HOCs
+  const SecureAuth = WithAuth(Layout);
+  const SecureEditPermissions = WithAuth(EditPermissions);
+  
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route path="/" element={<SecureAuth />}>
         <Route path="/" element={<Home />} />
         <Route path="/permissions" element={<Permissions />} />
         <Route path="/overview" element={<Overview />} />
@@ -21,7 +27,8 @@ const App = () => {
         <Route path="/file-upload" element={<UploadFiles />} />
       </Route>
       <Route path="/login" element={<Login />} />
-      <Route path="/edit-permissions" element={<EditPermissions />} />
+      <Route path="/edit-permissions" element={<SecureEditPermissions />} />
+      <Route path="/signup" element={<Signup />} />
     </Routes>
   );
 };

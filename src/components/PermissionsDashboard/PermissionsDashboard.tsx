@@ -4,18 +4,8 @@ import "./permissionsDashboard.css";
 import Select from "react-select";
 import PermissionFile from "../PermissionsFile/PermissionsFile";
 
-interface Options {
-  value: string;
-  label: string;
-}
-
-interface PermissionsData {
-  name: string;
-  email: string;
-  roleAssigned: string;
-  status: string;
-  img?: string;
-}
+import { Options, PermissionsDataType } from "../../utils/types";
+import { customStylesPermissions } from "../..//utils/helpers";
 
 const options: Options[] = [
   { value: "option1", label: "Option 1" },
@@ -24,66 +14,58 @@ const options: Options[] = [
 ];
 
 const PermissionsDashboard = () => {
-  const [selectetdCategory, setSelectedCategory] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState(1);
   const [selectAll, setSelectAll] = useState(false);
 
-  const overviewFileData: PermissionsData[] = [
+  const [sortedArray, setSortedArray] = useState<PermissionsDataType[]>([]);
+
+  const handleSortBasedOnRole = (category: string | null) => {
+    const filteredArray = overviewFileData.filter(
+      (data: PermissionsDataType) => {
+        return data.role === category;
+      }
+    );
+
+    setSortedArray(filteredArray);
+  };
+
+  const overviewFileData: PermissionsDataType[] = [
     {
       name: "Emily Radiance",
       email: "Segunfoazan112@gmail.com",
       roleAssigned: "Administrator",
       status: "Active",
+      role: "admin",
     },
     {
       name: "Emily Radiance",
       email: "Segunfoazan112@gmail.com",
       roleAssigned: "Administrator",
       status: "Active",
+      role: "manager",
     },
     {
       name: "Emily Radiance",
       email: "Segunfoazan112@gmail.com",
       roleAssigned: "Administrator",
       status: "Active",
+      role: "admin",
     },
     {
       name: "Emily Radiance",
       email: "Segunfoazan112@gmail.com",
       roleAssigned: "Administrator",
       status: "Active",
+      role: "admin",
     },
     {
       name: "Emily Radiance",
       email: "Segunfoazan112@gmail.com",
       roleAssigned: "Administrator",
       status: "Active",
+      role: "admin",
     },
   ];
-
-  const customStyles = {
-    control: (provided: any) => ({
-      ...provided,
-      border: "1px solid #ececec",
-
-      minWidth: "6rem",
-      minHeight: "2.5rem",
-      borderRadius: "8px",
-      fontSize: "0.85rem",
-      color: "black",
-      boxShadow: "none", // Remove box shadow
-      "&:focus": {
-        outline: "none", // Remove outline on focus
-      },
-    }),
-    indicatorSeparator: (provided: any) => ({
-      ...provided,
-      display: "none", // Remove the vertical line between indicator and text
-    }),
-    option: (provided: any) => ({
-      ...provided,
-      fontSize: "0.85rem", // Set font size of dropdown options
-    }),
-  };
 
   return (
     <div className="permissions-dashboard">
@@ -92,26 +74,38 @@ const PermissionsDashboard = () => {
       <div className="permissions-dashboard-top">
         <div className="permissions-dashboaord-top-left">
           <span
-            className={selectetdCategory === 1 ? "dashboard-nav-selected" : ""}
-            onClick={() => setSelectedCategory(1)}
+            className={selectedCategory === 1 ? "dashboard-nav-selected" : ""}
+            onClick={() => {
+              setSelectedCategory(1);
+              setSortedArray([]);
+            }}
           >
             All users
           </span>
           <span
-            className={selectetdCategory === 2 ? "dashboard-nav-selected" : ""}
-            onClick={() => setSelectedCategory(2)}
+            className={selectedCategory === 2 ? "dashboard-nav-selected" : ""}
+            onClick={() => {
+              setSelectedCategory(2);
+              handleSortBasedOnRole("admin");
+            }}
           >
             Administrator
           </span>
           <span
-            className={selectetdCategory === 3 ? "dashboard-nav-selected" : ""}
-            onClick={() => setSelectedCategory(3)}
+            className={selectedCategory === 3 ? "dashboard-nav-selected" : ""}
+            onClick={() => {
+              setSelectedCategory(3);
+              handleSortBasedOnRole("manager");
+            }}
           >
             Manager
           </span>
           <span
-            className={selectetdCategory === 4 ? "dashboard-nav-selected" : ""}
-            onClick={() => setSelectedCategory(4)}
+            className={selectedCategory === 4 ? "dashboard-nav-selected" : ""}
+            onClick={() => {
+              setSelectedCategory(4);
+              handleSortBasedOnRole("employee");
+            }}
           >
             Employee
           </span>
@@ -124,7 +118,7 @@ const PermissionsDashboard = () => {
           </div>
 
           <Select
-            styles={customStyles}
+            styles={customStylesPermissions}
             options={options}
             placeholder="Select"
           />
@@ -151,9 +145,29 @@ const PermissionsDashboard = () => {
         </div>
 
         <div className="permissions-dashboard-table-content">
-          {overviewFileData.map((file: PermissionsData) => {
-            return <PermissionFile selectAll={selectAll} {...file} />;
-          })}
+          {selectedCategory === 1 ? (
+            overviewFileData.map((file: PermissionsDataType, index) => (
+              <PermissionFile selectAll={selectAll} {...file} key={index} />
+            ))
+          ) : selectedCategory === 2 && sortedArray.length > 0 ? (
+            sortedArray.map((file: PermissionsDataType, index) => (
+              <PermissionFile selectAll={selectAll} {...file} key={index} />
+            ))
+          ) : selectedCategory === 3 && sortedArray.length > 0 ? (
+            sortedArray.map((file: PermissionsDataType, index) => (
+              <PermissionFile selectAll={selectAll} {...file} key={index} />
+            ))
+          ) : selectedCategory === 4 && sortedArray.length > 0 ? (
+            sortedArray.map((file: PermissionsDataType, index) => (
+              <PermissionFile selectAll={selectAll} {...file} key={index} />
+            ))
+          ) : selectedCategory === 2 ? (
+            <span className="decline-span">There are no administrators</span>
+          ) : selectedCategory === 3 ? (
+            <span className="decline-span">There are no managers</span>
+          ) : selectedCategory === 4 ? (
+            <span className="decline-span">There are no employees</span>
+          ) : null}
         </div>
       </div>
     </div>

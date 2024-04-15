@@ -2,13 +2,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import "./permissionsFile.css";
 import { Link } from "react-router-dom";
 
-interface PermissionsData {
-  name: string;
-  email: string;
-  roleAssigned: string;
-  status: string;
-  selectAll: boolean;
-}
+import { PermissionsDataType } from "../../utils/types";
 
 const PermissionsData = ({
   name,
@@ -16,7 +10,7 @@ const PermissionsData = ({
   roleAssigned,
   status,
   selectAll,
-}: PermissionsData) => {
+}: PermissionsDataType) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const optionsRef = useRef<HTMLDivElement>(null); // Ref for the options container
@@ -56,7 +50,6 @@ const PermissionsData = ({
       />
 
       <div className="permissions-file-pic-and-name">
-        <img src="/assets/sample-user.png" alt="User" />
         <div>
           <span className="permissions-name">{name}</span>
           <span className="permissions-email">{email}</span>

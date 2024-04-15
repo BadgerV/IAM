@@ -1,19 +1,12 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import "./overviewFile.css";
-
-interface OverviewData {
-  name: string;
-  email: string;
-  status: string;
-  img: string;
-  selectAll: boolean;
-}
+import { OverviewData } from "../../utils/types";
 
 const OverviewFile = ({
   name,
   email,
   status,
-  img,
+  
   selectAll,
 }: OverviewData) => {
   const [isChecked, setIsChecked] = useState(selectAll);
@@ -21,6 +14,7 @@ const OverviewFile = ({
   useEffect(() => {
     setIsChecked(selectAll);
   }, [selectAll]);
+  
   return (
     <div className="overview-file">
       <input
@@ -32,8 +26,6 @@ const OverviewFile = ({
       />
 
       <div className="overview-file-name-and-pic-cont">
-        <img src={img} alt="avatar" />
-
         <div>
           <span className="overview-file-name">{name}</span>
           <span className="overview-file-email">{email}</span>

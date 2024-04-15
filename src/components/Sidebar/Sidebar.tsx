@@ -3,7 +3,7 @@ import "./sidebar.css";
 import { Link } from "react-router-dom";
 
 const Sidebar = ({ setIsSidebarOpen }: any) => {
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   useEffect(() => {
     const handleResize = () => {
@@ -29,7 +29,7 @@ const Sidebar = ({ setIsSidebarOpen }: any) => {
   return (
     <div className="sidebar">
       <div className="sidebar-top">
-        <h1 className="fileshield-text">FileShield</h1>
+        <h1 className="fileshield-text">IAM</h1>
         <img
           src="/assets/arrow-left.png"
           alt="Close"
