@@ -100,6 +100,8 @@ const getFileController = async (req: Request, res: Response) => {
     // Fetch the file from Firebase Storage
     const filePath = await fetchFileFromFirebase(file.file_name);
 
+    console.log(filePath);
+
     // Send the file to the client
     res.download(filePath, file.file_name);
   } catch (error) {

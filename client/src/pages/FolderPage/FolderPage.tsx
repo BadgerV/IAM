@@ -3,12 +3,15 @@ import { AppDispatch, RootState } from "../../redux/store";
 import "./folderPage.css";
 import { useEffect, useState } from "react";
 import { GetFolders } from "../../redux/slices/folderSlice";
-import { Folder } from "../../utils/types";
+import { FolderType } from "../../utils/types";
+import Folder from "../../components/Folder/Folder";
 
 const FolderPage = () => {
   //loading state
   const [loadingState, setLoadingState] = useState<boolean>(true);
-  const folders: Folder[] | null = useSelector(
+
+  //getting folders from state
+  const folders: FolderType[] | null = useSelector(
     (state: RootState) => state.folder.fetchedFolders
   );
 
@@ -29,11 +32,13 @@ const FolderPage = () => {
   return (
     <div className="folder-page">
       {loadingState ? (
-        <>Loading</>
+        <div>Loading...</div>
       ) : (
-        folders?.map((folder: Folder) => {
-          return <span>{folder.name}</span>;
-        })
+        <div className="folder-page-folders">
+          {folders?.map((folder: FolderType) => (
+            <Folder key={folder.id} {...folder} />
+          ))}
+        </div>
       )}
     </div>
   );

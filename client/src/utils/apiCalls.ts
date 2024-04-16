@@ -186,31 +186,6 @@ const deleteCategoryAccessByIDCall = async (id: number, getState: any) => {
   return response;
 };
 
-//FILE CALLS
-const createFileCall = async (
-  { file_name, file_size, folder_id, category_id, description }: any,
-  { getState }: any
-) => {
-  const token = (getState as RootState).auth.user.token;
-  const response = await axios.post(
-    `${url}/category/file/}`,
-    {
-      file_name,
-      file_size,
-      folder_id,
-      category_id,
-      description,
-    },
-    {
-      headers: {
-        authorization: `authorization ${token}`,
-      },
-    }
-  );
-
-  return response;
-};
-
 export default {
   signupApiCall,
   loginApiCall,
@@ -226,6 +201,4 @@ export default {
   getCategoryAccessByCategoryIdCall,
   updateCategoryAccessCall,
   deleteCategoryAccessByIDCall,
-
-  createFileCall,
 };

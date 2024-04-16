@@ -56,12 +56,12 @@ export interface Data {
   selectAll?: any;
 }
 
-export interface FolderType {
-  folderName: string;
-  noOfFiles: number;
-  fileSize?: string;
-  img: string;
-}
+// export interface FolderType {
+//   folderName: string;
+//   noOfFiles: number;
+//   fileSize?: string;
+//   img: string;
+// }
 
 export interface ManageAccessFileType {
   request: string;
@@ -105,18 +105,36 @@ export interface CategoryAccessData {
   can_delete: boolean;
 }
 
+// export interface FileData {
+//   file_name: string;
+//   file_size: string;
+//   folder_id: number | null;
+//   category_id: number | null;
+//   description: string;
+//   file: File | any;
+// }
 export interface FileData {
+  id: number;
+  user_id: number;
+  folder_id: number;
+  category_id: number;
   file_name: string;
   file_size: string;
-  folder_id: number | null;
-  category_id: number | null;
   description: string;
-  file: File | any;
+  category_name: string;
+  cloud_url: string;
+  folder_name: string;
+  owner_username: string;
+  created_at: string;
+  updated_at: string;
+  file?: File | null;
 }
 
-export interface FileInitialState {}
+export interface FileInitialState {
+  files: FileData[] | null;
+}
 
-export interface Folder {
+export interface FolderType {
   id: number;
   name: string;
   description: string;
@@ -125,5 +143,21 @@ export interface Folder {
 }
 
 export interface FolderInitialState {
-  fetchedFolders: Folder[] | null;
+  fetchedFolders: FolderType[] | null;
+}
+
+export interface FolderDetails {
+  folder_id: number;
+  user_id: number;
+  can_read: boolean;
+  can_write: boolean;
+  can_delete: boolean;
+}
+
+export interface FileDetails {
+  file_id: number;
+  user_id: number;
+  can_read: boolean;
+  can_write: boolean;
+  can_delete: boolean;
 }

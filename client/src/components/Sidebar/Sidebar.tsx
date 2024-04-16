@@ -83,7 +83,7 @@ const Sidebar = ({ setIsSidebarOpen }: any) => {
               <span>Manage Access</span>
             </li>
           </Link>
-          <Link
+          {/* <Link
             to="/categories"
             className="nav-link"
             onClick={() => windowWidth <= 1130 && setIsSidebarOpen(false)}
@@ -92,7 +92,7 @@ const Sidebar = ({ setIsSidebarOpen }: any) => {
               <img src="/assets/user-icon.svg" alt="Dashboard" />
               <span>Categories</span>
             </li>
-          </Link>
+          </Link> */}
         </ul>
 
         <div className="nav-bottom">

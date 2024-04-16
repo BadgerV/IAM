@@ -5,18 +5,34 @@ import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Link, useNavigate } from "react-router-dom";
 import FileUploadModal from "../../components/FileUploadModal/FileUploadModal";
-import { AppDispatch } from "../../redux/store";
-import { useDispatch } from "react-redux";
-import { CreateFile } from "../../redux/slices/fileSlice";
-import { FileData } from "../../utils/types";
-import { calculateFileSize } from "../../utils/helpers";
+import { AppDispatch, RootState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+// import { CreateFile } from "../../redux/slices/fileSlice";
+import { CategoryData } from "../../utils/types";
+import { calculateFileSize, customUploadStyles } from "../../utils/helpers";
+import { GetFolders } from "../../redux/slices/folderSlice";
+import Select from "react-select";
+import { GetCategories } from "../../redux/slices/categorySlice";
+
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
+import fileApiCalls from "../../services/fileApiCalls";
 
 const UploadFiles = () => {
-  const [formData, setFormData] = useState<FileData>({
+  const [loadingState, setLoadingState] = useState<boolean>(true);
+  const [loadingButton, setLoadingButton] = useState<boolean>(false);
+
+  const [options, setOptions] = useState<any>();
+
+  const [categories, setCategories] = useState<CategoryData[]>([]);
+
+  const token = useSelector((state: RootState) => state.auth.user.token);
+
+  const [formData, setFormData] = useState<any>({
     file_name: "",
     file_size: "",
-    folder_id: null,
-    category_id: null,
+    folder_id: -1,
+    category_id: -1,
     description: "",
     file: null,
   });
@@ -26,7 +42,7 @@ const UploadFiles = () => {
   useEffect(() => {
     if (formData.file) {
       const fileSize = calculateFileSize(formData.file);
-      setFormData((prevFormData) => ({
+      setFormData((prevFormData: any) => ({
         ...prevFormData,
         file_size: fileSize,
         file_name: prevFormData.file.name,
@@ -34,21 +50,78 @@ const UploadFiles = () => {
     }
   }, [formData.file]);
 
+  //call the getFolders method when the app loads and categories
+  const getFolders = async () => {
+    return await dispatch(GetFolders());
+  };
+
+  const getCategories = async () => {
+    return await dispatch(GetCategories());
+  };
+
   useEffect(() => {
-    console.log(formData);
-  }, [formData]);
+    getFolders().then((res: any) => {
+      setLoadingState(false);
+
+      const updatedOptions = res.payload.map((item: any) => ({
+        id: item.id,
+        value: item.name,
+        label: item.name.charAt(0).toUpperCase() + item.name.slice(1),
+      }));
+
+      setOptions(updatedOptions);
+    });
+
+    getCategories().then((res) => {
+      console.log(res.payload);
+
+      const categories = res.payload.map((item: any) => ({
+        id: item.id,
+        value: item.name,
+        label: item.name.charAt(0).toUpperCase() + item.name.slice(1),
+      }));
+
+      setCategories(categories);
+    });
+  }, []);
 
   const handleSubmit = async () => {
-    const result = await dispatch(CreateFile(formData));
+    if (
+      !formData.file ||
+      formData.category_id === -1 ||
+      formData.folder_id === -1 ||
+      formData.description === "" ||
+      formData.file_name === ""
+    ) {
+      toast.error("You are required to fill all the fields", {
+        position: "top-right",
+      });
+      return;
+    }
+    setLoadingButton(true);
+    await fileApiCalls.createFileCall(formData, token).then((res) => {
+      if (res.data.message === "File created Successfully") {
+        navigate("/");
+        setLoadingButton(false);
 
-    console.log(result);
+        toast.success(res.data.message, {
+          position: "top-right", // Adjust position if needed
+        });
+      } else {
+        setLoadingButton(false);
+
+        toast.error("Something went wrong", {
+          position: "top-right", // Adjust position if needed
+        });
+      }
+    });
   };
 
   //react dropzone config
   const onDrop = useCallback((acceptedFiles: any) => {
     // Do something with the files
     console.log("accepted files = ", acceptedFiles);
-    setFormData((prevFormData) => ({
+    setFormData((prevFormData: any) => ({
       ...prevFormData,
       file: acceptedFiles[0],
     }));
@@ -62,45 +135,98 @@ const UploadFiles = () => {
 
   //usenavigate for navigation
   const navigate = useNavigate();
+
+  //handle select chnage
+  const handleFolderChange = (selectedOption: any) => {
+    setFormData((prevFormData: any) => ({
+      ...prevFormData,
+      folder_id: selectedOption.id,
+    }));
+  };
+  const handleCategoryChange = (selectedOption: any) => {
+    setFormData((prevFormData: any) => ({
+      ...prevFormData,
+      category_id: selectedOption.id,
+    }));
+  };
   return (
-    <div className="file-upload-content">
-      <div className="file-upload-absolute">
-        {isLoading && <FileUploadModal setIsLoading={setIsLoading} />}
-      </div>
-      <Link className="file-upload-upper" to="/">
-        <img src="/assets/arrow-left.png" alt="Back" />
-        <span>Back to overview</span>
-      </Link>
+    <>
+      {loadingState ? (
+        <>Loading ...</>
+      ) : (
+        <div className="file-upload-content">
+          <div className="file-upload-absolute">
+            {isLoading && <FileUploadModal setIsLoading={setIsLoading} />}
+          </div>
+          <Link className="file-upload-upper" to="/">
+            <img src="/assets/arrow-left.png" alt="Back" />
+            <span>Back to overview</span>
+          </Link>
 
-      <div className="file-upload-content">
-        <span className="upload-files-text">Upload Files</span>
+          <div className="file-upload-content">
+            <span className="upload-files-text">Upload Files</span>
 
-        <div className="file-upload-input-container" {...getRootProps()}>
-          <input {...getInputProps()} />
-          <img src="/assets/folder.png" alt="Folder" />
-          {isDragActive ? (
-            <p>Drop the files here ...</p>
-          ) : (
-            <p>Drag and drop files here or browse </p>
-          )}
+            <Select
+              styles={customUploadStyles}
+              isMulti={false} // Set isMulti to false to allow only one option selection
+              onChange={handleCategoryChange}
+              options={categories}
+              placeholder="Select Category"
+            />
+
+            <Select
+              styles={customUploadStyles}
+              isMulti={false} // Set isMulti to false to allow only one option selection
+              onChange={handleFolderChange}
+              options={options}
+              placeholder="Select Folder"
+            />
+
+            <div className="file-upload-input-container" {...getRootProps()}>
+              <input {...getInputProps()} />
+              <img src="/assets/folder.png" alt="Folder" />
+              {formData.file_name ? (
+                <span>{formData.file_name}</span>
+              ) : isDragActive ? (
+                <p>Drop the files here ...</p>
+              ) : (
+                <p>Drag and drop files here or browse</p>
+              )}
+            </div>
+
+            <textarea
+              name="description"
+              id=""
+              cols={30}
+              rows={4}
+              className="upload-file-desc"
+              placeholder="Description"
+              onChange={(e: any) => {
+                setFormData((prevFormData: any) => ({
+                  ...prevFormData,
+                  description: e.target.value,
+                }));
+              }}
+            ></textarea>
+
+            <div className="file-upload-buttons-container">
+              <button className="cancel-button" onClick={() => navigate("/")}>
+                Cancel
+              </button>
+              <button
+                className="upload-button"
+                onClick={() => {
+                  // setIsLoading(true);
+                  handleSubmit();
+                }}
+              >
+                {loadingButton ? "Loading . . . " : "Upload File"}
+              </button>
+            </div>
+          </div>
         </div>
-
-        <div className="file-upload-buttons-container">
-          <button className="cancel-button" onClick={() => navigate("/")}>
-            Cancel
-          </button>
-          <button
-            className="upload-button"
-            onClick={() => {
-              setIsLoading(true);
-              handleSubmit();
-            }}
-          >
-            Upload File
-          </button>
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 

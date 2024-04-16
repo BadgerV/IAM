@@ -3,11 +3,15 @@ import File from "../FIle/File";
 import Select from "react-select";
 
 import "./dashboard.css";
-import { ChangeEvent, useState } from "react";
-import { Data, Options } from "../../utils/types";
+import { ChangeEvent, useEffect, useState } from "react";
+import { Data, FileData, Options } from "../../utils/types";
 import { customStyles } from "../../utils/helpers";
 
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store";
+import fileApiCalls from "../../services/fileApiCalls";
+import { GetAllFiles } from "../../redux/slices/fileSlice";
 
 const options: Options[] = [
   { value: "option1", label: "Option 1" },
@@ -17,6 +21,33 @@ const options: Options[] = [
 
 const Dashboard = () => {
   const [selectAll, setSelectAll] = useState(false);
+
+  //declaring dispatch
+  const dispatch = useDispatch<AppDispatch>();
+
+  //loading state
+  const [loadingState, setLoadingState] = useState<boolean>(true);
+
+  const files = useSelector((state: RootState) => state.file.files);
+
+  //get token from state
+  const token = useSelector((state: RootState) => state.auth.user.token);
+
+  const getAllFiles = async () => {
+    dispatch(GetAllFiles(token));
+  };
+
+  //call the getAllFiles method at intialization
+  useEffect(() => {
+    getAllFiles();
+  }, []);
+
+  //correct the loading state
+  useEffect(() => {
+    if (files) {
+      setLoadingState(false);
+    }
+  }, [files]);
 
   const [sortedArray, setSortedArray] = useState<Data[]>([]);
   const folders = [
@@ -113,10 +144,10 @@ const Dashboard = () => {
             <span>Folders</span>
 
             <div className="dashboard-top-upper-right">
-              <div className="show-all-button">
+              <Link to="/folder" className="show-all-button">
                 <span>Show all</span>
                 <img src="/assets/arrow-down.png" alt="arrow_down" />
-              </div>
+              </Link>
 
               <div className="uplaod-button">
                 <Link to="/file-upload" className="dashboard-link">
@@ -135,7 +166,7 @@ const Dashboard = () => {
 
           <div className="dashboard-folders">
             {folders.map((folder, i) => {
-              return <Folder {...folder} key={i} />;
+              return <Folder id={0} name={""} description={""} created_at={""} updated_at={""} {...folder} key={i} />;
             })}
           </div>
         </div>
@@ -145,15 +176,15 @@ const Dashboard = () => {
             <span>Categories</span>
 
             <div className="dashboard-top-upper-right">
-              <div className="show-all-button">
+              <Link to="/folder" className="show-all-button">
                 <span>Show all</span>
                 <img src="/assets/arrow-down.png" alt="arrow_down" />
-              </div>
+              </Link>
             </div>
           </div>
           <div className="dashboard-folders">
             {categories.map((folder, i) => {
-              return <Folder {...folder} key={i} />;
+              return <Folder id={0} name={""} description={""} created_at={""} updated_at={""} {...folder} key={i} />;
             })}
           </div>
         </div>
@@ -227,31 +258,35 @@ const Dashboard = () => {
           <span>Last Modified</span>
         </div>
 
-        <div className="dashboard-table-content">
-          {selectedCategory === 1 ? (
-            data.map((file: Data, index) => (
-              <File selectAll={selectAll} {...file} key={index} />
-            ))
-          ) : selectedCategory === 2 && sortedArray.length > 0 ? (
-            sortedArray.map((file: Data, index) => (
-              <File selectAll={selectAll} {...file} key={index} />
-            ))
-          ) : selectedCategory === 3 && sortedArray.length > 0 ? (
-            sortedArray.map((file: Data, index) => (
-              <File selectAll={selectAll} {...file} key={index} />
-            ))
-          ) : selectedCategory === 4 && sortedArray.length > 0 ? (
-            sortedArray.map((file: Data, index) => (
-              <File selectAll={selectAll} {...file} key={index} />
-            ))
-          ) : selectedCategory === 2 ? (
-            <span className="decline-span">There are no documents</span>
-          ) : selectedCategory === 3 ? (
-            <span className="decline-span">There are no PDFs</span>
-          ) : selectedCategory === 4 ? (
-            <span className="decline-span">There are no images</span>
-          ) : null}
-        </div>
+        {loadingState ? (
+          <>Loading . . .</>
+        ) : (
+          <div className="dashboard-table-content">
+            {selectedCategory === 1 ? (
+              files?.map((file: FileData, index: number) => (
+                <File selectAll={selectAll} file={file} key={index} />
+              ))
+            ) : selectedCategory === 2 && files!.length > 0 ? (
+              files?.map((file: FileData, index: number) => (
+                <File selectAll={selectAll} file={file} key={index} />
+              ))
+            ) : selectedCategory === 3 && files!.length > 0 ? (
+              files?.map((file: FileData, index: number) => (
+                <File selectAll={selectAll} file={file} key={index} />
+              ))
+            ) : selectedCategory === 4 && files!.length > 0 ? (
+              files?.map((file: FileData, index: number) => (
+                <File selectAll={selectAll} file={file} key={index} />
+              ))
+            ) : selectedCategory === 2 ? (
+              <span className="decline-span">There are no documents</span>
+            ) : selectedCategory === 3 ? (
+              <span className="decline-span">There are no PDFs</span>
+            ) : selectedCategory === 4 ? (
+              <span className="decline-span">There are no images</span>
+            ) : null}
+          </div>
+        )}
       </div>
     </div>
   );

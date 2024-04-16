@@ -12,11 +12,12 @@ import UploadFiles from "./pages/UploadFiles/UploadFiles";
 import Signup from "./pages/Signup/Signup";
 import WithAuth from "./HOCs/WithAuth";
 import { ToastContainer } from "react-toastify";
-import CategoryDashboard from "./pages/CategoryDashboard/CategoryDashboard";
+// import CategoryDashboard from "./pages/CategoryDashboard/CategoryDashboard";
 import PageNotFound from "./pages/PageNotFound/PageNotFound";
-import CreateCategoryPage from "./pages/CreateCategoryPage/CreateCategoryPage";
+// import CreateCategoryPage from "./pages/CreateCategoryPage/CreateCategoryPage";
 import FolderPage from "./pages/FolderPage/FolderPage";
 import AddFolderPage from "./pages/AddFolderPage/AddFolderPage";
+import FilesPage from "./pages/FIlesPage/FilesPage";
 
 const App = () => {
   //secure routes usingg HOCs
@@ -36,12 +37,15 @@ const App = () => {
           <Route path="/file-upload" element={<UploadFiles />} />
 
           {/* category routes */}
-          <Route path="/categories" element={<CategoryDashboard />} />
-          <Route path="/categories/create" element={<CreateCategoryPage />} />
+          {/* <Route path="/categories" element={<CategoryDashboard />} />
+          <Route path="/categories/create" element={<CreateCategoryPage />} /> */}
 
           {/* folder routes */}
           <Route path="/folder" element={<FolderPage />} />
           <Route path="/folder/add" element={<AddFolderPage />} />
+
+          {/* file routes */}
+          <Route path="/file/:id" element={<FilesPage />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/edit-permissions" element={<SecureEditPermissions />} />

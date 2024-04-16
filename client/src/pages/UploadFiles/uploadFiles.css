@@ -9,11 +9,6 @@
 
 .file-upload-absolute {
   width: 100%;
-
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);z-index: 20000000;
 }
 
 .file-upload-upper {
@@ -59,7 +54,7 @@
   flex-direction: column;
   gap: 1.5em;
   align-items: center;
-  padding: 2.5em 4em 2em 4em;
+  padding: 0.5em 4em 0.5em 4em;
   cursor: pointer;
 }
 .file-upload-input-container p {
@@ -99,4 +94,16 @@
 .upload-button {
   background-color: var(--fill-color);
   color: white;
+}
+
+.upload-file-desc {
+  outline: none;
+  border: none;
+  background-color: #e3e3e381;
+  font-family: inherit;
+
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  border-radius: 16px;
+  margin-top: 1rem;
 }

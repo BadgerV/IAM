@@ -1,9 +1,8 @@
 .file {
   display: grid;
-  grid-template-columns: minmax(15px, 0.5fr) minmax(300px, 5fr) minmax(
-      200px,
-      4fr
-    ) minmax(100px, 2fr) minmax(150px, 3fr);
+  grid-template-columns:
+    minmax(15px, 0.5fr) minmax(300px, 5fr) minmax(200px, 4fr)
+    minmax(60px, 1.4fr) minmax(200px, 3.5fr);
   align-items: center;
   padding: 0.5rem 0;
 
@@ -33,7 +32,6 @@
 
 .uploaded-by-cont div {
   display: flex;
-  flex-direction: column;
 }
 
 .file-name-text {
@@ -41,8 +39,8 @@
 }
 
 .file-email-text {
-  font-size: 0.8rem;
-  font-weight: 300;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 .last-modified-and-options {
   display: flex;

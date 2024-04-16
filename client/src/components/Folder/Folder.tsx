@@ -1,8 +1,11 @@
 import "./folder.css";
 import { useRef, useState } from "react";
 import { FolderType } from "../../utils/types";
+import { useNavigate } from "react-router-dom";
 
-const Folder = ({ folderName, noOfFiles, fileSize, img }: FolderType) => {
+const Folder = (folder: FolderType) => {
+  const { name, id, description, created_at, updated_at } = folder;
+
   const folderRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -13,16 +16,23 @@ const Folder = ({ folderName, noOfFiles, fileSize, img }: FolderType) => {
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
+
+  const onHandleClick = () => {
+    navigate(`/file/${id}`);
+  };
+
+  const navigate = useNavigate();
   return (
     <div
       className="folder"
       ref={folderRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={onHandleClick}
     >
       <div className="folder-top">
         <img
-          src={`${img}${isHovered ? "light.png" : "dark.png"}`}
+          src={`/assets/folder-${isHovered ? "light.png" : "dark.png"}`}
           alt="folder"
           className="folder-file-img"
         />
@@ -32,10 +42,10 @@ const Folder = ({ folderName, noOfFiles, fileSize, img }: FolderType) => {
           className="folder-options"
         />
       </div>
-      <div className="folder-middle">{folderName}</div>
+      <div className="folder-middle">{name}</div>
       <div className="folder-bottom">
-        <span>{noOfFiles} files</span>
-        <span>{fileSize}</span>
+        <span> 15 files</span>
+        <span>45 Gb</span>
       </div>
     </div>
   );
