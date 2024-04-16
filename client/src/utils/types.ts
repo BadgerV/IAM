@@ -4,15 +4,31 @@ export interface User {
   username: string;
   email: string;
   token: string;
+
+  role?: string;
+  is_admin?: boolean;
+  is_active?: boolean;
 }
 
 export interface AuthInitialState {
   user: User | null;
-  error: any;
+  loginError: any;
+}
+
+export interface CategoryInitialState {
+  fetchedCategories: CategoryData[];
+}
+
+export interface CategoryData {
+  id: number;
+  name: string;
+  description: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface LoginCredentials {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -79,4 +95,35 @@ export interface RecentActivityData {
   image: string;
   activityText: string;
   timeAgo: string;
+}
+
+export interface CategoryAccessData {
+  category_id: number;
+  user_id: number;
+  can_read: boolean;
+  can_write: boolean;
+  can_delete: boolean;
+}
+
+export interface FileData {
+  file_name: string;
+  file_size: string;
+  folder_id: number | null;
+  category_id: number | null;
+  description: string;
+  file: File | any;
+}
+
+export interface FileInitialState {}
+
+export interface Folder {
+  id: number;
+  name: string;
+  description: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FolderInitialState {
+  fetchedFolders: Folder[] | null;
 }

@@ -10,24 +10,34 @@ import apiCalls from "../../utils/apiCalls";
 
 const initialState: AuthInitialState = {
   user: null,
-  error: null,
+  loginError: null,
 };
 
 export const LoginUser = createAsyncThunk(
   "auth/login",
-  async (cred: LoginCredentials) => {
-    const response = await apiCalls.loginApiCall(cred);
+  async (cred: LoginCredentials, { rejectWithValue }) => {
+    try {
+      const response = await apiCalls.loginApiCall(cred);
 
-    return response.data;
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data.message);
+    }
   }
 );
 
 export const SignupUser = createAsyncThunk(
   "auth/signup",
-  async (cred: SignupCredentials) => {
-    const response = await apiCalls.signupApiCall(cred);
+  async (cred: SignupCredentials, { rejectWithValue }) => {
+    try {
+      const response = await apiCalls.signupApiCall(cred);
 
-    return response.data;
+      console.log(response.data);
+
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data.message);
+    }
   }
 );
 
@@ -39,17 +49,11 @@ export const authSlice: any = createSlice({
     builder
       .addCase(LoginUser.fulfilled, (state, action) => {
         state.user = action.payload;
-      })
-      .addCase(LoginUser.rejected, (state, action) => {
-        console.log("working");
-        state.user = {
-          username: "Foazy",
-          email: "Segunfaozan112@gmail.com",
-          token: "12345",
-        };
 
         console.log(state.user);
-        state.error = action.payload;
+      })
+      .addCase(LoginUser.rejected, (state, action) => {
+        state.loginError = action.payload;
       });
   },
 });

@@ -3,6 +3,9 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
 //imorting reducers
 import authReducer from "./slices/authSlice";
+import categoryReducer from "./slices/categorySlice";
+import fileReducer from "./slices/fileSlice";
+import folderReducer from "./slices/folderSlice";
 
 //imports from redux persist
 
@@ -26,6 +29,9 @@ export type RootState = ReturnType<typeof rootReducer>;
 //root reducer
 const rootReducer = combineReducers({
   auth: authReducer,
+  category: categoryReducer,
+  file: fileReducer,
+  folder: folderReducer,
   //   file: fileReducer,
   //add the reducres
 });

@@ -83,10 +83,16 @@ const Sidebar = ({ setIsSidebarOpen }: any) => {
               <span>Manage Access</span>
             </li>
           </Link>
-          <li>
-            <img src="/assets/notification.svg" alt="Dashboard" />
-            <span>Notifications</span>
-          </li>
+          <Link
+            to="/categories"
+            className="nav-link"
+            onClick={() => windowWidth <= 1130 && setIsSidebarOpen(false)}
+          >
+            <li>
+              <img src="/assets/user-icon.svg" alt="Dashboard" />
+              <span>Categories</span>
+            </li>
+          </Link>
         </ul>
 
         <div className="nav-bottom">

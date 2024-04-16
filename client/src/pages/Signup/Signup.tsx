@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import "./signup.css";
-import { SignupCredentials } from "../../utils/types";
+import { SignupCredentials } from "@/utils/types.ts";
 
 import InputField from "../../components/inputField/inputField.tsx";
 
@@ -10,6 +10,10 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store.ts";
 import { SignupUser } from "../../redux/slices/authSlice.ts";
 import { useNavigate } from "react-router-dom";
+
+//import from react-toastify
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
 
 const Signup = () => {
   //signup credentials
@@ -19,6 +23,9 @@ const Signup = () => {
     email: "",
   });
 
+  //loading state
+  const [loadingState, setLoadingState] = useState<boolean>(false);
+
   //declaring useDispatch and useNavigate
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -26,19 +33,28 @@ const Signup = () => {
   //handlechnage
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setCredentials((prevCredentials) => ({
+    setCredentials((prevCredentials: any) => ({
       ...prevCredentials,
       [name]: value,
     }));
   };
 
   //submit function
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const result: any = dispatch(SignupUser(credentials));
+    setLoadingState(true);
+    const result: any =await dispatch(SignupUser(credentials));
 
-    if (result.type === "/auth/login/fulfilled") {
-      navigate("/");
+    if (result.type === "/auth/signup/fulfilled") {
+      console.log(result);
+      navigate("/login");
+      setLoadingState(false);
+    } else {
+      console.log(result);
+      setLoadingState(false);
+      toast.error(result.payload, {
+        position: "top-right", // Adjust position if needed
+      });
     }
   };
 
@@ -79,7 +95,9 @@ const Signup = () => {
 
           <span className="signup-forgot-password">Forgot password?</span>
 
-          <button className="signup-button">Sign Up</button>
+          <button className="signup-button" disabled={loadingState}>
+            {loadingState ? "loading . . . " : "Sign Up"}
+          </button>
         </form>
 
         <span className="terms-and-conditions-text">

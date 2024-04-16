@@ -28,9 +28,9 @@ categoryRouter.put('/:id', requireSuperAdmin, updateCategoryController);
 categoryRouter.delete('/:id', requireSuperAdmin, deleteCategoryController);
 
 // Routes for category access
-categoryRouter.post('access/:categoryId', requireSuperAdmin, createCategoryAccessController);
+categoryRouter.post('/access/', requireSuperAdmin, createCategoryAccessController);
 categoryRouter.get('/access/:id', getCategoryAccessByIdController);
-categoryRouter.get('/access/:categoryId', getCategoryAccessByCategoryIdController);
+categoryRouter.get('/access/getCategoryByID/:categoryId', getCategoryAccessByCategoryIdController);
 categoryRouter.put('/access/:id', requireSuperAdmin, updateCategoryAccessController);
 categoryRouter.delete('/access/:id', requireSuperAdmin, deleteCategoryAccessByIdController);
 

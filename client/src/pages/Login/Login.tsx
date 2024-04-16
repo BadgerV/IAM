@@ -8,10 +8,14 @@ import { useNavigate } from "react-router-dom";
 import { AppDispatch } from "../../redux/store.ts";
 import { LoginUser } from "../../redux/slices/authSlice.ts";
 
+//import from react-toastify
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
+
 const Login = () => {
   //credentials
   const [credentials, setCredentials] = useState<LoginCredentials>({
-    username: "",
+    email: "",
     password: "",
   });
 
@@ -32,17 +36,21 @@ const Login = () => {
   };
 
   //submit function
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoadingState(true);
-    const result: any = dispatch(LoginUser(credentials));
-
-    if (result.type === "/auth/login/fulfilled") {
+    const result: any = await dispatch(LoginUser(credentials));
+    
+    if (result.type === "auth/login/fulfilled") {
       setLoadingState(false);
       navigate("/");
     } else {
+      console.log(result.payload);
       setLoadingState(false);
-      navigate("/");
+
+      toast.error(result.payload, {
+        position: "top-right", // Adjust position if needed
+      });
     }
   };
   return (
@@ -53,12 +61,12 @@ const Login = () => {
 
         <form className="login-form" onSubmit={onSubmit}>
           <InputField
-            type="text"
-            name="username"
-            value={credentials.username}
+            type="email"
+            name="email"
+            value={credentials.email}
             onChange={handleChange}
-            label="Username"
-            placeholder="Username"
+            label="Email"
+            placeholder="Email"
             shouldValidate
           />
           <InputField

@@ -1,16 +1,57 @@
 import "./uploadFiles.css";
 
 //importing nessesary imports
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Link, useNavigate } from "react-router-dom";
 import FileUploadModal from "../../components/FileUploadModal/FileUploadModal";
+import { AppDispatch } from "../../redux/store";
+import { useDispatch } from "react-redux";
+import { CreateFile } from "../../redux/slices/fileSlice";
+import { FileData } from "../../utils/types";
+import { calculateFileSize } from "../../utils/helpers";
 
 const UploadFiles = () => {
+  const [formData, setFormData] = useState<FileData>({
+    file_name: "",
+    file_size: "",
+    folder_id: null,
+    category_id: null,
+    description: "",
+    file: null,
+  });
+  //declaring dispatch
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    if (formData.file) {
+      const fileSize = calculateFileSize(formData.file);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        file_size: fileSize,
+        file_name: prevFormData.file.name,
+      }));
+    }
+  }, [formData.file]);
+
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
+
+  const handleSubmit = async () => {
+    const result = await dispatch(CreateFile(formData));
+
+    console.log(result);
+  };
+
   //react dropzone config
   const onDrop = useCallback((acceptedFiles: any) => {
     // Do something with the files
     console.log("accepted files = ", acceptedFiles);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      file: acceptedFiles[0],
+    }));
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -48,7 +89,13 @@ const UploadFiles = () => {
           <button className="cancel-button" onClick={() => navigate("/")}>
             Cancel
           </button>
-          <button className="upload-button" onClick={() => setIsLoading(true)}>
+          <button
+            className="upload-button"
+            onClick={() => {
+              setIsLoading(true);
+              handleSubmit();
+            }}
+          >
             Upload File
           </button>
         </div>

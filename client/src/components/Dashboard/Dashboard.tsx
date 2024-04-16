@@ -7,6 +7,8 @@ import { ChangeEvent, useState } from "react";
 import { Data, Options } from "../../utils/types";
 import { customStyles } from "../../utils/helpers";
 
+import { Link } from "react-router-dom";
+
 const options: Options[] = [
   { value: "option1", label: "Option 1" },
   { value: "option2", label: "Option 2" },
@@ -117,7 +119,15 @@ const Dashboard = () => {
               </div>
 
               <div className="uplaod-button">
-                <span>Upload</span>
+                <Link to="/file-upload" className="dashboard-link">
+                  Upload
+                </Link>
+                <img src="/assets/cloud-upload.png" alt="cloud_icon" />
+              </div>
+              <div className="uplaod-button">
+                <Link to="/folder/add" className="dashboard-link">
+                  Add new folder
+                </Link>
                 <img src="/assets/cloud-upload.png" alt="cloud_icon" />
               </div>
             </div>

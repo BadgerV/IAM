@@ -1,26 +1,27 @@
 // middleware/authMiddleware.ts
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 import { User } from "../models/User";
-import {createUser, getUserByEmail} from "../services/user.service";
+import { createUser, getUserByEmail } from "../services/user.service";
 import { defaultConfig } from "../config/config";
-import {createLog} from "../services/log.service"
-
+import { createLog } from "../services/log.service";
 
 const saltRounds = 10;
 const secretKey = defaultConfig.SECRET_KEY;
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { username, email, password, role, is_active, is_admin} = req.body;
-    if(!username||!email||!password||!role){
-      res.status(400).json({ message: "username, email, password, role are required" });
+    const { username, email, password, role, is_active, is_admin } = req.body;
+    if (!username || !email || !password || !role) {
+      res
+        .status(400)
+        .json({ message: "username, email, password, role are required" });
     }
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const newUser: User = {
-      id: 1, // Generate unique ID
+      id: 3, // Generate unique ID
       username,
       email,
       password: hashedPassword,
@@ -31,11 +32,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     await createUser(newUser);
 
     await createLog({
-      id:1,
+      id: 3,
       user_id: Number(req.user_id),
-      action_taken:"Created User",
-      file_id: null
-    })
+      action_taken: "Created User",
+      file_id: null,
+    });
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
@@ -47,14 +48,18 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
+
+    console.log(typeof password);
+
     const user = await getUserByEmail(email);
     const username = user?.username;
     if (!user) {
       res.status(401).json({ message: "Invalid email" });
       return;
     }
-   
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
+
     if (!isPasswordValid) {
       res.status(401).json({ message: "Invalid email or password" });
       return;
@@ -62,13 +67,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign({ userId: user.id }, secretKey);
 
     await createLog({
-      id:1,
+      id: 1,
       user_id: Number(user.id),
-      action_taken:"Logged In",
-      file_id: null
-    })
+      action_taken: "Logged In",
+      file_id: null,
+    });
 
-    res.json({ username, token });
+    res.json({ username, token, email });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
