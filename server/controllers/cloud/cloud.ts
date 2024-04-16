@@ -22,18 +22,18 @@ const firebaseJSON = path.resolve(
 async function encryptFile(filePath: string, password: string) {
   try {
     const data = fs.readFileSync(filePath);
-    console.log('d', data.toString("base64"))
+    // console.log('d', data.toString("base64"))
     
     const iv = crypto.randomBytes(8);
     const cipher = new Blowfish(password);
     cipher.setIv(iv)
 
     const encryptedData = cipher.encode(data.toString("base64"));
-    console.log('e', encryptedData)
+    // console.log('e', encryptedData)
     const decryptedData= cipher.decode(encryptedData)
-    console.log('d', decryptedData)
+    // console.log('d', decryptedData)
 
-    const encryptedString=Buffer.from(encryptedData).toString("base64");
+     const encryptedString=Buffer.from(encryptedData).toString("base64");
    
 
     const finalOutputPath =`${filePath}.encrypted`;

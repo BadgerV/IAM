@@ -19,27 +19,76 @@ const createFolder = async (folder: Folder): Promise<void> => {
   }
 };
 
-const getFolderById = async (id: number): Promise<Folder | undefined> => {
+const getFolderById = async (id: number) => {
   const client = await pool.connect();
   try {
-    const query = 'SELECT * FROM folders WHERE id = $1';
+    const query = `
+      SELECT 
+        folders.id as folder_id,
+        folders.name,
+        json_agg(files.*) as files
+      FROM 
+        folders
+      LEFT JOIN 
+        files ON folders.id = files.folder_id
+      WHERE 
+        folders.id = $1
+      GROUP BY
+        folders.id;
+    `;
     const { rows } = await client.query(query, [id]);
-    return rows[0];
+
+    if (rows.length === 0) {
+      return undefined; // Return undefined if no folder with the given ID is found
+    }
+
+    // Extract folder data and format the result
+    const folderData = rows[0];
+    const folder = {
+      id: folderData.folder_id,
+      name: folderData.name,
+      files: folderData.files || [] // If there are no files, set it to an empty array
+    };
+
+    return folder;
   } finally {
     client.release();
   }
 };
 
-const getFolders = async (): Promise<Folder[] | undefined> => {
+
+const getFolders = async () => {
   const client = await pool.connect();
   try {
-    const query = 'SELECT * FROM folders';
+    const query = `
+      SELECT 
+        folders.id as folder_id,
+        folders.name,
+        json_agg(files.*) as files
+      FROM 
+        folders
+      LEFT JOIN 
+        files ON folders.id = files.folder_id
+      GROUP BY
+        folders.id;
+    `;
     const { rows } = await client.query(query);
-    return rows;
+
+    // Map the result rows to Folder objects
+    const folders = rows.map((row: any) => {
+      return {
+        id: row.folder_id,
+        name: row.name,
+        files: row.files || [] // If there are no files, set it to an empty array
+      };
+    });
+
+    return folders;
   } finally {
     client.release();
   }
 };
+
 
 const updateFolder = async (id: number, folder: Folder): Promise<void> => {
   const client = await pool.connect();
