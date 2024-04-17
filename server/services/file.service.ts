@@ -6,15 +6,15 @@ const createFile = async (file: File): Promise<void> => {
   const client = await pool.connect();
   try {
     const query = `
-      INSERT INTO files (user_id, folder_id, category_id, file_name, file_size, description, cloud_url)
+      INSERT INTO files (user_id, folder_id, file_name, file_size, access_type, description, cloud_url)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
     `;
     const values: any[] = [
       file.user_id,
       file.folder_id,
-      file.category_id,
       file.file_name,
       file.file_size,
+      file.access_type,
       file.description,
       file.cloud_url,
     ];
@@ -66,15 +66,15 @@ const updateFile = async (id: number, file: File): Promise<void> => {
   try {
     const query = `
       UPDATE files
-      SET user_id = $1, folder_id = $2, category_id = $3, file_name = $4, file_size = $5, description = $6, cloud_url = $7
+      SET user_id = $1, folder_id = $2, file_name = $3, file_size = $4, access_type=$5, description = $6, cloud_url = $7
       WHERE id = $8
     `;
     const values: any[] = [
       file.user_id,
       file.folder_id,
-      file.category_id,
       file.file_name,
       file.file_size,
+      file.access_type,
       file.description,
       file.cloud_url,
       id,
