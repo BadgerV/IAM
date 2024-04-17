@@ -1,8 +1,11 @@
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt';
 import { User } from "../../models/User";
-import {createUser} from "../../services/user.service";
+import { Permission } from "../../models/Permission";
+import { createPermission } from "../../services/permission.service";
+import {createUser, getUserByEmail} from "../../services/user.service";
 import { defaultConfig } from "../../config/config";
+import { Console } from "console";
 
 const saltRounds = 10;
 const secretKey = defaultConfig.SECRET_KEY;
@@ -34,6 +37,17 @@ const userInfo = {
       is_admin,
     };
     await createUser(newUser);
+
+    const user = await getUserByEmail(email);
+    console.log(user)
+    const newPermission: Permission={
+      user_id: Number(user?.id),
+      can_read: true,
+      can_write: true,
+      can_delete: true
+    }
+    await createPermission(newPermission)
+    
    console.log({ message: "Admin User Seeded successfully" });
   } catch (error) {
     console.error(error);

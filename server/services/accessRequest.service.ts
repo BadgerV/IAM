@@ -6,11 +6,12 @@ const createAccessRequest = async (accessRequest: AccessRequest): Promise<void> 
   const client = await pool.connect();
   try {
     const query = `
-      INSERT INTO access_request (file_id, status, reason)
-      VALUES ($1, $2, $3)
+      INSERT INTO access_request (file_id, user_id, status, reason)
+      VALUES ($1, $2, $3, $4)
     `;
     const values: any[] = [
       accessRequest.file_id,
+      accessRequest.user_id,
       accessRequest.status,
       accessRequest.reason,
     ];
@@ -31,16 +32,30 @@ const getAccessRequestById = async (id: number): Promise<AccessRequest | undefin
   }
 };
 
+
+const getAccessRequests = async (): Promise<AccessRequest[] | undefined> => {
+  const client = await pool.connect();
+  try {
+    const query = 'SELECT * FROM access_request';
+    const { rows } = await client.query(query);
+    return rows;
+  } finally {
+    client.release();
+  }
+};
+
+
 const updateAccessRequest = async (id: number, accessRequest: AccessRequest): Promise<void> => {
   const client = await pool.connect();
   try {
     const query = `
       UPDATE access_request
-      SET file_id = $1, status = $2, reason = $3
-      WHERE id = $4
+      SET file_id = $1, file_id = $2, status = $3, reason = $4
+      WHERE id = $5
     `;
     const values: any[] = [
       accessRequest.file_id,
+      accessRequest.user_id,
       accessRequest.status,
       accessRequest.reason,
       id,
@@ -61,4 +76,4 @@ const deleteAccessRequestById = async (id: number): Promise<void> => {
   }
 };
 
-export { createAccessRequest, getAccessRequestById, updateAccessRequest, deleteAccessRequestById };
+export { createAccessRequest, getAccessRequestById, getAccessRequests, updateAccessRequest, deleteAccessRequestById };

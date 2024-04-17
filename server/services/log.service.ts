@@ -21,20 +21,38 @@ const createLog = async (log: Log): Promise<void> => {
 };
 
 const getAllLogs = async (): Promise<Log[]> => {
-    const client = await pool.connect();
-    try {
-      const query = 'SELECT * FROM logs';
-      const { rows } = await client.query(query);
-      return rows;
-    } finally {
-      client.release();
-    }
-  };
+  const client = await pool.connect();
+  try {
+    const query = `
+      SELECT 
+        logs.*, 
+        users.username 
+      FROM 
+        logs
+      LEFT JOIN 
+        users ON logs.user_id = users.id;
+    `;
+    const { rows } = await client.query(query);
+    return rows;
+  } finally {
+    client.release();
+  }
+};
+
 
   const getLogsByUserId = async (userId: number): Promise<Log[]> => {
     const client = await pool.connect();
     try {
-      const query = 'SELECT * FROM logs WHERE user_id = $1';
+      const query = `
+      SELECT 
+        logs.*, 
+        users.username 
+      FROM 
+        logs
+      WHERE user_id = $1
+      LEFT JOIN 
+        users ON logs.user_id = users.id;
+    `;
       const { rows } = await client.query(query, [userId]);
       return rows;
     } finally {
