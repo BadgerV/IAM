@@ -8,10 +8,10 @@ import {
 // Controller function to create file access
 const createPermissionController = async (req: Request, res: Response) => {
   try {
-    const { file_id, user_id, can_read, can_write, can_delete } = req.body;
+    const { user_id, can_read, can_write, can_delete } = req.body;
 
     // Check if required fields are provided
-    if (!file_id || typeof can_read !== 'boolean' || typeof can_write !== 'boolean' || typeof can_delete !== 'boolean') {
+    if (!user_id || typeof can_read !== 'boolean' || typeof can_write !== 'boolean' || typeof can_delete !== 'boolean') {
       return res.status(400).json({ message: 'user ID, can_read, can_write, and can_delete are required' });
     }
 

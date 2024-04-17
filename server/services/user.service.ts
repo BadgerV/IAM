@@ -47,5 +47,30 @@ const getUserById = async (id:number): Promise<User | undefined> => {
   }
 };
 
+const getUsers = async (): Promise<User[] | undefined> => {
+  const client = await pool.connect();
+  try {
+    const query = `
+      SELECT 
+        users.id,
+        users.username,
+        users.email,
+        users.role,
+        users.is_active,
+        users.is_admin,
+        permissions.* 
+      FROM 
+        users
+      LEFT JOIN 
+        permissions ON users.id = permissions.user_id;
+    `;
+    const { rows } = await client.query(query);
+    return rows;
+  } finally {
+    client.release();
+  }
+};
 
-export { createUser, getUserByEmail, getUserById};
+
+
+export { createUser, getUserByEmail, getUsers, getUserById};
