@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt';
 import { User } from "../models/User";
-import {createUser, getUserByEmail} from "../services/user.service";
+import {createUser, getUserByEmail, getUsers} from "../services/user.service";
 import { defaultConfig } from "../config/config";
 import {createLog} from "../services/log.service"
 
@@ -72,6 +72,23 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Controller function to get a folder by ID
+export const getUsersController = async (req: Request, res: Response) => {
+  try {
+    // Call the service function to get the folder by ID
+    const folders = await getUsers();
+
+    if (!folders) {
+      return res.status(404).json({ message: 'Users not found' });
+    }
+
+    res.status(200).json(folders);
+  } catch (error) {
+    console.error('Error fetching folders:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 

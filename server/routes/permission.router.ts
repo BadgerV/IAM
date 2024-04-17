@@ -15,7 +15,7 @@ import {requireSuperAdmin} from "../middlewares/middleware"
 const permissionRouter=express.Router();
 
 
-permissionRouter.post('/', createPermissionController);
+permissionRouter.post('/', requireSuperAdmin, createPermissionController);
 permissionRouter.put('/:id', requireSuperAdmin,updatePermissionController)
 permissionRouter.delete('/:id', requireSuperAdmin,deletePermissionController)
 permissionRouter.get('/:id', requireSuperAdmin,getPermissionController)

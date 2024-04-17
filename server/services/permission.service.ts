@@ -40,15 +40,15 @@ const updatePermission = async (id: number, permission: Permission): Promise<voi
   try {
     const query = `
       UPDATE permissions
-      SET can_read = $2, can_write = $3, can_delete = $4
-      WHERE id = $5
+      SET can_read = $1, can_write = $2, can_delete = $3
+      WHERE user_id = $4
     `;
     const values: any[] = [
-      permission.user_id,
+   
       permission.can_read,
       permission.can_write,
       permission.can_delete,
-      id,
+      permission.user_id,
     ];
     await client.query(query, values);
   } finally {
@@ -59,7 +59,7 @@ const updatePermission = async (id: number, permission: Permission): Promise<voi
 const deletePermissionById = async (id: number): Promise<void> => {
   const client = await pool.connect();
   try {
-    const query = 'DELETE FROM permissions WHERE id = $1';
+    const query = 'DELETE FROM permissions WHERE user_id = $1';
     await client.query(query, [id]);
   } finally {
     client.release();
