@@ -3,7 +3,9 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { User } from "../models/User";
+import { Permission } from "../models/Permission";
 import { createUser, getUserByEmail, getUsers } from "../services/user.service";
+import { createPermission } from "../services/permission.service";
 import { defaultConfig } from "../config/config";
 import { createLog } from "../services/log.service";
 
@@ -31,10 +33,19 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     };
     await createUser(newUser);
 
+    const user = await getUserByEmail(email);
+    const newPermission: Permission={
+      user_id: Number(user?.id),
+      can_read: false,
+      can_write: false,
+      can_delete: false
+    }
+    await createPermission(newPermission)
+
     await createLog({
       id: 1,
       user_id: Number(req.user_id),
-      action_taken: "Created User",
+      action_taken: `Created User ${username}`,
       file_id: null,
     });
 

@@ -15,6 +15,6 @@ router.use(`${apiPath}/folder`, folderRouter);
 router.use(`${apiPath}/auth`, authRouter);
 router.use(`${apiPath}/log`, logRouter);
 router.use(`${apiPath}/permission`, permissionRouter);
-router.use(`${apiPath}/access/request`, logRouter)
+router.use(`${apiPath}/access/request`, accessRequestRouter)
 
 export { router };
