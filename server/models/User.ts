@@ -6,5 +6,7 @@ export interface User {
   role: string;
   is_active: boolean;
   is_admin: boolean;
+  can_read?: boolean;
+  can_write?: boolean;
+  can_delete?: boolean;
 }
-

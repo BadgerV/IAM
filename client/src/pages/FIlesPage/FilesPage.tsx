@@ -15,7 +15,7 @@ const FilesPage = () => {
   const { id } = useParams();
   // Loading state
   const [loadingState, setLoadingState] = useState<boolean>(true);
-  const [selectAll, setSelectAll] = useState<boolean>(false);
+  // const [selectAll, setSelectAll] = useState<boolean>(false);
   const [fetchedFolderFiles, setFetchedFolderFiles] = useState<FileData[]>([]);
   const [folderName, setFolderName] = useState<string>("");
 
@@ -67,12 +67,6 @@ const FilesPage = () => {
 
           <div className="file-page-bottom">
             <div className="file-page-table-header">
-              <input
-                type="checkbox"
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setSelectAll(e.target.checked)
-                }
-              />
               <span>File name</span>
               <span>Uploaded By</span>
               <span>Size</span>
@@ -81,12 +75,7 @@ const FilesPage = () => {
 
             <div className="file-page-table-content">
               {fetchedFolderFiles?.map((file: FileData, index: number) => (
-                <File
-                  selectAll={selectAll}
-                  file={file}
-                  key={index}
-                  onDelete={handleFileDelete}
-                />
+                <File file={file} key={index} onDelete={handleFileDelete} />
               ))}
             </div>
           </div>

@@ -22,12 +22,14 @@ import AddUserPage from "./pages/AddUserPage/AddUserPage";
 
 import SuperAdminOnly from "./HOCs/SuperAdminOnly";
 import ManagerOrAdminOnly from "./HOCs/ManagerOrAdminOnly";
+import RequestAccessPage from "./pages/RequestAccessPage/RequestAccessPage";
 
 const App = () => {
   //secure routes usingg HOCs
   const SecureAuth = WithAuth(Layout);
   const SecureEditPermissions = WithAuth(EditPermissions);
   const SecureNotFoundPage = WithAuth(PageNotFound);
+  const SecureRequestAccessPage = WithAuth(RequestAccessPage);
 
   const SecureAddUserPage = SuperAdminOnly(AddUserPage);
 
@@ -44,7 +46,7 @@ const App = () => {
           <Route index path="/" element={<Home />} />
           <Route path="/permissions" element={<Permissions />} />
           <Route path="/overview" element={<Overview />} />
-          <Route path="/manage-access" element={<ManageAccess />} />
+          <Route path="/manage-access/" element={<ManageAccess />} />
           <Route path="/file-upload" element={<SecureAddFilePage />} />
 
           {/* category routes */}
@@ -60,6 +62,12 @@ const App = () => {
 
           {/* add user route */}
           <Route path="/add-user" element={<SecureAddUserPage />} />
+
+          {/* request permission route */}
+          <Route
+            path="/request-access/:id"
+            element={<SecureRequestAccessPage />}
+          />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route

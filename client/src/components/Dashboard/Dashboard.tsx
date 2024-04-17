@@ -25,8 +25,6 @@ const options: Options[] = [
 ];
 
 const Dashboard = () => {
-  const [selectAll, setSelectAll] = useState(false);
-
   //loading states
   const [loadingState, setLoadingState] = useState<boolean>(true);
   const [folderLoadingState, setFolderLoadingState] = useState<boolean>(true);
@@ -36,6 +34,9 @@ const Dashboard = () => {
   const [files, setFiles] = useState([]);
   const [folders, setFolders] = useState<any[]>([]);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchedFiles, setSearchedFiles] = useState<any[]>([]);
+
   //get token from state
   const token = useSelector((state: RootState) => state.auth.user.token);
 
@@ -43,8 +44,6 @@ const Dashboard = () => {
   const userRole: string = useSelector(
     (state: RootState) => state.auth.user.role
   );
-
-  console.log(userRole);
 
   const getAllFiles = async () => {
     try {
@@ -95,48 +94,37 @@ const Dashboard = () => {
 
   const [selectedCategory, setSelectedCategory] = useState(1);
 
-  const data: Data[] = [
-    {
-      fileName: "Resource Management",
-      name: "Emily Radiance",
-      email: "emilyradiance94@gmail.com",
-      size: "1.3MB",
-      lastModified: "2-01-2024",
-      type: "pdf",
-    },
-    {
-      fileName: "Resource Management",
-      name: "Emily Radiance",
-      email: "emilyradiance94@gmail.com",
-      size: "1.3MB",
-      lastModified: "2-01-2024",
-      type: "document",
-    },
-    {
-      fileName: "Resource Management",
-      name: "Emily Radiance",
-      email: "emilyradiance94@gmail.com",
-
-      size: "1.3MB",
-      lastModified: "2-01-2024",
-      type: "pdf",
-    },
-    {
-      fileName: "Resource Management",
-      name: "Emily Radiance",
-      email: "emilyradiance94@gmail.com",
-      size: "1.3MB",
-      lastModified: "2-01-2024",
-      type: "pdf",
-    },
-  ];
-
   const handleSortBasedOnType = (type: string) => {
-    const filteredArray = data.filter((data: Data) => {
+    const filteredArray = files.filter((data: Data) => {
       return data.type === type;
     });
     setSortedArray(filteredArray);
   };
+
+  const handleSearch = (searchString: string, arr: any[]): void => {
+    // Convert the search string to lowercase for case-insensitive matching.
+    const searchStringLower = searchString.toLowerCase();
+
+    // Filter the array to find entries where `file_name` contains the search string.
+    // This is done in a case-insensitive manner to ensure user input can match files
+    // regardless of how the file names are cased.
+    const searchResults = arr.filter((obj) => {
+      // Convert `file_name` to lowercase for case-insensitive matching.
+      const nameLower = obj.file_name.toLowerCase();
+
+      // Check if the lowercase `file_name` includes the lowercase search string.
+      // This will allow partial matches such as 'n' or 'nf' to find 'nfhg'.
+      return nameLower.includes(searchStringLower);
+    });
+
+    setSearchedFiles(searchResults);
+  };
+
+  useEffect(() => {
+    if (searchQuery.length > 0) {
+      handleSearch(searchQuery, files);
+    }
+  }, [searchQuery]);
 
   return (
     <div className="dashboard">
@@ -155,12 +143,12 @@ const Dashboard = () => {
                 userRole === "admin" ||
                 userRole === "manager") && (
                 <>
-                  <div className="uplaod-button">
-                    <Link to="/file-upload" className="dashboard-link">
+                  <Link to="/file-upload" className="dashboard-link">
+                    <div className="uplaod-button">
                       Upload
-                    </Link>
-                    <img src="/assets/cloud-upload.png" alt="cloud_icon" />
-                  </div>
+                      <img src="/assets/cloud-upload.png" alt="cloud_icon" />
+                    </div>
+                  </Link>
 
                   <div className="uplaod-button">
                     <Link to="/folder/add" className="dashboard-link">
@@ -184,33 +172,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="dashboard-folder-collection">
-          {/* <div className="dashboard-top-upper">
-            <span>Categories</span>
-
-            <div className="dashboard-top-upper-right">
-              <Link to="/folder" className="show-all-button">
-                <span>Show all</span>
-                <img src="/assets/arrow-down.png" alt="arrow_down" />
-              </Link>
-            </div>
-          </div> */}
-          {/* <div className="dashboard-folders">
-            {categories.map((folder, i) => {
-              return (
-                <Folder
-                  id={0}
-                  name={""}
-                  description={""}
-                  created_at={""}
-                  updated_at={""}
-                  {...folder}
-                  key={i}
-                />
-              );
-            })}
-          </div> */}
-        </div>
+        <div className="dashboard-folder-collection"></div>
       </div>
       <div className="dashboard-bottom">
         <span className="all-files-text">All Files</span>
@@ -257,24 +219,16 @@ const Dashboard = () => {
           <div className="dashboard-nav-right">
             <div className="dashboard-input-cont">
               <img src="/assets/search.png" alt="Search" />
-              <input type="text" placeholder="Search" />
+              <input
+                type="text"
+                placeholder="Search"
+                onChange={(e: any) => setSearchQuery(e.target.value)}
+              />
             </div>
-
-            <Select
-              styles={customStyles}
-              options={options}
-              placeholder="Select"
-            />
           </div>
         </div>
 
         <div className="dashboard-table-header">
-          <input
-            type="checkbox"
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setSelectAll(e.target.checked)
-            }
-          />
           <span>File name</span>
           <span>Uploaded By</span>
           <span>Size</span>
@@ -285,21 +239,25 @@ const Dashboard = () => {
           <>Loading . . .</>
         ) : (
           <div className="dashboard-table-content">
-            {selectedCategory === 1 ? (
+            {searchQuery.length > 0 ? (
+              searchedFiles.map((file, index) => {
+                return <File file={file} key={index} />;
+              })
+            ) : selectedCategory === 1 ? (
               files?.map((file: FileData, index: number) => (
-                <File selectAll={selectAll} file={file} key={index} />
+                <File file={file} key={index} />
               ))
             ) : selectedCategory === 2 && files!.length > 0 ? (
               files?.map((file: FileData, index: number) => (
-                <File selectAll={selectAll} file={file} key={index} />
+                <File file={file} key={index} />
               ))
             ) : selectedCategory === 3 && files!.length > 0 ? (
               files?.map((file: FileData, index: number) => (
-                <File selectAll={selectAll} file={file} key={index} />
+                <File file={file} key={index} />
               ))
             ) : selectedCategory === 4 && files!.length > 0 ? (
               files?.map((file: FileData, index: number) => (
-                <File selectAll={selectAll} file={file} key={index} />
+                <File file={file} key={index} />
               ))
             ) : selectedCategory === 2 ? (
               <span className="decline-span">There are no documents</span>

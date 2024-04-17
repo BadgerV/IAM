@@ -40,18 +40,7 @@ const ManageAccess = () => {
 
   return (
     <div className="manage-access">
-      <div className="manage-access-top">
-        <span className="manage-access-top-title">Request Access</span>
-        <span className="manage-access-top-subtitle">
-          Send a request to access all files
-        </span>
-
-        <form className="manage-access-form">
-          <input type="text" placeholder="Email" />
-          <input type="text" placeholder="Password" />
-          <button>Request Access</button>
-        </form>
-      </div>
+      
       <div className="manage-access-bottom">
         <span className="manage-access-bottom-title">Request History</span>
         <div className="manage-access-nav">

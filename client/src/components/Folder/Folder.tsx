@@ -2,19 +2,16 @@ import "./folder.css";
 import { useRef, useState } from "react";
 import { FolderType } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
-import {
-  calculateTotalFileSize,
-  countNonNullValues,
-} from "../../utils/helpers";
+import { countNonNullValues } from "../../utils/helpers";
 
 const Folder = (folder: FolderType) => {
-  const { name, id, files } = folder;
+  const { name, id, files, fileSize } = folder;
 
   let len;
-  let totalFileSize;
-  if (files) {
+
+  if (files && files.length > 0) {
+    console.log(files);
     len = countNonNullValues(files);
-    totalFileSize = calculateTotalFileSize(files);
   }
 
   const folderRef = useRef(null);
@@ -57,7 +54,7 @@ const Folder = (folder: FolderType) => {
       <div className="folder-middle">{name}</div>
       <div className="folder-bottom">
         <span> {len} file(s)</span>
-        <span>{totalFileSize}</span>
+        <span>{fileSize}</span>
       </div>
     </div>
   );

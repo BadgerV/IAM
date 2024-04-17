@@ -13,6 +13,10 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
 import apiCalls from "../../utils/apiCalls";
 import folderApiCalls from "../../services/folderApiCalls";
+import {
+  calculateTotalFileSize,
+  countNonNullValues,
+} from "../../utils/helpers";
 
 const OverviewDashboard = () => {
   const token = useSelector((state: RootState) => state.auth.user.token);
@@ -102,7 +106,6 @@ const OverviewDashboard = () => {
   }, []);
 
   const [selectedCategory, setSelectedCategory] = useState<number>(1);
-  const [selectAll, setSelectAll] = useState<boolean>(false);
   const [sortedArray, setSortedArray] = useState<OverviewData[]>([]);
 
   const handleSortBasedOnRole = (
@@ -123,7 +126,12 @@ const OverviewDashboard = () => {
           <>Loading . . . .</>
         ) : (
           folders.map((box, index) => {
-            return <Folder {...box} key={index} />;
+            let fileSize = "0 Kb";
+
+            if (countNonNullValues(box.files) > 0) {
+              fileSize = calculateTotalFileSize(box.files);
+            }
+            return <Folder {...box} key={index} fileSize={fileSize} />;
           })
         )}
       </div>
@@ -174,32 +182,28 @@ const OverviewDashboard = () => {
       <div className="overview-dashboard-bottom">
         <div className="overview-dashboard-bottom-left">
           <div className="overview-dashboard-table-header">
-            <input
-              type="checkbox"
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setSelectAll(e.target.checked)
-              }
-            />
             <span>Name</span>
             <span>Status</span>
             <span>Role</span>
           </div>
           <div className="overview-dashboard-table-content">
-            {selectedCategory === 1 ? (
+            {userLoadingState ? (
+              <>Loading . . . .</>
+            ) : selectedCategory === 1 ? (
               users.map((user: OverviewData, index) => (
-                <OverviewFile data={user} selectAll={selectAll} key={index} />
+                <OverviewFile data={user} key={index} />
               ))
             ) : selectedCategory === 2 && sortedArray.length > 0 ? (
               sortedArray.map((user: OverviewData, index) => (
-                <OverviewFile data={user} selectAll={selectAll} key={index} />
+                <OverviewFile data={user} key={index} />
               ))
             ) : selectedCategory === 3 && sortedArray.length > 0 ? (
               sortedArray.map((user: OverviewData, index) => (
-                <OverviewFile data={user} selectAll={selectAll} key={index} />
+                <OverviewFile data={user} key={index} />
               ))
             ) : selectedCategory === 4 && sortedArray.length > 0 ? (
               sortedArray.map((user: OverviewData, index) => (
-                <OverviewFile data={user} selectAll={selectAll} key={index} />
+                <OverviewFile data={user} key={index} />
               ))
             ) : selectedCategory === 2 ? (
               <span className="decline-span">There are no administrators</span>
@@ -217,9 +221,12 @@ const OverviewDashboard = () => {
             {logLoadingState ? (
               <>Loading . . . .</>
             ) : (
-              recentActivitiesData.map((activity, index) => {
-                return <RecentActivity {...activity} key={index} />;
-              })
+              logs
+                .slice()
+                .reverse()
+                .map((activity, index) => {
+                  return <RecentActivity {...activity} key={index} />;
+                })
             )}
           </div>
         </div>

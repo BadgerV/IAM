@@ -1,28 +1,40 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./permissionsFile.css";
 import { Link } from "react-router-dom";
 
 import { PermissionsDataType } from "../../utils/types";
 import { reviseRole } from "../../utils/helpers";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { AppDispatch, RootState } from "../../redux/store";
+import { useDispatch } from "react-redux";
+import { setUserToBeEdited } from "../../redux/slices/authSlice";
 
 const PermissionsData: React.FC<{
   data: PermissionsDataType;
-  selectAll: any;
-}> = ({ data, selectAll }) => {
-  const { username, email, role, is_active, id } = data;
+}> = ({ data }) => {
+  const {
+    username,
+    email,
+    role,
+    is_active,
+    id,
+    // can_read,
+    // can_delete,
+    // can_write,
+  } = data;
 
-  const [isSelected, setIsSelected] = useState(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const optionsRef = useRef<HTMLDivElement>(null); // Ref for the options container
 
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleSetState = () => {
+    dispatch(setUserToBeEdited(data));
+    console.log("user setted successfulyly");
+  };
+
   //get user role from state
   const userRole = useSelector((state: RootState) => state.auth.user.role);
-
-  useEffect(() => {
-    setIsSelected(selectAll);
-  }, [selectAll]);
 
   useEffect(() => {
     // Function to handle clicks outside the options container
@@ -51,22 +63,14 @@ const PermissionsData: React.FC<{
         userRole === "super_admin"
           ? {
               gridTemplateColumns:
-                "minmax(20px, 0.5fr) minmax(300px, 6fr) minmax(200px, 3fr) minmax(100px, 3fr) minmax(15px, 0.5fr)",
+                "minmax(300px, 6fr) minmax(200px, 3fr) minmax(100px, 3fr) minmax(15px, 0.5fr)",
             }
           : {
               gridTemplateColumns:
-                "minmax(20px, 0.5fr) minmax(300px, 6fr) minmax(200px, 3fr) minmax(150px, 3fr)",
+                "minmax(300px, 6fr) minmax(200px, 3fr) minmax(150px, 3fr)",
             }
       }
     >
-      <input
-        type="checkbox"
-        checked={isSelected}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setIsSelected(e.target.checked)
-        }
-      />
-
       <div className="permissions-file-pic-and-name">
         <div>
           <span className="permissions-name">{username}</span>
@@ -100,6 +104,7 @@ const PermissionsData: React.FC<{
               style={isOptionsOpen ? { display: "flex" } : { display: "none" }}
             >
               <Link
+                onClick={handleSetState}
                 to={`/edit-permissions/${id}`}
                 className="permissions-file-options-absolute-container-file"
               >

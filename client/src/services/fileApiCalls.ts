@@ -149,6 +149,27 @@ const deleteFileAccessCall = async (id: number, token: string) => {
   return response;
 };
 
+const createAccessRequestCall = async (
+  fileId: number,
+  reason: string,
+  token: string
+) => {
+  const response = await axios.post(
+    `${url}/access/request/`,
+    {
+      reason,
+      file_id: fileId,
+    }, // Pass fileDetails as the request body
+    {
+      headers: {
+        authorization: `authorization ${token}`,
+      },
+    }
+  );
+
+  return response;
+};
+
 export default {
   createFileCall,
   getAllFilesCall,
@@ -162,4 +183,7 @@ export default {
   getFileAccessByIDCall,
   updateFileAccessCall,
   deleteFileAccessCall,
+
+  //ACCESS REQUEST
+  createAccessRequestCall,
 };

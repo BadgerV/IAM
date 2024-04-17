@@ -9,6 +9,17 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
 
+import Select from "react-select";
+
+import { customStyles } from "../../utils/helpers.ts";
+
+const options = [
+  { value: "admin", label: "Administrator" },
+  { value: "manager", label: "Manager" },
+  { value: "employee", label: "Employee" },
+  // { value: "sha256", label: "sha256" },
+];
+
 const AddUserPage = () => {
   const [loadingState, setLoadingState] = useState<boolean>(false);
 
@@ -18,8 +29,12 @@ const AddUserPage = () => {
     username: "",
     password: "",
     email: "",
+    role: "",
   });
 
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({
@@ -38,7 +53,7 @@ const AddUserPage = () => {
     try {
       const res = await apiCalls.signupApiCall(formData, token);
 
-      console.log(res.status);
+      console.log(res.data);
 
       if (res.status === 201) {
         setLoadingState(false);
@@ -86,6 +101,17 @@ const AddUserPage = () => {
           label="User's password"
           value={formData.password}
           onChange={handleInputChange}
+        />
+        <Select
+          placeholder="Choose role"
+          options={options}
+          styles={customStyles}
+          onChange={(selectedOption) =>
+            setFormData((prevState: any) => ({
+              ...prevState,
+              role: selectedOption?.value,
+            }))
+          }
         />
 
         <button

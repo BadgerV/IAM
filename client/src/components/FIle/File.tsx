@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, ChangeEvent } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./file.css";
 import { FileData } from "../../utils/types";
 import { formatDate } from "../../utils/helpers";
@@ -11,22 +11,20 @@ import { AppDispatch, RootState } from "../../redux/store";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
 import { GetAllFiles } from "../../redux/slices/fileSlice";
+import { useNavigate } from "react-router-dom";
 
-const File: React.FC<{ file: FileData; selectAll: any; onDelete?: any }> = ({
+const File: React.FC<{ file: FileData; onDelete?: any }> = ({
   file,
-  selectAll,
+
   onDelete,
 }) => {
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-  const [isSelected, setIsSelected] = useState(false);
 
   const optionsRef = useRef<HTMLDivElement>(null);
   const token = useSelector((state: RootState) => state.auth.user.token);
   const userRole = useSelector((state: RootState) => state.auth.user.role);
   const dispatch = useDispatch<AppDispatch>();
-
-  console.log(userRole);
 
   // Effect to handle clicks outside the options container
   useEffect(() => {
@@ -45,15 +43,13 @@ const File: React.FC<{ file: FileData; selectAll: any; onDelete?: any }> = ({
     };
   }, []);
 
-  useEffect(() => {
-    setIsSelected(selectAll);
-  }, [selectAll]);
-
   const handleDownload = async () => {
     fileApiCalls.getFileCall(file.id, token).then((res) => {
       console.log(res.data);
     });
   };
+
+  const navigate = useNavigate();
 
   const handleDelete = async () => {
     setDeleteLoading(true);
@@ -87,18 +83,15 @@ const File: React.FC<{ file: FileData; selectAll: any; onDelete?: any }> = ({
     return null; // Return null if file is undefined
   }
 
-  const { file_name, owner_username, file_size, updated_at } = file;
+  const { file_name, owner_username, file_size, updated_at, access_type, id } =
+    file;
+
+  const handReqeustHandle = async () => {
+    navigate(`/request-access/${id}`);
+  };
 
   return (
     <div className="file">
-      <input
-        type="checkbox"
-        checked={isSelected}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setIsSelected(e.target.checked)
-        }
-      />
-
       <div className="filename-container">
         <img src="/assets/file.png" alt="File" />
         <span> {file_name} </span>
@@ -129,9 +122,17 @@ const File: React.FC<{ file: FileData; selectAll: any; onDelete?: any }> = ({
             ref={optionsRef}
             style={isOptionsOpen ? { display: "flex" } : { display: "none" }}
           >
-            <div onClick={handleDownload}>
+            <div
+              onClick={
+                access_type === "request_only"
+                  ? handReqeustHandle
+                  : handleDownload
+              }
+            >
               <img src="/assets/file-download.png" alt="" />
-              <span>Download</span>
+              <span>
+                {access_type === "request_only" ? "Request Access" : "Download"}
+              </span>
             </div>
             <div>
               <img src="/assets/file-edit.png" alt="" />

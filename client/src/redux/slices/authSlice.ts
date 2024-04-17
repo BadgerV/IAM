@@ -12,6 +12,7 @@ import { RootState } from "../store";
 const initialState: AuthInitialState = {
   user: null,
   loginError: null,
+  userPermissionToBeEdited: null,
 };
 
 export const LoginUser = createAsyncThunk(
@@ -19,6 +20,8 @@ export const LoginUser = createAsyncThunk(
   async (cred: LoginCredentials, { rejectWithValue }) => {
     try {
       const response = await apiCalls.loginApiCall(cred);
+
+      console.log(response.data);
 
       return response.data;
     } catch (error: any) {
@@ -44,7 +47,15 @@ export const SignupUser = createAsyncThunk(
 export const authSlice: any = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    setUserToBeEdited: (state, action) => {
+      state.userPermissionToBeEdited = action.payload;
+      console.log(state.userPermissionToBeEdited);
+    },
+    removeUserToBeEdited: (state) => {
+      state.userPermissionToBeEdited = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(LoginUser.fulfilled, (state, action) => {
@@ -57,5 +68,7 @@ export const authSlice: any = createSlice({
       });
   },
 });
+
+export const { setUserToBeEdited, removeUserToBeEdited } = authSlice.actions;
 
 export default authSlice.reducer;

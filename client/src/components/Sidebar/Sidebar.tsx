@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import "./sidebar.css";
 import { Link } from "react-router-dom";
+import { RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
 
 const Sidebar = ({ setIsSidebarOpen }: any) => {
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+
+  const username = useSelector((state: RootState) => state.auth.user.username);
 
   useEffect(() => {
     const handleResize = () => {
@@ -74,7 +78,7 @@ const Sidebar = ({ setIsSidebarOpen }: any) => {
           </Link>
 
           <Link
-            to="/manage-access"
+            to="/manage-access/"
             className="nav-link"
             onClick={() => windowWidth <= 1130 && setIsSidebarOpen(false)}
           >
@@ -89,7 +93,12 @@ const Sidebar = ({ setIsSidebarOpen }: any) => {
             onClick={() => windowWidth <= 1130 && setIsSidebarOpen(false)}
           >
             <li>
-              <img src="/assets/folder-dark.png" alt="Dashboard" height={27} width={28}/>
+              <img
+                src="/assets/folder-dark.png"
+                alt="Dashboard"
+                height={27}
+                width={28}
+              />
               <span>Folders</span>
             </li>
           </Link>
@@ -111,7 +120,7 @@ const Sidebar = ({ setIsSidebarOpen }: any) => {
           <div className="avatar-cont">
             <div className="avatar-cont-left">
               <img src="/assets/Rectangle.png" alt="avatar" />
-              <span>Christine Bell</span>
+              <span>{username}</span>
             </div>
 
             <div className="avatar-cont-right">

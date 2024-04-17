@@ -12,6 +12,9 @@ export interface User {
 export interface AuthInitialState {
   user: User | null;
   loginError: any;
+
+  //other
+  userPermissionToBeEdited: any;
 }
 
 export interface CategoryInitialState {
@@ -35,6 +38,7 @@ export interface SignupCredentials {
   username: string;
   email: string;
   password: string;
+  role?: string;
 }
 
 export interface Options {
@@ -89,6 +93,10 @@ export interface PermissionsDataType {
   id: number;
 
   role: Role;
+
+  can_read: boolean;
+  can_delete: boolean;
+  can_write: boolean;
 }
 
 export interface RecentActivityData {
@@ -96,7 +104,11 @@ export interface RecentActivityData {
   activityText: string;
   timeAgo: string;
 }
-
+export interface LogDetail {
+  username: string;
+  created_at: any;
+  action_taken: string;
+}
 export interface CategoryAccessData {
   category_id: number;
   user_id: number;
@@ -128,6 +140,8 @@ export interface FileData {
   created_at: string;
   updated_at: string;
   file?: File | null;
+
+  access_type?: string;
 }
 
 export interface FileInitialState {
@@ -138,6 +152,7 @@ export interface FolderType {
   id: number;
   name: string;
   files: any;
+  fileSize: string;
   description: string;
   created_at: string;
   updated_at: string;
@@ -157,6 +172,12 @@ export interface FolderDetails {
 
 export interface FileDetails {
   file_id: number;
+  user_id: number;
+  can_read: boolean;
+  can_write: boolean;
+  can_delete: boolean;
+}
+export interface PermissionDetails {
   user_id: number;
   can_read: boolean;
   can_write: boolean;

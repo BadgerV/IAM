@@ -1,37 +1,38 @@
-import { useState } from "react";
+import React from "react";
 import "./editPermissionFile.css";
 
-const EditPermissionFile = () => {
-  const [isTrue, setIsTrue] = useState<boolean>(false);
+const EditPermissionFile = ({ state, setState, texts }: any) => {
+  const [isTrue, setIsTrue] = React.useState(state);
+
+  const handleToggle = () => {
+    const newValue = !isTrue;
+    setIsTrue(newValue);
+    setState(newValue);
+  };
+
   return (
     <div className="edit-permission-file">
       <div className="edit-permission-file-left">
         <img src="/assets/edit-file.png" alt="File" />
-
         <div>
-          <span className="edit-permission-file-big-text">Edit files</span>
-          <span className="edit-permission-file-small-text">
-            Allow access to edit and review all files
-          </span>
+          <span className="edit-permission-file-big-text">{texts[0]}</span>
+          <span className="edit-permission-file-small-text">{texts[1]}</span>
         </div>
       </div>
       <div className="edit-permission-file-right">
         <div
           className="permission-input-slider"
-          style={
-            isTrue
-              ? { backgroundColor: "#34c759" }
-              : { backgroundColor: "#F2F2F7" }
-          }
-          onClick={() => setIsTrue(!isTrue)}
+          style={{
+            backgroundColor: isTrue ? "#34c759" : "#F2F2F7",
+          }}
+          onClick={handleToggle}
         >
           <span
             className="permission-input-circle"
-            style={
-              isTrue
-                ? { left: "75%", color: "green" }
-                : { left: "25%", color: "white" }
-            }
+            style={{
+              left: isTrue ? "75%" : "25%",
+              color: isTrue ? "green" : "white",
+            }}
           ></span>
         </div>
       </div>

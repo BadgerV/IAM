@@ -157,7 +157,7 @@
   margin: 1rem 0;
   display: grid;
   grid-template-columns:
-    minmax(15px, 0.5fr) minmax(250px, 4fr) minmax(200px, 4fr)
+    minmax(250px, 5fr) minmax(200px, 4fr)
     minmax(60px, 1.4fr) minmax(200px, 3.5fr);
   gap: 1rem;
 }

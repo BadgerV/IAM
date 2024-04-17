@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import "./signup.css";
-import { SignupCredentials } from "@/utils/types.ts";
+import { SignupCredentials } from "../../utils/types.ts";
 
 import InputField from "../../components/inputField/inputField.tsx";
 

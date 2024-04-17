@@ -10,7 +10,7 @@ const url = "http://localhost:8000/api/v1";
 
 //AUTH CALLS
 const signupApiCall = async (
-  { username, email, password }: SignupCredentials,
+  { username, email, password, role = "employee" }: SignupCredentials,
   token: string
 ) => {
   const response = await axios.post(
@@ -19,7 +19,7 @@ const signupApiCall = async (
       username: username,
       password: password,
       email: email,
-      role: "employee",
+      role: role,
       is_active: true,
       is_admin: false,
     },

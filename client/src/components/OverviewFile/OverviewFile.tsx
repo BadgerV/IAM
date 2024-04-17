@@ -1,30 +1,13 @@
-import { ChangeEvent, useEffect, useState } from "react";
+// import { ChangeEvent, useEffect, useState } from "react";
 import "./overviewFile.css";
 import { OverviewData } from "../../utils/types";
 import { reviseRole } from "../../utils/helpers";
 
-const OverviewFile: React.FC<{ data: OverviewData; selectAll: any }> = ({
-  data,
-  selectAll,
-}) => {
-  const [isChecked, setIsChecked] = useState(selectAll);
-
+const OverviewFile: React.FC<{ data: OverviewData }> = ({ data }) => {
   const { username, email, is_active, role } = data;
-
-  useEffect(() => {
-    setIsChecked(selectAll);
-  }, [selectAll]);
 
   return (
     <div className="overview-file">
-      <input
-        type="checkbox"
-        checked={isChecked}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setIsChecked(e.target.checked)
-        }
-      />
-
       <div className="overview-file-name-and-pic-cont">
         <div>
           <span className="overview-file-name">{username}</span>

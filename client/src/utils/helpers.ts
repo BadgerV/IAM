@@ -105,10 +105,10 @@ export const calculateTotalFileSize = (files: any[]) => {
   // Loop through each file in the files array
   files.forEach((file) => {
     // Extract the file size from the file object
-    const fileSizeStr = file.file_size;
+    const fileSizeStr = file?.file_size;
 
     // Remove " KB" from the file size string and convert it to a number
-    const fileSizeNum = parseFloat(fileSizeStr.replace(" KB", ""));
+    const fileSizeNum = parseFloat(fileSizeStr?.replace(" KB", ""));
 
     // Add the file size to the total size
     totalSize += fileSizeNum;
@@ -144,3 +144,19 @@ export const reviseRole = (role: string) => {
     return "Employee";
   }
 };
+
+export function calculateTimePassed(timeString: string) {
+  // Parse the time string using Moment.js
+  const startTime = moment(timeString, "YYYY-MM-DD HH:mm:ss");
+
+  // Get the current time
+  const currentTime = moment();
+
+  // Calculate the difference
+  const difference = moment.duration(currentTime.diff(startTime));
+
+  // Format the duration
+  const formattedTimePassed = moment.duration(difference).humanize();
+
+  return formattedTimePassed;
+}

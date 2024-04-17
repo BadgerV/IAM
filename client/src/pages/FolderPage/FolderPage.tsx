@@ -5,6 +5,10 @@ import { useEffect, useState } from "react";
 import { GetFolders } from "../../redux/slices/folderSlice";
 import { FolderType } from "../../utils/types";
 import Folder from "../../components/Folder/Folder";
+import {
+  calculateTotalFileSize,
+  countNonNullValues,
+} from "../../utils/helpers";
 
 const FolderPage = () => {
   //loading state
@@ -18,8 +22,6 @@ const FolderPage = () => {
   useEffect(() => {
     if (folders) {
       setLoadingState(false);
-
-      console.log(folders);
     }
   }, [folders]);
 
@@ -35,9 +37,13 @@ const FolderPage = () => {
         <div>Loading...</div>
       ) : (
         <div className="folder-page-folders">
-          {folders?.map((folder: FolderType) => (
-            <Folder key={folder.id} {...folder} />
-          ))}
+          {folders?.map((folder: FolderType) => {
+            let fileSize = "0 Kb";
+            if (countNonNullValues(folder.files) > 0) {
+              fileSize = calculateTotalFileSize(folder.files);
+            }
+            return <Folder key={folder.id} {...folder} fileSize={fileSize} />;
+          })}
         </div>
       )}
     </div>

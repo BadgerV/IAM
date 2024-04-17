@@ -1,29 +1,27 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./permissionsDashboard.css";
 
-import Select from "react-select";
 import PermissionFile from "../PermissionsFile/PermissionsFile";
 
-import { Options, PermissionsDataType } from "../../utils/types";
-import { customStylesPermissions } from "../..//utils/helpers";
+import { PermissionsDataType } from "../../utils/types";
 import { Link } from "react-router-dom";
 import apiCalls from "../../utils/apiCalls";
 
 //import from react-toastify
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
-import { RootState } from "../../redux/store";
-import { useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { removeUserToBeEdited } from "../../redux/slices/authSlice";
 
-const options: Options[] = [
-  { value: "option1", label: "Option 1" },
-  { value: "option2", label: "Option 2" },
-  { value: "option3", label: "Option 3" },
-];
+// const options: Options[] = [
+//   { value: "option1", label: "Option 1" },
+//   { value: "option2", label: "Option 2" },
+//   { value: "option3", label: "Option 3" },
+// ];
 
 const PermissionsDashboard = () => {
   const [selectedCategory, setSelectedCategory] = useState(1);
-  const [selectAll, setSelectAll] = useState(false);
 
   const [users, setUsers] = useState<any[]>([]);
 
@@ -42,6 +40,9 @@ const PermissionsDashboard = () => {
 
     setSortedArray(filteredArray);
   };
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchedUsers, setSearchedUsers] = useState<any[]>([]);
   const fetchUsers = async () => {
     try {
       apiCalls.getUsersCall().then((res) => {
@@ -59,10 +60,40 @@ const PermissionsDashboard = () => {
     }
   };
 
+  const dispatch = useDispatch<AppDispatch>();
+
   //call the fecth functions when the oage loads
   useEffect(() => {
     fetchUsers();
+    dispatch(removeUserToBeEdited());
   }, []);
+
+  const handleSearch = (searchString: string, arr: any[]): void => {
+    // Convert the search string to lowercase for case-insensitive matching.
+    const searchStringLower = searchString.toLowerCase();
+
+    // Filter the array to find entries where `file_name` contains the search string.
+    // This is done in a case-insensitive manner to ensure user input can match files
+    // regardless of how the file names are cased.
+    const searchResults = arr.filter((obj) => {
+      console.log(obj);
+      // Convert `file_name` to lowercase for case-insensitive matching.
+      const nameLower = obj.username.toLowerCase();
+
+      // Check if the lowercase `file_name` includes the lowercase search string.
+      // This will allow partial matches such as 'n' or 'nf' to find 'nfhg'.
+      return nameLower.includes(searchStringLower);
+    });
+
+    setSearchedUsers(searchResults);
+  };
+
+  useEffect(() => {
+    if (searchQuery.length > 0) {
+      handleSearch(searchQuery, users);
+      console.log(searchedUsers);
+    }
+  }, [searchQuery]);
 
   return (
     <div className="permissions-dashboard">
@@ -111,7 +142,11 @@ const PermissionsDashboard = () => {
         <div className="permissions-dashboard-top-right">
           <div className="permissions-input-cont">
             <img src="/assets/search.png" alt="Search" />
-            <input type="text" placeholder="Search" />
+            <input
+              type="text"
+              placeholder="Search"
+              onChange={(e: any) => setSearchQuery(e.target.value)}
+            />
           </div>
 
           {/* <Select
@@ -136,20 +171,14 @@ const PermissionsDashboard = () => {
             userRole === "super_admin"
               ? {
                   gridTemplateColumns:
-                    "minmax(20px, 0.5fr) minmax(300px, 6fr) minmax(200px, 3fr) minmax(100px, 3fr) minmax(15px, 0.5fr)",
+                    " minmax(300px, 6fr) minmax(200px, 3fr) minmax(100px, 3fr) minmax(15px, 0.5fr)",
                 }
               : {
                   gridTemplateColumns:
-                    "minmax(20px, 0.5fr) minmax(300px, 6fr) minmax(200px, 3fr) minmax(150px, 3fr)",
+                    "minmax(300px, 6fr) minmax(200px, 3fr) minmax(150px, 3fr)",
                 }
           }
         >
-          <input
-            type="checkbox"
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setSelectAll(e.target.checked)
-            }
-          />
           <span>Name</span>
           <span>Role assigned</span>
           <span>Status</span>
@@ -157,23 +186,27 @@ const PermissionsDashboard = () => {
         </div>
 
         <div className="permissions-dashboard-table-content">
-          {userLoadingState ? (
+          {searchQuery.length > 0 ? (
+            searchedUsers.map((file, index) => {
+              return <PermissionFile data={file} key={index} />;
+            })
+          ) : userLoadingState ? (
             <>Loading . . . </>
           ) : selectedCategory === 1 ? (
             users.map((file: PermissionsDataType, index) => (
-              <PermissionFile selectAll={selectAll} data={file} key={index} />
+              <PermissionFile data={file} key={index} />
             ))
           ) : selectedCategory === 2 && sortedArray.length > 0 ? (
             sortedArray.map((file: PermissionsDataType, index) => (
-              <PermissionFile selectAll={selectAll} data={file} key={index} />
+              <PermissionFile data={file} key={index} />
             ))
           ) : selectedCategory === 3 && sortedArray.length > 0 ? (
             sortedArray.map((file: PermissionsDataType, index) => (
-              <PermissionFile selectAll={selectAll} data={file} key={index} />
+              <PermissionFile data={file} key={index} />
             ))
           ) : selectedCategory === 4 && sortedArray.length > 0 ? (
             sortedArray.map((file: PermissionsDataType, index) => (
-              <PermissionFile selectAll={selectAll} data={file} key={index} />
+              <PermissionFile data={file} key={index} />
             ))
           ) : selectedCategory === 2 ? (
             <span className="decline-span">There are no administrators</span>

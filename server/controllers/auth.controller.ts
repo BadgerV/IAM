@@ -34,13 +34,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     await createUser(newUser);
 
     const user = await getUserByEmail(email);
-    const newPermission: Permission={
+    const newPermission: Permission = {
       user_id: Number(user?.id),
       can_read: false,
       can_write: false,
-      can_delete: false
-    }
-    await createPermission(newPermission)
+      can_delete: false,
+    };
+    await createPermission(newPermission);
 
     await createLog({
       id: 1,
@@ -63,6 +63,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const role = user?.role;
     const is_active = user?.is_active;
+    // const can_read = user?.can_read;
+    // const can_write = user?.can_write;
+    // const can_delete = user?.can_delete;
 
     const username = user?.username;
     if (!user) {
@@ -84,7 +87,15 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       file_id: null,
     });
 
-    res.json({ username, token, role, is_active });
+    res.json({
+      username,
+      token,
+      role,
+      is_active,
+      // can_read,
+      // can_write,
+      // can_delete,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
