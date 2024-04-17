@@ -1,8 +1,5 @@
 .permissions-file {
   display: grid;
-  grid-template-columns:
-    minmax(20px, 0.5fr) minmax(300px, 6fr) minmax(200px, 3fr)
-    minmax(100px, 3fr) minmax(150px, 3fr);
 
   align-items: center;
 

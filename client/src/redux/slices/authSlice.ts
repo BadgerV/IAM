@@ -7,6 +7,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 //importing auth api calls
 import apiCalls from "../../utils/apiCalls";
+import { RootState } from "../store";
 
 const initialState: AuthInitialState = {
   user: null,
@@ -28,11 +29,10 @@ export const LoginUser = createAsyncThunk(
 
 export const SignupUser = createAsyncThunk(
   "auth/signup",
-  async (cred: SignupCredentials, { rejectWithValue }) => {
+  async (cred: SignupCredentials, { rejectWithValue, getState }) => {
+    const token = (getState() as RootState).auth.user.token;
     try {
-      const response = await apiCalls.signupApiCall(cred);
-
-      console.log(response.data);
+      const response = await apiCalls.signupApiCall(cred, token);
 
       return response.data;
     } catch (error: any) {
@@ -49,7 +49,7 @@ export const authSlice: any = createSlice({
     builder
       .addCase(LoginUser.fulfilled, (state, action) => {
         state.user = action.payload;
-
+        console.log(action.payload);
         console.log(state.user);
       })
       .addCase(LoginUser.rejected, (state, action) => {

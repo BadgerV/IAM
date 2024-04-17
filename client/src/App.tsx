@@ -18,12 +18,23 @@ import PageNotFound from "./pages/PageNotFound/PageNotFound";
 import FolderPage from "./pages/FolderPage/FolderPage";
 import AddFolderPage from "./pages/AddFolderPage/AddFolderPage";
 import FilesPage from "./pages/FIlesPage/FilesPage";
+import AddUserPage from "./pages/AddUserPage/AddUserPage";
+
+import SuperAdminOnly from "./HOCs/SuperAdminOnly";
+import ManagerOrAdminOnly from "./HOCs/ManagerOrAdminOnly";
 
 const App = () => {
   //secure routes usingg HOCs
   const SecureAuth = WithAuth(Layout);
   const SecureEditPermissions = WithAuth(EditPermissions);
   const SecureNotFoundPage = WithAuth(PageNotFound);
+
+  const SecureAddUserPage = SuperAdminOnly(AddUserPage);
+
+  //protected routes for admin, super_admins and managers only
+
+  const SecureAddFolderPage = ManagerOrAdminOnly(AddFolderPage);
+  const SecureAddFilePage = ManagerOrAdminOnly(UploadFiles);
 
   return (
     <>
@@ -34,7 +45,7 @@ const App = () => {
           <Route path="/permissions" element={<Permissions />} />
           <Route path="/overview" element={<Overview />} />
           <Route path="/manage-access" element={<ManageAccess />} />
-          <Route path="/file-upload" element={<UploadFiles />} />
+          <Route path="/file-upload" element={<SecureAddFilePage />} />
 
           {/* category routes */}
           {/* <Route path="/categories" element={<CategoryDashboard />} />
@@ -42,13 +53,19 @@ const App = () => {
 
           {/* folder routes */}
           <Route path="/folder" element={<FolderPage />} />
-          <Route path="/folder/add" element={<AddFolderPage />} />
+          <Route path="/folder/add" element={<SecureAddFolderPage />} />
 
           {/* file routes */}
           <Route path="/file/:id" element={<FilesPage />} />
+
+          {/* add user route */}
+          <Route path="/add-user" element={<SecureAddUserPage />} />
         </Route>
         <Route path="/login" element={<Login />} />
-        <Route path="/edit-permissions" element={<SecureEditPermissions />} />
+        <Route
+          path="/edit-permissions/:id"
+          element={<SecureEditPermissions />}
+        />
         <Route path="/signup" element={<Signup />} />
         <Route path="*" element={<SecureNotFoundPage />} />
       </Routes>

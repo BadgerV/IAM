@@ -8,10 +8,15 @@ import { Data, FileData, Options } from "../../utils/types";
 import { customStyles } from "../../utils/helpers";
 
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+
+//import from react-toastify
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
+
 import fileApiCalls from "../../services/fileApiCalls";
-import { GetAllFiles } from "../../redux/slices/fileSlice";
+import folderApiCalls from "../../services/folderApiCalls";
 
 const options: Options[] = [
   { value: "option1", label: "Option 1" },
@@ -22,25 +27,62 @@ const options: Options[] = [
 const Dashboard = () => {
   const [selectAll, setSelectAll] = useState(false);
 
-  //declaring dispatch
-  const dispatch = useDispatch<AppDispatch>();
-
-  //loading state
+  //loading states
   const [loadingState, setLoadingState] = useState<boolean>(true);
+  const [folderLoadingState, setFolderLoadingState] = useState<boolean>(true);
 
-  const files = useSelector((state: RootState) => state.file.files);
+  // const files = useSelector((state: RootState) => state.file.files);
+
+  const [files, setFiles] = useState([]);
+  const [folders, setFolders] = useState<any[]>([]);
 
   //get token from state
   const token = useSelector((state: RootState) => state.auth.user.token);
 
+  //get role from state
+  const userRole: string = useSelector(
+    (state: RootState) => state.auth.user.role
+  );
+
+  console.log(userRole);
+
   const getAllFiles = async () => {
-    dispatch(GetAllFiles(token));
+    try {
+      const res = await fileApiCalls.getAllFilesCall(token);
+      setFiles(res.data);
+      setLoadingState(false);
+    } catch (error) {
+      console.log(error);
+      setLoadingState(false);
+      toast.error("Error fetching files", {
+        position: "top-right",
+      });
+    }
+  };
+
+  const getFolders = async () => {
+    try {
+      const res = await folderApiCalls.getFoldersCall();
+      setFolders(res.data);
+      setFolderLoadingState(false);
+    } catch (error) {
+      console.log(error);
+      setFolderLoadingState(false);
+      toast.error("Error fetching files", {
+        position: "top-right",
+      });
+    }
   };
 
   //call the getAllFiles method at intialization
   useEffect(() => {
     getAllFiles();
+    getFolders();
   }, []);
+
+  useEffect(() => {
+    console.log(files);
+  }, [files]);
 
   //correct the loading state
   useEffect(() => {
@@ -50,46 +92,6 @@ const Dashboard = () => {
   }, [files]);
 
   const [sortedArray, setSortedArray] = useState<Data[]>([]);
-  const folders = [
-    {
-      folderName: "Development",
-      noOfFiles: 17,
-      fileSize: "1.3Gb",
-      img: "/assets/folder-",
-    },
-    {
-      folderName: "Data Cloud",
-      noOfFiles: 20,
-      fileSize: "6.3Gb",
-      img: "/assets/folder-",
-    },
-    {
-      folderName: "Game Development",
-      noOfFiles: 172,
-      fileSize: "190.3Gb",
-      img: "/assets/folder-",
-    },
-  ];
-  const categories = [
-    {
-      folderName: "Human Resources",
-      noOfFiles: 16,
-      fileSize: "16.3Gb",
-      img: "/assets/folder-open-",
-    },
-    {
-      folderName: "Finance",
-      noOfFiles: 20,
-      fileSize: "0.8Gb",
-      img: "/assets/folder-open-",
-    },
-    {
-      folderName: "Product",
-      noOfFiles: 19,
-      fileSize: "20.89Gb",
-      img: "/assets/folder-open-",
-    },
-  ];
 
   const [selectedCategory, setSelectedCategory] = useState(1);
 
@@ -149,30 +151,41 @@ const Dashboard = () => {
                 <img src="/assets/arrow-down.png" alt="arrow_down" />
               </Link>
 
-              <div className="uplaod-button">
-                <Link to="/file-upload" className="dashboard-link">
-                  Upload
-                </Link>
-                <img src="/assets/cloud-upload.png" alt="cloud_icon" />
-              </div>
-              <div className="uplaod-button">
-                <Link to="/folder/add" className="dashboard-link">
-                  Add new folder
-                </Link>
-                <img src="/assets/cloud-upload.png" alt="cloud_icon" />
-              </div>
+              {(userRole === "super_admin" ||
+                userRole === "admin" ||
+                userRole === "manager") && (
+                <>
+                  <div className="uplaod-button">
+                    <Link to="/file-upload" className="dashboard-link">
+                      Upload
+                    </Link>
+                    <img src="/assets/cloud-upload.png" alt="cloud_icon" />
+                  </div>
+
+                  <div className="uplaod-button">
+                    <Link to="/folder/add" className="dashboard-link">
+                      Add new folder
+                    </Link>
+                    <img src="/assets/cloud-upload.png" alt="cloud_icon" />
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
           <div className="dashboard-folders">
-            {folders.map((folder, i) => {
-              return <Folder id={0} name={""} description={""} created_at={""} updated_at={""} {...folder} key={i} />;
-            })}
+            {folderLoadingState ? (
+              <>Loading . . . . </>
+            ) : (
+              folders.map((box, index) => {
+                return <Folder {...box} key={index} />;
+              })
+            )}
           </div>
         </div>
 
         <div className="dashboard-folder-collection">
-          <div className="dashboard-top-upper">
+          {/* <div className="dashboard-top-upper">
             <span>Categories</span>
 
             <div className="dashboard-top-upper-right">
@@ -181,12 +194,22 @@ const Dashboard = () => {
                 <img src="/assets/arrow-down.png" alt="arrow_down" />
               </Link>
             </div>
-          </div>
-          <div className="dashboard-folders">
+          </div> */}
+          {/* <div className="dashboard-folders">
             {categories.map((folder, i) => {
-              return <Folder id={0} name={""} description={""} created_at={""} updated_at={""} {...folder} key={i} />;
+              return (
+                <Folder
+                  id={0}
+                  name={""}
+                  description={""}
+                  created_at={""}
+                  updated_at={""}
+                  {...folder}
+                  key={i}
+                />
+              );
             })}
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="dashboard-bottom">

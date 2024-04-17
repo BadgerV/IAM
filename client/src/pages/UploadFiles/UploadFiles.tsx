@@ -8,15 +8,19 @@ import FileUploadModal from "../../components/FileUploadModal/FileUploadModal";
 import { AppDispatch, RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 // import { CreateFile } from "../../redux/slices/fileSlice";
-import { CategoryData } from "../../utils/types";
+
 import { calculateFileSize, customUploadStyles } from "../../utils/helpers";
 import { GetFolders } from "../../redux/slices/folderSlice";
 import Select from "react-select";
-import { GetCategories } from "../../redux/slices/categorySlice";
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
 import fileApiCalls from "../../services/fileApiCalls";
+
+const permissionOptions = [
+  { value: "request_only", label: "Request access only" },
+  { value: "org_wide", label: "Orgarnization wide" },
+];
 
 const UploadFiles = () => {
   const [loadingState, setLoadingState] = useState<boolean>(true);
@@ -24,15 +28,13 @@ const UploadFiles = () => {
 
   const [options, setOptions] = useState<any>();
 
-  const [categories, setCategories] = useState<CategoryData[]>([]);
-
   const token = useSelector((state: RootState) => state.auth.user.token);
 
   const [formData, setFormData] = useState<any>({
     file_name: "",
     file_size: "",
     folder_id: -1,
-    category_id: -1,
+    permission_type: "",
     description: "",
     file: null,
   });
@@ -55,10 +57,6 @@ const UploadFiles = () => {
     return await dispatch(GetFolders());
   };
 
-  const getCategories = async () => {
-    return await dispatch(GetCategories());
-  };
-
   useEffect(() => {
     getFolders().then((res: any) => {
       setLoadingState(false);
@@ -71,24 +69,12 @@ const UploadFiles = () => {
 
       setOptions(updatedOptions);
     });
-
-    getCategories().then((res) => {
-      console.log(res.payload);
-
-      const categories = res.payload.map((item: any) => ({
-        id: item.id,
-        value: item.name,
-        label: item.name.charAt(0).toUpperCase() + item.name.slice(1),
-      }));
-
-      setCategories(categories);
-    });
   }, []);
 
   const handleSubmit = async () => {
     if (
       !formData.file ||
-      formData.category_id === -1 ||
+      formData.permission_type === "" ||
       formData.folder_id === -1 ||
       formData.description === "" ||
       formData.file_name === ""
@@ -98,23 +84,26 @@ const UploadFiles = () => {
       });
       return;
     }
-    setLoadingButton(true);
-    await fileApiCalls.createFileCall(formData, token).then((res) => {
+    try {
+      setLoadingButton(true);
+      const res = await fileApiCalls.createFileCall(formData, token);
       if (res.data.message === "File created Successfully") {
         navigate("/");
         setLoadingButton(false);
-
         toast.success(res.data.message, {
-          position: "top-right", // Adjust position if needed
+          position: "top-right",
         });
       } else {
         setLoadingButton(false);
-
-        toast.error("Something went wrong", {
-          position: "top-right", // Adjust position if needed
-        });
+        throw new Error("Something went wrong");
       }
-    });
+    } catch (error) {
+      console.error("Error:", error);
+      setLoadingButton(false);
+      toast.error("Something went wrong", {
+        position: "top-right",
+      });
+    }
   };
 
   //react dropzone config
@@ -143,18 +132,23 @@ const UploadFiles = () => {
       folder_id: selectedOption.id,
     }));
   };
-  const handleCategoryChange = (selectedOption: any) => {
+  const handlePermissionChange = (selectedOption: any) => {
     setFormData((prevFormData: any) => ({
       ...prevFormData,
-      category_id: selectedOption.id,
+      permission_type: selectedOption.value,
     }));
   };
+
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
+
   return (
     <>
       {loadingState ? (
         <>Loading ...</>
       ) : (
-        <div className="file-upload-content">
+        <div className="file-upload-content-container">
           <div className="file-upload-absolute">
             {isLoading && <FileUploadModal setIsLoading={setIsLoading} />}
           </div>
@@ -169,9 +163,9 @@ const UploadFiles = () => {
             <Select
               styles={customUploadStyles}
               isMulti={false} // Set isMulti to false to allow only one option selection
-              onChange={handleCategoryChange}
-              options={categories}
-              placeholder="Select Category"
+              options={permissionOptions}
+              placeholder="Select Permission Option"
+              onChange={handlePermissionChange}
             />
 
             <Select

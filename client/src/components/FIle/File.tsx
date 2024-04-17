@@ -3,7 +3,7 @@ import "./file.css";
 import { FileData } from "../../utils/types";
 import { formatDate } from "../../utils/helpers";
 import React from "react";
-import axios from "axios";
+
 import fileApiCalls from "../../services/fileApiCalls";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
@@ -12,31 +12,23 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
 import { GetAllFiles } from "../../redux/slices/fileSlice";
 
-const File: React.FC<{ file: FileData; selectAll: any }> = ({
+const File: React.FC<{ file: FileData; selectAll: any; onDelete?: any }> = ({
   file,
   selectAll,
+  onDelete,
 }) => {
-  const {
-    id,
-    user_id,
-    folder_id,
-    category_id,
-    file_name,
-    file_size,
-    description,
-    category_name,
-    cloud_url,
-    folder_name,
-    owner_username,
-    created_at,
-    updated_at,
-  } = file;
-
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
-  const optionsRef = useRef<HTMLDivElement>(null);
-
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const [isSelected, setIsSelected] = useState(false);
 
+  const optionsRef = useRef<HTMLDivElement>(null);
+  const token = useSelector((state: RootState) => state.auth.user.token);
+  const userRole = useSelector((state: RootState) => state.auth.user.role);
+  const dispatch = useDispatch<AppDispatch>();
+
+  console.log(userRole);
+
+  // Effect to handle clicks outside the options container
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -53,24 +45,19 @@ const File: React.FC<{ file: FileData; selectAll: any }> = ({
     };
   }, []);
 
-  //get token frokm state
-  const token = useSelector((state: RootState) => state.auth.user.token);
-  const [isSelected, setIsSelected] = useState(false);
-
   useEffect(() => {
     setIsSelected(selectAll);
   }, [selectAll]);
 
   const handleDownload = async () => {
-    await fileApiCalls.getFileCall(id, token);
+    fileApiCalls.getFileCall(file.id, token).then((res) => {
+      console.log(res.data);
+    });
   };
-
-  //declaring dispatch
-  const dispatch = useDispatch<AppDispatch>();
 
   const handleDelete = async () => {
     setDeleteLoading(true);
-    await fileApiCalls.deleteFileCall(id, token).then((res: any) => {
+    await fileApiCalls.deleteFileCall(file.id, token).then((res: any) => {
       setDeleteLoading(false);
 
       if (res.status === 200) {
@@ -78,8 +65,9 @@ const File: React.FC<{ file: FileData; selectAll: any }> = ({
           position: "top-right", // Adjust position if needed
         });
 
-        //call all the files from the backend again
+        // Call all the files from the backend again
         dispatch(GetAllFiles(token));
+        onDelete();
       } else {
         toast.error("Something went wrong", {
           position: "top-right", // Adjust position if needed
@@ -88,12 +76,18 @@ const File: React.FC<{ file: FileData; selectAll: any }> = ({
     });
   };
 
-  //check if delete loading is true and close the options
+  // Effect to close options when delete loading state changes
   useEffect(() => {
     if (deleteLoading) {
       setIsOptionsOpen(false);
     }
   }, [deleteLoading]);
+
+  if (!file) {
+    return null; // Return null if file is undefined
+  }
+
+  const { file_name, owner_username, file_size, updated_at } = file;
 
   return (
     <div className="file">
@@ -137,7 +131,7 @@ const File: React.FC<{ file: FileData; selectAll: any }> = ({
           >
             <div onClick={handleDownload}>
               <img src="/assets/file-download.png" alt="" />
-              <span>Downlaod</span>
+              <span>Download</span>
             </div>
             <div>
               <img src="/assets/file-edit.png" alt="" />
@@ -147,14 +141,16 @@ const File: React.FC<{ file: FileData; selectAll: any }> = ({
               <img src="/assets/link-square.png" alt="" />
               <span>Open in browser</span>
             </div>
-            <div>
+            {/* <div>
               <img src="/assets/wifi-disconnected.png" alt="" />
               <span>Make available offline</span>
-            </div>
-            <div onClick={handleDelete}>
-              <img src="/assets/delete.png" alt="" />
-              <span>Delete file</span>
-            </div>
+            </div> */}
+            {userRole === "super_admin" && (
+              <div onClick={handleDelete}>
+                <img src="/assets/delete.png" alt="" />
+                <span style={{ color: "red" }}>Delete file</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

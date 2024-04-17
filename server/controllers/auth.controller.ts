@@ -1,21 +1,22 @@
 // middleware/authMiddleware.ts
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 import { User } from "../models/User";
-import {createUser, getUserByEmail, getUsers} from "../services/user.service";
+import { createUser, getUserByEmail, getUsers } from "../services/user.service";
 import { defaultConfig } from "../config/config";
-import {createLog} from "../services/log.service"
-
+import { createLog } from "../services/log.service";
 
 const saltRounds = 10;
 const secretKey = defaultConfig.SECRET_KEY;
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { username, email, password, role, is_active, is_admin} = req.body;
-    if(!username||!email||!password||!role){
-      res.status(400).json({ message: "username, email, password, role are required" });
+    const { username, email, password, role, is_active, is_admin } = req.body;
+    if (!username || !email || !password || !role) {
+      res
+        .status(400)
+        .json({ message: "username, email, password, role are required" });
     }
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -31,11 +32,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     await createUser(newUser);
 
     await createLog({
-      id:1,
+      id: 1,
       user_id: Number(req.user_id),
-      action_taken:"Created User",
-      file_id: null
-    })
+      action_taken: "Created User",
+      file_id: null,
+    });
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
@@ -48,12 +49,16 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
     const user = await getUserByEmail(email);
+
+    const role = user?.role;
+    const is_active = user?.is_active;
+
     const username = user?.username;
     if (!user) {
       res.status(401).json({ message: "Invalid email" });
       return;
     }
-   
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       res.status(401).json({ message: "Invalid email or password" });
@@ -62,13 +67,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign({ userId: user.id }, secretKey);
 
     await createLog({
-      id:1,
+      id: 1,
       user_id: Number(user.id),
-      action_taken:"Logged In",
-      file_id: null
-    })
+      action_taken: "Logged In",
+      file_id: null,
+    });
 
-    res.json({ username, token });
+    res.json({ username, token, role, is_active });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -82,13 +87,13 @@ export const getUsersController = async (req: Request, res: Response) => {
     const folders = await getUsers();
 
     if (!folders) {
-      return res.status(404).json({ message: 'Users not found' });
+      return res.status(404).json({ message: "Users not found" });
     }
 
     res.status(200).json(folders);
   } catch (error) {
-    console.error('Error fetching folders:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error fetching folders:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

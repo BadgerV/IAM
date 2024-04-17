@@ -37,3 +37,20 @@
 .file-page-table-header input {
   max-width: fit-content;
 }
+
+.file-upload-upper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+
+  margin-bottom: 1rem;
+
+  span {
+    font-size: 0.9em;
+  }
+}

@@ -1,7 +1,7 @@
 .file {
   display: grid;
   grid-template-columns:
-    minmax(15px, 0.5fr) minmax(300px, 5fr) minmax(200px, 4fr)
+    minmax(15px, 0.5fr) minmax(250px, 4fr) minmax(200px, 4fr)
     minmax(60px, 1.4fr) minmax(200px, 3.5fr);
   align-items: center;
   padding: 0.5rem 0;
@@ -92,9 +92,9 @@
 
   transition: 0.2s all ease-in-out;
 }
-.file-options-absolute-container div:last-child {
+/* .file-options-absolute-container div:last-child {
   color: red;
-}
+} */
 
 .file-options-absolute-container div span {
   font-size: 0.9rem;

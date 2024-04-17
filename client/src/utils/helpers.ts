@@ -91,3 +91,56 @@ export const calculateFileSize = (file: File) => {
 export const formatDate = (dateString: string) => {
   return moment(dateString).format("MMMM Do YYYY, h:mm:ss a");
 };
+export function countNonNullValues(arr: any[]) {
+  // Filter out null values from the array
+  const nonNullArray = arr.filter((value) => value !== null);
+
+  // Return the length of the filtered array
+  return nonNullArray.length;
+}
+
+export const calculateTotalFileSize = (files: any[]) => {
+  let totalSize = 0;
+
+  // Loop through each file in the files array
+  files.forEach((file) => {
+    // Extract the file size from the file object
+    const fileSizeStr = file.file_size;
+
+    // Remove " KB" from the file size string and convert it to a number
+    const fileSizeNum = parseFloat(fileSizeStr.replace(" KB", ""));
+
+    // Add the file size to the total size
+    totalSize += fileSizeNum;
+  });
+
+  // Convert total size to appropriate unit (KB, MB, GB)
+  let sizeUnit = "KB";
+  let size = totalSize;
+  if (totalSize >= 1024) {
+    size /= 1024;
+    sizeUnit = "MB";
+    if (totalSize >= 1024 * 1024) {
+      size /= 1024;
+      sizeUnit = "GB";
+    }
+  }
+
+  // Round the size to two decimal places
+  const stringSize = size.toFixed(2);
+
+  // Return the total size with the appropriate unit
+  return `${stringSize}${sizeUnit}`;
+};
+
+export const reviseRole = (role: string) => {
+  if (role === "super_admin") {
+    return "Administrator";
+  } else if (role === "manager") {
+    return "Manager";
+  } else if (role === "admin") {
+    return "Admin";
+  } else {
+    return "Employee";
+  }
+};

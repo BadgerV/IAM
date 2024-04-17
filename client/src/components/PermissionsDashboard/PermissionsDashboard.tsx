@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import "./permissionsDashboard.css";
 
 import Select from "react-select";
@@ -6,6 +6,14 @@ import PermissionFile from "../PermissionsFile/PermissionsFile";
 
 import { Options, PermissionsDataType } from "../../utils/types";
 import { customStylesPermissions } from "../..//utils/helpers";
+import { Link } from "react-router-dom";
+import apiCalls from "../../utils/apiCalls";
+
+//import from react-toastify
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
+import { RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
 
 const options: Options[] = [
   { value: "option1", label: "Option 1" },
@@ -17,55 +25,44 @@ const PermissionsDashboard = () => {
   const [selectedCategory, setSelectedCategory] = useState(1);
   const [selectAll, setSelectAll] = useState(false);
 
+  const [users, setUsers] = useState<any[]>([]);
+
+  //loading state
+  const [userLoadingState, setUserLoadingState] = useState<boolean>(true);
+
+  //get user role
+  const userRole = useSelector((state: RootState) => state.auth.user.role);
+
   const [sortedArray, setSortedArray] = useState<PermissionsDataType[]>([]);
 
   const handleSortBasedOnRole = (category: string | null) => {
-    const filteredArray = overviewFileData.filter(
-      (data: PermissionsDataType) => {
-        return data.role === category;
-      }
-    );
+    const filteredArray = users.filter((data: PermissionsDataType) => {
+      return data.role === category;
+    });
 
     setSortedArray(filteredArray);
   };
+  const fetchUsers = async () => {
+    try {
+      apiCalls.getUsersCall().then((res) => {
+        setUserLoadingState(false);
+        console.log(res.data);
+        setUsers(res.data);
+      });
+    } catch (error) {
+      setUserLoadingState(false);
 
-  const overviewFileData: PermissionsDataType[] = [
-    {
-      name: "Emily Radiance",
-      email: "Segunfoazan112@gmail.com",
-      roleAssigned: "Administrator",
-      status: "Active",
-      role: "admin",
-    },
-    {
-      name: "Emily Radiance",
-      email: "Segunfoazan112@gmail.com",
-      roleAssigned: "Administrator",
-      status: "Active",
-      role: "manager",
-    },
-    {
-      name: "Emily Radiance",
-      email: "Segunfoazan112@gmail.com",
-      roleAssigned: "Administrator",
-      status: "Active",
-      role: "admin",
-    },
-    {
-      name: "Emily Radiance",
-      email: "Segunfoazan112@gmail.com",
-      roleAssigned: "Administrator",
-      status: "Active",
-      role: "admin",
-    },
-    {
-      name: "Emily Radiance",
-      email: "Segunfoazan112@gmail.com",
-      roleAssigned: "Administrator",
-      status: "Active",
-      role: "admin",
-    },
-  ];
+      toast.error("Error fetching users", {
+        position: "top-right",
+      });
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  //call the fecth functions when the oage loads
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   return (
     <div className="permissions-dashboard">
@@ -86,7 +83,7 @@ const PermissionsDashboard = () => {
             className={selectedCategory === 2 ? "dashboard-nav-selected" : ""}
             onClick={() => {
               setSelectedCategory(2);
-              handleSortBasedOnRole("admin");
+              handleSortBasedOnRole("super_admin");
             }}
           >
             Administrator
@@ -117,21 +114,36 @@ const PermissionsDashboard = () => {
             <input type="text" placeholder="Search" />
           </div>
 
-          <Select
+          {/* <Select
             styles={customStylesPermissions}
             options={options}
             placeholder="Select"
-          />
+          /> */}
 
-          <button className="permissions-add-new-button">
-            <span>Add new user</span>
-            <img src="/assets/user-add.png" alt="" />
-          </button>
+          {userRole === "super_admin" && (
+            <Link to="/add-user" className="permissions-add-new-button">
+              <span>Add new user</span>
+              <img src="/assets/user-add.png" alt="" />
+            </Link>
+          )}
         </div>
       </div>
 
       <div className="permissions-dashboard-bottom">
-        <div className="permissions-dashboard-table-header">
+        <div
+          className="permissions-dashboard-table-header"
+          style={
+            userRole === "super_admin"
+              ? {
+                  gridTemplateColumns:
+                    "minmax(20px, 0.5fr) minmax(300px, 6fr) minmax(200px, 3fr) minmax(100px, 3fr) minmax(15px, 0.5fr)",
+                }
+              : {
+                  gridTemplateColumns:
+                    "minmax(20px, 0.5fr) minmax(300px, 6fr) minmax(200px, 3fr) minmax(150px, 3fr)",
+                }
+          }
+        >
           <input
             type="checkbox"
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -141,25 +153,27 @@ const PermissionsDashboard = () => {
           <span>Name</span>
           <span>Role assigned</span>
           <span>Status</span>
-          <div>&nbsp; </div>
+          {userRole === "super_admin" && <div>&nbsp; </div>}
         </div>
 
         <div className="permissions-dashboard-table-content">
-          {selectedCategory === 1 ? (
-            overviewFileData.map((file: PermissionsDataType, index) => (
-              <PermissionFile selectAll={selectAll} {...file} key={index} />
+          {userLoadingState ? (
+            <>Loading . . . </>
+          ) : selectedCategory === 1 ? (
+            users.map((file: PermissionsDataType, index) => (
+              <PermissionFile selectAll={selectAll} data={file} key={index} />
             ))
           ) : selectedCategory === 2 && sortedArray.length > 0 ? (
             sortedArray.map((file: PermissionsDataType, index) => (
-              <PermissionFile selectAll={selectAll} {...file} key={index} />
+              <PermissionFile selectAll={selectAll} data={file} key={index} />
             ))
           ) : selectedCategory === 3 && sortedArray.length > 0 ? (
             sortedArray.map((file: PermissionsDataType, index) => (
-              <PermissionFile selectAll={selectAll} {...file} key={index} />
+              <PermissionFile selectAll={selectAll} data={file} key={index} />
             ))
           ) : selectedCategory === 4 && sortedArray.length > 0 ? (
             sortedArray.map((file: PermissionsDataType, index) => (
-              <PermissionFile selectAll={selectAll} {...file} key={index} />
+              <PermissionFile selectAll={selectAll} data={file} key={index} />
             ))
           ) : selectedCategory === 2 ? (
             <span className="decline-span">There are no administrators</span>

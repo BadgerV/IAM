@@ -6,7 +6,6 @@ export interface User {
   token: string;
 
   role?: string;
-  is_admin?: boolean;
   is_active?: boolean;
 }
 
@@ -72,21 +71,22 @@ export interface ManageAccessFileType {
 type Role = "admin" | "manager" | "employee";
 
 export interface OverviewData {
-  name: string;
+  username: string;
   email: string;
   status: string;
   role: Role;
+  is_active: boolean;
 
   selectAll?: boolean;
 }
 
 export interface PermissionsDataType {
-  name: string;
+  username: string;
   email: string;
-  roleAssigned: string;
-  status: string;
-  img?: string;
-  selectAll?: any;
+  is_active: boolean;
+  // status: string;
+
+  id: number;
 
   role: Role;
 }
@@ -137,6 +137,7 @@ export interface FileInitialState {
 export interface FolderType {
   id: number;
   name: string;
+  files: any;
   description: string;
   created_at: string;
   updated_at: string;

@@ -1,6 +1,6 @@
-import { Pool } from 'pg';
-import { File } from '../models/File';
-import pool from '../db/connect';
+import { Pool } from "pg";
+import { File } from "../models/File";
+import pool from "../db/connect";
 
 const createFile = async (file: File): Promise<void> => {
   const client = await pool.connect();
@@ -18,14 +18,11 @@ const createFile = async (file: File): Promise<void> => {
       file.description,
       file.cloud_url,
     ];
-    const result=await client.query(query, values);
-
+    const result = await client.query(query, values);
   } finally {
     client.release();
   }
 };
-
-
 
 const getAllFiles = async (): Promise<File[]> => {
   const client = await pool.connect();
@@ -34,11 +31,11 @@ const getAllFiles = async (): Promise<File[]> => {
       SELECT 
         files.*, 
         folders.name AS folder_name, 
-        categories.name AS category_name, 
+        
         users.username AS owner_username 
       FROM files 
       LEFT JOIN folders ON files.folder_id = folders.id 
-      LEFT JOIN categories ON files.category_id = categories.id 
+      
       LEFT JOIN users ON files.user_id = users.id
     `;
     const { rows } = await client.query(query);
@@ -48,12 +45,10 @@ const getAllFiles = async (): Promise<File[]> => {
   }
 };
 
-
-
 const getFileById = async (id: number): Promise<File | undefined> => {
   const client = await pool.connect();
   try {
-    const query = 'SELECT * FROM files WHERE id = $1';
+    const query = "SELECT * FROM files WHERE id = $1";
     const { rows } = await client.query(query, [id]);
     return rows[0];
   } finally {
@@ -88,7 +83,7 @@ const updateFile = async (id: number, file: File): Promise<void> => {
 const deleteFileById = async (id: number): Promise<void> => {
   const client = await pool.connect();
   try {
-    const query = 'DELETE FROM files WHERE id = $1';
+    const query = "DELETE FROM files WHERE id = $1";
     await client.query(query, [id]);
   } finally {
     client.release();

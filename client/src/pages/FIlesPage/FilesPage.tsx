@@ -4,21 +4,51 @@ import { useSelector } from "react-redux";
 import File from "../../components/FIle/File";
 import "./filesPage.css";
 import { FileData } from "../../utils/types";
+import { Link, useParams } from "react-router-dom";
+import folderApiCalls from "../../services/folderApiCalls";
+
+//import from react-toastify
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
 
 const FilesPage = () => {
+  const { id } = useParams();
   // Loading state
   const [loadingState, setLoadingState] = useState<boolean>(true);
   const [selectAll, setSelectAll] = useState<boolean>(false);
-  const folder = "Overview";
+  const [fetchedFolderFiles, setFetchedFolderFiles] = useState<FileData[]>([]);
+  const [folderName, setFolderName] = useState<string>("");
 
-  // Get files from Redux store
-  const allFiles = useSelector((state: RootState) => state.file.files);
+  const token = useSelector((state: RootState) => state.auth.token);
+
+  const getFilesInAFolder = async () => {
+    try {
+      const res = await folderApiCalls.getFolderCall(Number(id), token);
+      setFetchedFolderFiles(res.data.files);
+      setFolderName(res.data.name);
+      setLoadingState(false);
+    } catch (error) {
+      setLoadingState(false);
+      toast.error("Error fetching files", {
+        position: "top-right",
+      });
+    }
+  };
 
   useEffect(() => {
-    if (allFiles) {
-      setLoadingState(false);
+    getFilesInAFolder();
+  }, []);
+
+  // Inside FilesPage component
+  const handleFileDelete = async () => {
+    // Call the API again to fetch updated files after deletion
+    try {
+      await getFilesInAFolder();
+    } catch (error) {
+      // Handle error if needed
+      console.error("Error fetching files after deletion:", error);
     }
-  }, [allFiles]);
+  };
 
   return (
     <div className="file-page-container">
@@ -26,7 +56,14 @@ const FilesPage = () => {
         <div>Loading . . .</div>
       ) : (
         <div className="file-page">
-          <span className="file-page-text">Files from {folder} folder</span>
+          <Link className="file-upload-upper" to="../">
+            <img src="/assets/arrow-left.png" alt="Back" />
+            <span>Back to overview</span>
+          </Link>
+
+          <span className="file-page-text">
+            Files from "<strong>{folderName}</strong>" folder
+          </span>
 
           <div className="file-page-bottom">
             <div className="file-page-table-header">
@@ -43,8 +80,13 @@ const FilesPage = () => {
             </div>
 
             <div className="file-page-table-content">
-              {allFiles?.map((file: FileData, index: number) => (
-                <File selectAll={selectAll} file={file} key={index} />
+              {fetchedFolderFiles?.map((file: FileData, index: number) => (
+                <File
+                  selectAll={selectAll}
+                  file={file}
+                  key={index}
+                  onDelete={handleFileDelete}
+                />
               ))}
             </div>
           </div>

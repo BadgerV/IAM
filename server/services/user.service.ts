@@ -65,6 +65,7 @@ const getUsers = async (): Promise<User[] | undefined> => {
         permissions ON users.id = permissions.user_id;
     `;
     const { rows } = await client.query(query);
+    console.log(rows);
     return rows;
   } finally {
     client.release();

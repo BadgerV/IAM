@@ -5,7 +5,7 @@ const url = "http://localhost:8000/api/v1";
 
 //FILE CALLS
 const createFileCall = async (
-  { file_name, file_size, folder_id, category_id, description, file }: any,
+  { file_name, file_size, folder_id, description, file, permission_type }: any,
   token: string
 ) => {
   const formData = new FormData();
@@ -13,7 +13,8 @@ const createFileCall = async (
   formData.append("file_name", file_name);
   formData.append("file_size", String(file_size)); // Convert file_size to string
   formData.append("folder_id", String(folder_id));
-  formData.append("category_id", String(category_id));
+  formData.append("permission_type", String(permission_type));
+
   formData.append("description", String(description));
 
   const response = await axios.post(`${url}/file/`, formData, {

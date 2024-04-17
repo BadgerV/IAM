@@ -1,20 +1,20 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import "./overviewFile.css";
 import { OverviewData } from "../../utils/types";
+import { reviseRole } from "../../utils/helpers";
 
-const OverviewFile = ({
-  name,
-  email,
-  status,
-  
+const OverviewFile: React.FC<{ data: OverviewData; selectAll: any }> = ({
+  data,
   selectAll,
-}: OverviewData) => {
+}) => {
   const [isChecked, setIsChecked] = useState(selectAll);
+
+  const { username, email, is_active, role } = data;
 
   useEffect(() => {
     setIsChecked(selectAll);
   }, [selectAll]);
-  
+
   return (
     <div className="overview-file">
       <input
@@ -27,17 +27,18 @@ const OverviewFile = ({
 
       <div className="overview-file-name-and-pic-cont">
         <div>
-          <span className="overview-file-name">{name}</span>
+          <span className="overview-file-name">{username}</span>
           <span className="overview-file-email">{email}</span>
         </div>
       </div>
 
-      <span className="overview-status-text">{status}</span>
+      <span className="overview-status-text">
+        {is_active ? "Active" : "Inactive"}
+      </span>
 
       <div className="overview-file-view-profile">
         <div>
-          <span>View Profile</span>
-          <img src="/assets/link-square.png" alt="" />
+          <span>{reviseRole(role)}</span>
         </div>
 
         <img src="/assets/options-dark.png" alt="Options" />

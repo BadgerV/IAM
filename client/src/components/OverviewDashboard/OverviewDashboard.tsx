@@ -1,55 +1,29 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Folder from "../Folder/Folder";
 import "./overviewDashboard.css";
 import OverviewFile from "../OverviewFile/OverviewFile";
 import RecentActivity from "../RecentActivity/RecentActivity";
-import { OverviewData } from "@/utils/types";
+import { OverviewData } from "../../utils/types";
+import logApiCalls from "../../services/logApiCalls";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+
+//import from react-toastify
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
+import apiCalls from "../../utils/apiCalls";
+import folderApiCalls from "../../services/folderApiCalls";
 
 const OverviewDashboard = () => {
-  const boxes = [
-    {
-      folderName: "Development",
-      noOfFiles: 17,
-      img: "/assets/user-group-",
-    },
-    {
-      folderName: "Pending Requests",
-      noOfFiles: 5,
-      img: "/assets/clock-",
-    },
-    {
-      folderName: "Restricted",
-      noOfFiles: 2,
-      img: "/assets/file-block-",
-    },
-  ];
+  const token = useSelector((state: RootState) => state.auth.user.token);
 
-  const overviewData: OverviewData[] = [
-    {
-      name: "Emily Raidance",
-      email: "Emilyradiance@gmail.com",
-      status: "Active",
-      role: "manager",
-    },
-    {
-      name: "Emily Raidance",
-      email: "Emilyradiance@gmail.com",
-      status: "Active",
-      role: "employee",
-    },
-    {
-      name: "Emily Raidance",
-      email: "Emilyradiance@gmail.com",
-      status: "Active",
-      role: "manager",
-    },
-    {
-      name: "Emily Raidance",
-      email: "Emilyradiance@gmail.com",
-      status: "Active",
-      role: "manager",
-    },
-  ];
+  const [logLoadingState, setLogLoadingState] = useState<boolean>(true);
+  const [userLoadingState, setUserLoadingState] = useState<boolean>(true);
+  const [folderLoadingState, setFolderLoadingState] = useState<boolean>(true);
+
+  const [users, setUsers] = useState<any[]>([]);
+  const [logs, setLogs] = useState<any[]>([]);
+  const [folders, setFolders] = useState<any[]>([]);
 
   const recentActivitiesData = [
     {
@@ -74,13 +48,69 @@ const OverviewDashboard = () => {
     },
   ];
 
+  const fetchUsers = async () => {
+    try {
+      apiCalls.getUsersCall().then((res) => {
+        setUserLoadingState(false);
+        console.log(res.data);
+        setUsers(res.data);
+      });
+    } catch (error) {
+      setUserLoadingState(false);
+
+      toast.error("Error fetching users", {
+        position: "top-right",
+      });
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const getAllLogs = async () => {
+    try {
+      const res = await logApiCalls.getAllLogs(token);
+      setLogs(res.data);
+
+      setLogLoadingState(false);
+    } catch (error) {
+      console.error("Error fetching logs:", error);
+      toast.error("Error fetching logs", {
+        position: "top-right",
+      });
+      setLogLoadingState(false);
+    }
+  };
+
+  const fetchFolders = async () => {
+    try {
+      const res = await folderApiCalls.getFoldersCall();
+      const shortenedData = res.data.slice(0, 3); // Shorten the array to the first 3 elements
+      setFolders(shortenedData);
+      setFolderLoadingState(false);
+    } catch (error) {
+      toast.error("Error fetching folders", {
+        position: "top-right",
+      });
+      console.error("Error fetching folders:", error);
+      setFolderLoadingState(false);
+    }
+  };
+
+  useEffect(() => {
+    getAllLogs();
+    fetchUsers();
+    fetchFolders();
+  }, []);
+
   const [selectedCategory, setSelectedCategory] = useState<number>(1);
   const [selectAll, setSelectAll] = useState<boolean>(false);
   const [sortedArray, setSortedArray] = useState<OverviewData[]>([]);
 
-  const handleSortBasedOnRole = (category: string | null) => {
-    const filteredArray = overviewData.filter((data: OverviewData) => {
-      return data.role === category;
+  const handleSortBasedOnRole = (
+    category: string | null,
+    secondCategory = ""
+  ) => {
+    const filteredArray = users.filter((data: OverviewData) => {
+      return data.role === category || data.role === secondCategory;
     });
 
     setSortedArray(filteredArray);
@@ -89,9 +119,13 @@ const OverviewDashboard = () => {
   return (
     <div className="overview-dashboard">
       <div className="overview-dashboard-top">
-        {boxes.map((box, index) => {
-          return <Folder {...box} key={index} />;
-        })}
+        {folderLoadingState ? (
+          <>Loading . . . .</>
+        ) : (
+          folders.map((box, index) => {
+            return <Folder {...box} key={index} />;
+          })
+        )}
       </div>
       <div className="overview-dashboard-middle">
         <span className="users-access-text">User's access permissions</span>
@@ -111,7 +145,7 @@ const OverviewDashboard = () => {
             className={selectedCategory === 2 ? "dashboard-nav-selected" : ""}
             onClick={() => {
               setSelectedCategory(2);
-              handleSortBasedOnRole("admin");
+              handleSortBasedOnRole("super_admin", "admin");
             }}
           >
             Administrator
@@ -148,24 +182,24 @@ const OverviewDashboard = () => {
             />
             <span>Name</span>
             <span>Status</span>
-            <span>&nbsp;</span>
+            <span>Role</span>
           </div>
           <div className="overview-dashboard-table-content">
             {selectedCategory === 1 ? (
-              overviewData.map((file: OverviewData, index) => (
-                <OverviewFile selectAll={selectAll} {...file} key={index} />
+              users.map((user: OverviewData, index) => (
+                <OverviewFile data={user} selectAll={selectAll} key={index} />
               ))
             ) : selectedCategory === 2 && sortedArray.length > 0 ? (
-              sortedArray.map((file: OverviewData, index) => (
-                <OverviewFile selectAll={selectAll} {...file} key={index} />
+              sortedArray.map((user: OverviewData, index) => (
+                <OverviewFile data={user} selectAll={selectAll} key={index} />
               ))
             ) : selectedCategory === 3 && sortedArray.length > 0 ? (
-              sortedArray.map((file: OverviewData, index) => (
-                <OverviewFile selectAll={selectAll} {...file} key={index} />
+              sortedArray.map((user: OverviewData, index) => (
+                <OverviewFile data={user} selectAll={selectAll} key={index} />
               ))
             ) : selectedCategory === 4 && sortedArray.length > 0 ? (
-              sortedArray.map((file: OverviewData, index) => (
-                <OverviewFile selectAll={selectAll} {...file} key={index} />
+              sortedArray.map((user: OverviewData, index) => (
+                <OverviewFile data={user} selectAll={selectAll} key={index} />
               ))
             ) : selectedCategory === 2 ? (
               <span className="decline-span">There are no administrators</span>
@@ -180,9 +214,13 @@ const OverviewDashboard = () => {
           <span className="recent-activities-text">Recent Activites</span>
 
           <div className="recent-activities">
-            {recentActivitiesData.map((activity, index) => {
-              return <RecentActivity {...activity} key={index} />;
-            })}
+            {logLoadingState ? (
+              <>Loading . . . .</>
+            ) : (
+              recentActivitiesData.map((activity, index) => {
+                return <RecentActivity {...activity} key={index} />;
+              })
+            )}
           </div>
         </div>
       </div>

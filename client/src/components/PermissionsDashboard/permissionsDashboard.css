@@ -94,6 +94,9 @@
   cursor: pointer;
 
   min-width: fit-content;
+
+  font-size: 0.9rem;
+  text-decoration: none;
 }
 
 .permissions-add-new-button span {
@@ -106,9 +109,6 @@
 
 .permissions-dashboard-table-header {
   display: grid;
-  grid-template-columns:
-    minmax(20px, 0.5fr) minmax(300px, 6fr) minmax(200px, 3fr)
-    minmax(100px, 3fr) minmax(150px, 3fr);
 
   margin-bottom: 1rem;
 }

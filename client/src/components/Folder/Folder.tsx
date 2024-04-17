@@ -2,9 +2,20 @@ import "./folder.css";
 import { useRef, useState } from "react";
 import { FolderType } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
+import {
+  calculateTotalFileSize,
+  countNonNullValues,
+} from "../../utils/helpers";
 
 const Folder = (folder: FolderType) => {
-  const { name, id, description, created_at, updated_at } = folder;
+  const { name, id, files } = folder;
+
+  let len;
+  let totalFileSize;
+  if (files) {
+    len = countNonNullValues(files);
+    totalFileSize = calculateTotalFileSize(files);
+  }
 
   const folderRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -22,6 +33,7 @@ const Folder = (folder: FolderType) => {
   };
 
   const navigate = useNavigate();
+
   return (
     <div
       className="folder"
@@ -44,8 +56,8 @@ const Folder = (folder: FolderType) => {
       </div>
       <div className="folder-middle">{name}</div>
       <div className="folder-bottom">
-        <span> 15 files</span>
-        <span>45 Gb</span>
+        <span> {len} file(s)</span>
+        <span>{totalFileSize}</span>
       </div>
     </div>
   );
