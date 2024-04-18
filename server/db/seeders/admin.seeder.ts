@@ -32,8 +32,6 @@ const userInfo = {
       username,
       email,
       password: hashedPassword,
-      role,
-      is_active,
       is_admin,
     };
     await createUser(newUser);
@@ -44,7 +42,10 @@ const userInfo = {
       user_id: Number(user?.id),
       can_read: true,
       can_write: true,
-      can_delete: true
+      can_delete: true,
+      role,
+      is_active
+     
     }
     await createPermission(newPermission)
     

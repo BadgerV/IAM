@@ -11,20 +11,11 @@ import {
 // Controller function to create file access
 const createPermissionController = async (req: Request, res: Response) => {
   try {
-    const { user_id, can_read, can_write, can_delete } = req.body;
+    const { user_id, can_read, can_write, can_delete, role} = req.body;
 
     // Check if required fields are provided
-    if (
-      !user_id ||
-      typeof can_read !== "boolean" ||
-      typeof can_write !== "boolean" ||
-      typeof can_delete !== "boolean"
-    ) {
-      return res
-        .status(400)
-        .json({
-          message: "user ID, can_read, can_write, and can_delete are required",
-        });
+    if (!user_id || typeof can_read !== 'boolean' || typeof can_write !== 'boolean' || typeof can_delete !== 'boolean' || !role) {
+      return res.status(400).json({ message: 'user ID, can_read, can_write, and can_delete are required' });
     }
 
     // Create file access object
@@ -33,6 +24,8 @@ const createPermissionController = async (req: Request, res: Response) => {
       can_read,
       can_write,
       can_delete,
+      is_active: true,
+      role
     };
 
     // Call the service function to create file access
@@ -68,7 +61,7 @@ const getPermissionController = async (req: Request, res: Response) => {
 const updatePermissionController = async (req: Request, res: Response) => {
   try {
     const user_id: number = parseInt(req.params.id, 10);
-    const { can_read, can_write, can_delete } = req.body;
+    const {  can_read, can_write, can_delete, is_active, role } = req.body;
 
     // Check if required fields are provided
     if (
@@ -90,6 +83,8 @@ const updatePermissionController = async (req: Request, res: Response) => {
       can_read,
       can_write,
       can_delete,
+      is_active,
+      role
     };
 
     // Call the service function to update file access

@@ -6,14 +6,16 @@ const createPermission = async (permission: Permission): Promise<void> => {
   const client = await pool.connect();
   try {
     const query = `
-      INSERT INTO permissions ( user_id, can_read, can_write, can_delete)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO permissions ( user_id, can_read, can_write, can_delete, is_active, role)
+      VALUES ($1, $2, $3, $4, $5, $6)
     `;
     const values: any[] = [
       permission.user_id,
       permission.can_read,
       permission.can_write,
       permission.can_delete,
+      permission.is_active,
+      permission.role
     ];
     await client.query(query, values);
   } finally {
@@ -40,7 +42,7 @@ const updatePermission = async (id: number, permission: Permission): Promise<voi
   try {
     const query = `
       UPDATE permissions
-      SET can_read = $1, can_write = $2, can_delete = $3
+      SET can_read = $1, can_write = $2, can_delete = $3, is_active =$4, role=$6
       WHERE user_id = $4
     `;
     const values: any[] = [
@@ -49,6 +51,8 @@ const updatePermission = async (id: number, permission: Permission): Promise<voi
       permission.can_write,
       permission.can_delete,
       permission.user_id,
+      permission.is_active,
+      permission.role
     ];
     await client.query(query, values);
   } finally {
