@@ -82,8 +82,10 @@ const updateAccessRequestController = async (req: Request, res: Response) => {
     const requestId: number = parseInt(req.params.id, 10);
     const { file_id, user_id, status, reason } = req.body;
 
+    console.log(file_id, user_id, status, reason);
+
     // Check if required fields are provided
-    if (!file_id || !status || !reason) {
+    if (!file_id || typeof status !== "boolean" || !reason) {
       return res
         .status(400)
         .json({ message: "File ID, status, and reason are required" });

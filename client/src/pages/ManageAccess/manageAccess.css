@@ -88,10 +88,9 @@
 
 .manage-access-table-header {
   display: grid;
-  grid-template-columns: minmax(300px, 3.5fr) minmax(120px, 1fr) minmax(
-      120px,
-      1fr
-    );
+  grid-template-columns:
+    minmax(150px, 2.5fr) minmax(250px, 4fr) minmax(200px, 1fr)
+    minmax(150px, 1fr);
   gap: 2rem;
 }
 .manage-access-table-header span {

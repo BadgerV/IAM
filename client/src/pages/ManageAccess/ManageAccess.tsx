@@ -1,49 +1,48 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./manageAccess.css";
 import ManageAccessFile from "../../components/ManageAccessFile/ManageAccessFile";
+import { RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
+import requestAccessApiCalls from "../../services/requestAccessApiCalls";
 
 const ManageAccess = () => {
   const [selectetdCategory, setSelectedCategory] = useState(1);
 
-  const demoData = [
-    {
-      request: "Manging resouces by Emily Radiance",
-      dateOfRequest: "2-01-2024",
-      statusOfRequest: "Approved",
-    },
-    {
-      request: "Manging resouces by Emily Radiance",
-      dateOfRequest: "2-01-2024",
-      statusOfRequest: "Approved",
-    },
-    {
-      request: "Manging resouces by Emily Radiance",
-      dateOfRequest: "2-01-2024",
-      statusOfRequest: "Declined",
-    },
-    {
-      request: "Manging resouces by Emily Radiance",
-      dateOfRequest: "2-01-2024",
-      statusOfRequest: "Approved",
-    },
-    {
-      request: "Manging resouces by Emily Radiance",
-      dateOfRequest: "2-01-2024",
-      statusOfRequest: "Declined",
-    },
-    {
-      request: "Manging resouces by Emily Radiance",
-      dateOfRequest: "2-01-2024",
-      statusOfRequest: "Approved",
-    },
-  ];
+  const [requests, setRequests] = useState<any[]>([]);
+  const [loadingState, setLoadingState] = useState<boolean>(true);
+
+  const role = useSelector((state: RootState) => state.auth.user.role);
+  const token = useSelector((state: RootState) => state.auth.user.token);
+
+  const [getrequestAgain, setGetRequestAgain] = useState(0);
+
+  const getAllRequests = async () => {
+    setLoadingState(true);
+    const res = requestAccessApiCalls.getAllAccessRequests(token);
+
+    setRequests((await res).data);
+
+    setLoadingState(false);
+  };
+
+  useEffect(() => {
+    getAllRequests();
+  }, [getrequestAgain]);
+
+  useEffect(() => {
+    if (role === "super_admin" || role === "admin") {
+      getAllRequests();
+    }
+  }, []);
 
   return (
     <div className="manage-access">
-      
-      <div className="manage-access-bottom">
-        <span className="manage-access-bottom-title">Request History</span>
-        <div className="manage-access-nav">
+      {loadingState ? (
+        <>Loading . . . . </>
+      ) : (
+        <div className="manage-access-bottom">
+          <span className="manage-access-bottom-title">Request History</span>
+          {/* <div className="manage-access-nav">
           <span
             className={
               selectetdCategory === 1 ? "manage-access-nav-selected" : ""
@@ -68,21 +67,30 @@ const ManageAccess = () => {
           >
             Folders
           </span>
-        </div>
+        </div> */}
 
-        <div className="manage-access-table">
-          <div className="manage-access-table-header">
-            <span>Request</span>
-            <span>Date of Request</span>
-            <span>Status of Request</span>
-          </div>
-          <div className="manage-access-table-content">
-            {demoData.map((data, index) => {
-              return <ManageAccessFile {...data} key={index} />;
-            })}
+          <div className="manage-access-table">
+            <div className="manage-access-table-header">
+              <span>Request</span>
+              <span>Reason for request</span>
+              <span>Date of Request</span>
+              <span>Status of Request</span>
+            </div>
+            <div className="manage-access-table-content">
+              {requests.map((data, index) => {
+                return (
+                  <ManageAccessFile
+                    {...data}
+                    key={index}
+                    setGetRequestAgain={setGetRequestAgain}
+                    setLoading={setLoadingState}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

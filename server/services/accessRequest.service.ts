@@ -50,7 +50,7 @@ const updateAccessRequest = async (id: number, accessRequest: AccessRequest): Pr
   try {
     const query = `
       UPDATE access_request
-      SET file_id = $1, file_id = $2, status = $3, reason = $4
+      SET file_id = $1, user_id = $2, status = $3, reason = $4
       WHERE id = $5
     `;
     const values: any[] = [

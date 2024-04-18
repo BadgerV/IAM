@@ -67,9 +67,12 @@ export interface Data {
 // }
 
 export interface ManageAccessFileType {
-  request: string;
-  dateOfRequest: string;
-  statusOfRequest: string;
+  user_id: number;
+  file_id: number;
+  status: boolean;
+  created_at: string;
+  reason : string;
+  id : number;
 }
 
 type Role = "admin" | "manager" | "employee";

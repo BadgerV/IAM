@@ -10,9 +10,12 @@ const url = "http://localhost:8000/api/v1";
 
 //AUTH CALLS
 const signupApiCall = async (
-  { username, email, password, role = "employee" }: SignupCredentials,
+  { username, email, password, role }: SignupCredentials,
   token: string
 ) => {
+  console.log("username", username);
+  console.log("email", email);
+
   const response = await axios.post(
     `${url}/auth/register`,
     {
@@ -48,8 +51,15 @@ const getUsersCall = async () => {
   return response;
 };
 
+const getUserCall = async (userId: number) => {
+  const response = await axios.get(`${url}/auth/user/${userId}`);
+
+  return response;
+};
+
 export default {
   signupApiCall,
   loginApiCall,
   getUsersCall,
+  getUserCall,
 };

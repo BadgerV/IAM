@@ -27,14 +27,11 @@ const AddUserPage = () => {
 
   const [formData, setFormData] = useState({
     username: "",
-    password: "",
     email: "",
+    password: "",
     role: "",
   });
 
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({
@@ -48,12 +45,9 @@ const AddUserPage = () => {
 
   const handleSubmit = async () => {
     setLoadingState(true);
-    console.log("working");
 
     try {
       const res = await apiCalls.signupApiCall(formData, token);
-
-      console.log(res.data);
 
       if (res.status === 201) {
         setLoadingState(false);

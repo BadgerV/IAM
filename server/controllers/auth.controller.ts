@@ -1,11 +1,19 @@
 // middleware/authMiddleware.ts
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, request } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { User } from "../models/User";
 import { Permission } from "../models/Permission";
-import { createUser, getUserByEmail, getUsers } from "../services/user.service";
-import { createPermission, getPermissionByUserId } from "../services/permission.service";
+import {
+  createUser,
+  getUserByEmail,
+  getUserById,
+  getUsers,
+} from "../services/user.service";
+import {
+  createPermission,
+  getPermissionByUserId,
+} from "../services/permission.service";
 import { defaultConfig } from "../config/config";
 import { createLog } from "../services/log.service";
 
@@ -27,8 +35,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       username,
       email,
       password: hashedPassword,
-      is_admin:false,
-   
+      is_admin: false,
     };
     await createUser(newUser);
 
@@ -39,10 +46,9 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       can_write: false,
       can_delete: false,
       role,
-      is_active:true,
-
-    }
-    await createPermission(newPermission)
+      is_active: true,
+    };
+    await createPermission(newPermission);
 
     await createLog({
       id: 1,
@@ -61,8 +67,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
+    // console.log(email, password);
     const user = await getUserByEmail(email);
-    const permission=await getPermissionByUserId(Number(user?.id));
+
+    const permission = await getPermissionByUserId(Number(user?.id));
 
     const role = permission?.role;
     const is_active = permission?.is_active;
@@ -92,9 +100,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       token,
       role,
       is_active,
-      // can_read,
-      // can_write,
-      // can_delete,
     });
   } catch (error) {
     console.error(error);
@@ -115,6 +120,25 @@ export const getUsersController = async (req: Request, res: Response) => {
     res.status(200).json(folders);
   } catch (error) {
     console.error("Error fetching folders:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+// Controller function to get a folder by ID
+export const getUserController = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    // Call the service function to get the folder by ID
+    const user = await getUserById(Number(userId));
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log(user);
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Featching user", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
