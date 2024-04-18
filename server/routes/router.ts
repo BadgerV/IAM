@@ -15,6 +15,8 @@ router.use(`${apiPath}/folder`, folderRouter);
 router.use(`${apiPath}/auth`, authRouter);
 router.use(`${apiPath}/log`, logRouter);
 router.use(`${apiPath}/permission`, permissionRouter);
-router.use(`${apiPath}/access/request`, accessRequestRouter)
+router.use(`${apiPath}/access/request`, accessRequestRouter);
+router.use('/uploads', express.static('uploads'));
+
 
 export { router };

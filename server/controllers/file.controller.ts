@@ -13,7 +13,7 @@ import {
 } from "../services/file.service";
 import { createLog } from "../services/log.service";
 import { defaultConfig } from "../config/config";
-import { getAccessRequestByUserFileId } from "../services/accessRequest.service";
+import path from "path";
 
 // Controller function to create a new file
 const createFileController = async (req: Request, res: Response) => {
@@ -83,27 +83,7 @@ const getAllFilesController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const user_id=Number(req.user_id)
     const files = await getAllFiles();
-    
-    for (const file of files as any) {
-      // Check if access_type is 'org_wide'
-      if (file.access_type === 'org_wide') {
-        // Set can_access to true
-        file.can_access = true;
-      } else {
-        const access_request = await getAccessRequestByUserFileId(user_id, file.id);
-        let can_access = false;
-
-        // Check if access request exists and if it's approved
-        if (access_request && access_request.status === true) {
-          can_access = true;
-        }
-
-        // Set can_access for the file
-        file.can_access = can_access;
-      }
-    }
     res.status(200).json(files);
   } catch (error) {
     console.error("Error fetching all files:", error);
@@ -129,11 +109,10 @@ const getFileController = async (req: Request, res: Response) => {
     }
 
     // Fetch the file from Firebase Storage
-    // const filePath = await fetchFileFromFirebase(file.file_name);
-    res.json(file);
-
-    // Send the file to the client
-    // res.download(filePath, file.file_name);
+    const filePath = await fetchFileFromFirebase(file.file_name);
+    const serverFilePath = `http://localhost:8000/uploads/${path.basename(filePath)}`;
+    res.json({ file, filePath: serverFilePath });
+    
   } catch (error) {
     console.error("Error fetching file:", error);
     res.status(500).json({ message: "Internal server error" });
