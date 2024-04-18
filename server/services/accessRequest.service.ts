@@ -41,6 +41,16 @@ const getAccessRequestByUserFileId = async (user_id: number, file_id:number): Pr
     client.release();
   }
 };
+const getAccessRequestByUserId = async (user_id: number, file_id:number): Promise<AccessRequest | undefined> => {
+  const client = await pool.connect();
+  try {
+    const query = 'SELECT * FROM access_request WHERE user_id = $1';
+    const { rows } = await client.query(query, [user_id]);
+    return rows[0];
+  } finally {
+    client.release();
+  }
+};
 
 
 const getAccessRequests = async (): Promise<AccessRequest[] | undefined> => {
@@ -86,4 +96,4 @@ const deleteAccessRequestById = async (id: number): Promise<void> => {
   }
 };
 
-export { createAccessRequest, getAccessRequestById, getAccessRequestByUserFileId, getAccessRequests, updateAccessRequest, deleteAccessRequestById };
+export { createAccessRequest, getAccessRequestById, getAccessRequestByUserId, getAccessRequestByUserFileId, getAccessRequests, updateAccessRequest, deleteAccessRequestById };
