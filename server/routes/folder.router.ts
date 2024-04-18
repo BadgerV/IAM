@@ -10,13 +10,13 @@ import {
 
 
 
-import { requireSuperAdmin } from "../middlewares/middleware";
+import { authMiddleware, requireSuperAdmin } from "../middlewares/middleware";
 
 const folderRouter = express.Router();
 
 // Routes for folders
 folderRouter.post('/', requireSuperAdmin, createFolderController);
-folderRouter.get('/', getFoldersController);
+folderRouter.get('/', authMiddleware, getFoldersController);
 folderRouter.get('/:id', getFolderController);
 folderRouter.put('/:id', requireSuperAdmin, updateFolderController);
 folderRouter.delete('/:id', requireSuperAdmin, deleteFolderController);
