@@ -74,6 +74,10 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const role = permission?.role;
     const is_active = permission?.is_active;
+    const can_read= permission?.can_read
+    const can_write= permission?.can_write
+    const can_delete= permission?.can_delete
+
 
     const username = user?.username;
     if (!user) {
@@ -99,6 +103,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       username,
       token,
       role,
+      can_read,
+      can_write,
+      can_delete,
       is_active,
     });
   } catch (error) {

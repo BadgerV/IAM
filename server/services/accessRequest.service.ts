@@ -52,7 +52,6 @@ const getAccessRequestByUserId = async (user_id: number, file_id:number): Promis
   }
 };
 
-
 const getAccessRequests = async (): Promise<AccessRequest[] | undefined> => {
   const client = await pool.connect();
   try {

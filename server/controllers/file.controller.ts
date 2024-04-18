@@ -14,6 +14,7 @@ import {
 import { createLog } from "../services/log.service";
 import { defaultConfig } from "../config/config";
 import path from "path";
+import { getAccessRequestByUserFileId } from "../services/accessRequest.service";
 
 // Controller function to create a new file
 const createFileController = async (req: Request, res: Response) => {
@@ -84,6 +85,29 @@ const getAllFilesController = async (
 ): Promise<void> => {
   try {
     const files = await getAllFiles();
+    const user_id=Number(req.user_id)
+
+        // Iterate through each file in the folder
+        for (const file of files as any[]) {
+          // Check if access_type is 'org_wide'
+          if (file.access_type === 'org_wide') {
+            // Set can_access to true
+            file.can_access = true;
+          } else {
+           
+            const access_request = await getAccessRequestByUserFileId(user_id, file.id);
+          
+            let can_access = false;
+  
+            // Check if access request exists and if it's approved
+            if (access_request && access_request.status === true) {
+              can_access = true;
+            }
+  
+            // Set can_access for the file
+            file.can_access = can_access;
+          }
+        }
     res.status(200).json(files);
   } catch (error) {
     console.error("Error fetching all files:", error);
