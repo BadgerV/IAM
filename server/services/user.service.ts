@@ -7,8 +7,8 @@ const createUser = async (user: User): Promise<void> => {
   const client = await pool.connect();
   try {
     const query = `
-      INSERT INTO users (username, email, password, role, is_active, is_admin)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO users (username, email, password, is_admin)
+      VALUES ($1, $2, $3, $4)
     `;
     const values = [
       user.username,
