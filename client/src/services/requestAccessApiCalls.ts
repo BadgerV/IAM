@@ -49,8 +49,19 @@ const updateRequestAccess = async (
   return response;
 };
 
+const getRequestAccessesByID = async (id: number, token: string) => {
+  const response = await axios.get(`${url}/access/request/user/${id}`, {
+    headers: {
+      authorization: `authorization ${token}`,
+    },
+  });
+
+  return response;
+};
+
 export default {
   getAllAccessRequests,
   updateRequestAccess,
   getAllAccessRequest,
+  getRequestAccessesByID,
 };

@@ -20,13 +20,11 @@ const ManageAccessFile: React.FC<any> = ({
   created_at,
   reason,
   id,
-  setGetRequestAgain,
+  setLoading,
 }) => {
-  const [loadingState, setLoadingState] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [file, setFile] = useState<any>(null);
-
-  let number = 1;
+  const [permissionStatus, setPermissionStatus] = useState<boolean>(status);
 
   const token = useSelector((state: RootState) => state.auth.user.token);
   const role = useSelector((state: RootState) => state.auth.user.role);
@@ -56,26 +54,30 @@ const ManageAccessFile: React.FC<any> = ({
 
   useEffect(() => {
     if (user && file) {
-      setLoadingState(false);
+      setLoading(false);
     }
   }, [user, file]);
 
   // Define changeStatusOfRequest and other necessary code...
   const changeStatusOfRequest = async () => {
-    let theStatus;
     try {
-      console.log(id, file_id, user_id, !status, reason);
-      const accessRequest = await 
       // Assuming id, file_id, user_id, status, reason, and token are defined elsewhere
       requestAccessApiCalls
-        .updateRequestAccess(id, file_id, user_id, !status, reason, token)
+        .updateRequestAccess(
+          id,
+          file_id,
+          user_id,
+          !permissionStatus,
+          reason,
+          token
+        )
         .then((res) => {
           if (res) {
             toast.success("Permission updated successfully", {
               position: "top-right",
             });
 
-            setGetRequestAgain(number++); // Assuming this function sets a state to re-fetch data
+            setPermissionStatus(!permissionStatus);
           }
         });
     } catch (error) {
@@ -85,33 +87,57 @@ const ManageAccessFile: React.FC<any> = ({
       });
     }
   };
+
+  useEffect(() => {
+    console.log(file?.file?.file_name);
+    console.log(user);
+  }, [user, file]);
   return (
     <div className="manage-access-file">
-      {loadingState ? (
-        <>Loading . . . .</>
-      ) : (
+      {role === "super_admin" ? (
         <>
-          <span>{`${user.username} requested for file ${file.file_name}`}</span>
+          <span>{`${user?.username} requested for file ${file?.file?.file_name}`}</span>
           <span>{formatDate(created_at)}</span>
           <span>{reason}</span>
           <button
-            className={status ? "manage-access-green" : "manage-access-red"}
-            style={{ cursor: role === "super_admin" ? "pointer" : "default" }}
-            onClick={role === "super_admin" ? changeStatusOfRequest : undefined}
+            className={
+              permissionStatus ? "manage-access-red" : "manage-access-green"
+            }
+            style={{ cursor: "pointer" }}
+            onClick={changeStatusOfRequest}
           >
-            {status ? (
+            {permissionStatus ? (
+              <>
+                <img src="/assets/cancel-circle-icon.png" alt="" />
+                <span>Remove Access</span>
+              </>
+            ) : (
               <>
                 <img src="/assets/check-mark-circle-icon.png" alt="" />
-                <span>
-                  {role === "super_admin" ? "Remove Access" : "Approved"}
-                </span>
+                <span>Approve</span>
+              </>
+            )}
+          </button>
+        </>
+      ) : (
+        <>
+          <span>{`${user?.username} requested for file ${file?.file_name}`}</span>
+          <span>{formatDate(created_at)}</span>
+          <span>{reason}</span>
+          <button
+            className={
+              permissionStatus ? "manage-access-green" : "manage-access-red"
+            }
+          >
+            {permissionStatus ? (
+              <>
+                <img src="/assets/check-mark-circle-icon.png" alt="" />
+                <span>Approved</span>
               </>
             ) : (
               <>
                 <img src="/assets/cancel-circle-icon.png" alt="" />
-                <span>
-                  {role === "super_admin" ? "Approve" : "Not approved"}
-                </span>
+                <span>Not approved</span>
               </>
             )}
           </button>

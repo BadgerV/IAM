@@ -1,3 +1,4 @@
+import { formatDistanceToNow } from "date-fns";
 import moment from "moment";
 
 export const customStyles = {
@@ -145,18 +146,83 @@ export const reviseRole = (role: string) => {
   }
 };
 
-export function calculateTimePassed(timeString: string) {
-  // Parse the time string using Moment.js
-  const startTime = moment(timeString, "YYYY-MM-DD HH:mm:ss");
+// export function calculateTimePassed(timeString: string) {
+//   // Parse the time string using Moment.js
+//   const startTime = moment(timeString, "YYYY-MM-DD HH:mm:ss");
 
-  // Get the current time
-  const currentTime = moment();
+//   // Get the current time
+//   const currentTime = moment();
 
-  // Calculate the difference
-  const difference = moment.duration(currentTime.diff(startTime));
+//   // Calculate the difference
+//   const difference = moment.duration(currentTime.diff(startTime));
 
-  // Format the duration
-  const formattedTimePassed = moment.duration(difference).humanize();
+//   // Format the duration
+//   const formattedTimePassed = moment.duration(difference).humanize();
 
-  return formattedTimePassed;
-}
+//   return formattedTimePassed;
+// }
+
+export const calculateTimePassed = (dateString: string) => {
+  const date = new Date(dateString);
+  return formatDistanceToNow(date);
+};
+
+export const openInBrowser = (url: any, filename: any) => {
+  // Create a new anchor element dynamically
+  const anchor = document.createElement("a");
+  anchor.href = url;
+
+  // Set target as '_blank' to open in a new tab
+  anchor.target = "_blank";
+
+  // Optionally, use download attribute if filename is provided
+  // This part is usually not needed if you just want to open the file
+  if (filename) {
+    anchor.download = filename;
+  }
+
+  // Append the anchor to the body, click it, and then remove it
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+};
+
+export const downloadFileFromUrl = async (url: string, filename: string) => {
+  try {
+    // Fetch the file from the provided URL
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch file: ${response.statusText}`);
+    }
+
+    // Convert the response data to a Blob
+    const blob = await response.blob();
+
+    // Create a temporary anchor element and trigger download
+    const a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style.display = "none";
+
+    // Create a URL for the Blob and set up the anchor attributes
+    const blobUrl = window.URL.createObjectURL(blob);
+    a.href = blobUrl;
+    a.download = filename; // Set the filename for the download
+    a.click();
+
+    // Clean up by revoking the Blob URL and removing the anchor element
+    window.URL.revokeObjectURL(blobUrl);
+    document.body.removeChild(a);
+  } catch (error) {
+    console.error("Error downloading the file:", error);
+  }
+};
+
+//add logign login user to backend
+//add making access requests
+//uplaoded by folder
+//reove help and support
+//remove user image
+
+//undefined manage access rename file
+
+//set for backend managers can create fodlers and files

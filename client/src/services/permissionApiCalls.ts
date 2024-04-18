@@ -26,7 +26,14 @@ const createPermission = async (
 };
 
 const updatePermission = async (
-  { user_id, can_read, can_write, can_delete }: PermissionDetails,
+  {
+    user_id,
+    can_read,
+    can_write,
+    can_delete,
+    is_active,
+    role,
+  }: PermissionDetails,
   token: string
 ) => {
   const response = await axios.put(
@@ -35,6 +42,8 @@ const updatePermission = async (
       can_read,
       can_write,
       can_delete,
+      is_active,
+      role,
     },
     {
       headers: {

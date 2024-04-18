@@ -85,6 +85,8 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+
+  min-height: 30rem;
 }
 
 .overview-dashboard-bottom-right {
@@ -107,6 +109,16 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+
+  height: 30rem;
+}
+
+.loading-div {
+  height: 10rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media screen and (max-width: 840px) {

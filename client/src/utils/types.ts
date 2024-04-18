@@ -71,8 +71,8 @@ export interface ManageAccessFileType {
   file_id: number;
   status: boolean;
   created_at: string;
-  reason : string;
-  id : number;
+  reason: string;
+  id: number;
 }
 
 type Role = "admin" | "manager" | "employee";
@@ -145,6 +145,7 @@ export interface FileData {
   file?: File | null;
 
   access_type?: string;
+  can_access: boolean;
 }
 
 export interface FileInitialState {
@@ -185,4 +186,6 @@ export interface PermissionDetails {
   can_read: boolean;
   can_write: boolean;
   can_delete: boolean;
+  is_active: boolean;
+  role: string;
 }

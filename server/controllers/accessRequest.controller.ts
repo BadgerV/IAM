@@ -3,10 +3,11 @@ import { AccessRequest } from "../models/AccessRequest";
 import {
   createAccessRequest,
   getAccessRequestById,
-  getAccessRequestByUserId,
   getAccessRequests,
   updateAccessRequest,
   deleteAccessRequestById,
+  getAccessRequestByUserFileId,
+  getAccessRequestByUserId,
 } from "../services/accessRequest.service";
 
 // Controller function to create an access re8quest
@@ -61,12 +62,15 @@ const getAccessRequestByIdController = async (req: Request, res: Response) => {
 };
 
 // Controller function to get access request by ID
-const getAccessRequestByUserIdController = async (req: Request, res: Response) => {
+const getAccessRequestByUserIdController = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const userId: number = Number(req.user_id);
 
     // Call the service function to get access request by ID
-    const accessRequest = await getAccessRequestById(userId);
+    const accessRequest = await getAccessRequestByUserId(userId);
 
     if (!accessRequest) {
       return res.status(404).json({ message: "Access request not found" });
@@ -78,7 +82,6 @@ const getAccessRequestByUserIdController = async (req: Request, res: Response) =
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 // Controller function to get access request by ID
 const getAccessRequestsController = async (req: Request, res: Response) => {

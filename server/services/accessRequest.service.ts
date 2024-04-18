@@ -1,8 +1,10 @@
-import { Pool } from 'pg';
-import { AccessRequest } from '../models/AccessRequest';
-import pool from '../db/connect';
+import { Pool } from "pg";
+import { AccessRequest } from "../models/AccessRequest";
+import pool from "../db/connect";
 
-const createAccessRequest = async (accessRequest: AccessRequest): Promise<void> => {
+const createAccessRequest = async (
+  accessRequest: AccessRequest
+): Promise<void> => {
   const client = await pool.connect();
   try {
     const query = `
@@ -21,42 +23,49 @@ const createAccessRequest = async (accessRequest: AccessRequest): Promise<void> 
   }
 };
 
-const getAccessRequestById = async (id: number): Promise<AccessRequest | undefined> => {
+const getAccessRequestById = async (
+  id: number
+): Promise<AccessRequest | undefined> => {
   const client = await pool.connect();
   try {
-    const query = 'SELECT * FROM access_request WHERE id = $1';
+    const query = "SELECT * FROM access_request WHERE id = $1";
     const { rows } = await client.query(query, [id]);
     return rows[0];
   } finally {
     client.release();
   }
 };
-const getAccessRequestByUserFileId = async (user_id: number, file_id:number): Promise<AccessRequest | undefined> => {
+const getAccessRequestByUserFileId = async (
+  user_id: number,
+  file_id: number
+): Promise<AccessRequest | undefined> => {
   const client = await pool.connect();
   try {
-    const query = 'SELECT * FROM access_request WHERE user_id = $1 AND file_id = $2';
+    const query =
+      "SELECT * FROM access_request WHERE user_id = $1 AND file_id = $2";
     const { rows } = await client.query(query, [user_id, file_id]);
     return rows[0];
   } finally {
     client.release();
   }
 };
-const getAccessRequestByUserId = async (user_id: number, file_id:number): Promise<AccessRequest | undefined> => {
+const getAccessRequestByUserId = async (
+  user_id: number
+): Promise<AccessRequest[] | undefined> => {
   const client = await pool.connect();
   try {
-    const query = 'SELECT * FROM access_request WHERE user_id = $1';
+    const query = "SELECT * FROM access_request WHERE user_id = $1";
     const { rows } = await client.query(query, [user_id]);
-    return rows[0];
+    return rows;
   } finally {
     client.release();
   }
 };
 
-
 const getAccessRequests = async (): Promise<AccessRequest[] | undefined> => {
   const client = await pool.connect();
   try {
-    const query = 'SELECT * FROM access_request';
+    const query = "SELECT * FROM access_request";
     const { rows } = await client.query(query);
     return rows;
   } finally {
@@ -64,8 +73,10 @@ const getAccessRequests = async (): Promise<AccessRequest[] | undefined> => {
   }
 };
 
-
-const updateAccessRequest = async (id: number, accessRequest: AccessRequest): Promise<void> => {
+const updateAccessRequest = async (
+  id: number,
+  accessRequest: AccessRequest
+): Promise<void> => {
   const client = await pool.connect();
   try {
     const query = `
@@ -89,11 +100,19 @@ const updateAccessRequest = async (id: number, accessRequest: AccessRequest): Pr
 const deleteAccessRequestById = async (id: number): Promise<void> => {
   const client = await pool.connect();
   try {
-    const query = 'DELETE FROM access_request WHERE id = $1';
+    const query = "DELETE FROM access_request WHERE id = $1";
     await client.query(query, [id]);
   } finally {
     client.release();
   }
 };
 
-export { createAccessRequest, getAccessRequestById, getAccessRequestByUserId, getAccessRequestByUserFileId, getAccessRequests, updateAccessRequest, deleteAccessRequestById };
+export {
+  createAccessRequest,
+  getAccessRequestById,
+  getAccessRequestByUserId,
+  getAccessRequestByUserFileId,
+  getAccessRequests,
+  updateAccessRequest,
+  deleteAccessRequestById,
+};

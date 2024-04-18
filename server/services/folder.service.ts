@@ -1,6 +1,6 @@
-import { Pool } from 'pg';
-import { Folder } from '../models/Folder';
-import pool from '../db/connect';
+import { Pool } from "pg";
+import { Folder } from "../models/Folder";
+import pool from "../db/connect";
 
 const createFolder = async (folder: Folder): Promise<void> => {
   const client = await pool.connect();
@@ -9,10 +9,7 @@ const createFolder = async (folder: Folder): Promise<void> => {
       INSERT INTO folders (name, description)
       VALUES ($1, $2)
     `;
-    const values: any[] = [
-      folder.name,
-      folder.description,
-    ];
+    const values: any[] = [folder.name, folder.description];
     await client.query(query, values);
   } finally {
     client.release();
@@ -24,17 +21,26 @@ const getFolderById = async (id: number) => {
   try {
     const query = `
       SELECT 
-        folders.id as folder_id,
-        folders.name,
-        json_agg(files.*) as files
-      FROM 
-        folders
-      LEFT JOIN 
-        files ON folders.id = files.folder_id
-      WHERE 
-        folders.id = $1
-      GROUP BY
-        folders.id;
+  folders.id as folder_id,
+  folders.name,
+  json_agg(json_build_object(
+    'file_id', files.id, 
+    'file_name', files.file_name, 
+    'user_id', files.user_id,
+    'owner_username', users.username,
+    'file_size', files.file_size
+  )) as files
+FROM 
+  folders
+LEFT JOIN 
+  files ON folders.id = files.folder_id
+LEFT JOIN
+  users ON files.user_id = users.id
+WHERE 
+  folders.id = $1
+GROUP BY
+  folders.id;
+
     `;
     const { rows } = await client.query(query, [id]);
 
@@ -47,7 +53,7 @@ const getFolderById = async (id: number) => {
     const folder = {
       id: folderData.folder_id,
       name: folderData.name,
-      files: folderData.files || [] // If there are no files, set it to an empty array
+      files: folderData.files || [], // If there are no files, set it to an empty array
     };
 
     return folder;
@@ -56,22 +62,29 @@ const getFolderById = async (id: number) => {
   }
 };
 
-
 const getFolders = async () => {
   const client = await pool.connect();
   try {
     const query = `
-      SELECT 
-        folders.id as folder_id,
-        folders.name,
-        json_agg(files.*) as files
-      FROM 
-        folders
-      LEFT JOIN 
-        files ON folders.id = files.folder_id
-      GROUP BY
-        folders.id;
+     SELECT 
+  folders.id as folder_id,
+  folders.name,
+  json_agg(json_build_object(
+    'file_id', files.id, 
+    'file_name', files.file_name, 
+    'owner_username', users.username,
+    'file_size', files.file_size
+  )) as files
+FROM 
+  folders
+LEFT JOIN 
+  files ON folders.id = files.folder_id
+LEFT JOIN
+  users ON files.user_id = users.id
+GROUP BY
+  folders.id;
     `;
+
     const { rows } = await client.query(query);
 
     // Map the result rows to Folder objects
@@ -79,7 +92,7 @@ const getFolders = async () => {
       return {
         id: row.folder_id,
         name: row.name,
-        files: row.files || [] // If there are no files, set it to an empty array
+        files: row.files || [], // If there are no files, set it to an empty array
       };
     });
 
@@ -89,7 +102,6 @@ const getFolders = async () => {
   }
 };
 
-
 const updateFolder = async (id: number, folder: Folder): Promise<void> => {
   const client = await pool.connect();
   try {
@@ -98,11 +110,7 @@ const updateFolder = async (id: number, folder: Folder): Promise<void> => {
       SET name = $1, description = $2
       WHERE id = $3
     `;
-    const values: any[] = [
-      folder.name,
-      folder.description,
-      id,
-    ];
+    const values: any[] = [folder.name, folder.description, id];
     await client.query(query, values);
   } finally {
     client.release();
@@ -112,11 +120,17 @@ const updateFolder = async (id: number, folder: Folder): Promise<void> => {
 const deleteFolderById = async (id: number): Promise<void> => {
   const client = await pool.connect();
   try {
-    const query = 'DELETE FROM folders WHERE id = $1';
+    const query = "DELETE FROM folders WHERE id = $1";
     await client.query(query, [id]);
   } finally {
     client.release();
   }
 };
 
-export { createFolder, getFolderById, getFolders, updateFolder, deleteFolderById };
+export {
+  createFolder,
+  getFolderById,
+  getFolders,
+  updateFolder,
+  deleteFolderById,
+};

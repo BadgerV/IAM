@@ -14,12 +14,6 @@ import { AppDispatch, RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { removeUserToBeEdited } from "../../redux/slices/authSlice";
 
-// const options: Options[] = [
-//   { value: "option1", label: "Option 1" },
-//   { value: "option2", label: "Option 2" },
-//   { value: "option3", label: "Option 3" },
-// ];
-
 const PermissionsDashboard = () => {
   const [selectedCategory, setSelectedCategory] = useState(1);
 
@@ -149,12 +143,6 @@ const PermissionsDashboard = () => {
             />
           </div>
 
-          {/* <Select
-            styles={customStylesPermissions}
-            options={options}
-            placeholder="Select"
-          /> */}
-
           {userRole === "super_admin" && (
             <Link to="/add-user" className="permissions-add-new-button">
               <span>Add new user</span>
@@ -191,7 +179,9 @@ const PermissionsDashboard = () => {
               return <PermissionFile data={file} key={index} />;
             })
           ) : userLoadingState ? (
-            <>Loading . . . </>
+            <div className="loading-div">
+              <div className="spinner"></div>
+            </div>
           ) : selectedCategory === 1 ? (
             users.map((file: PermissionsDataType, index) => (
               <PermissionFile data={file} key={index} />

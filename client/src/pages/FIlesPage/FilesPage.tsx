@@ -11,6 +11,8 @@ import folderApiCalls from "../../services/folderApiCalls";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
 
+//FIMME - ADD THE ADMIN FROM BACKEND
+
 const FilesPage = () => {
   const { id } = useParams();
   // Loading state
@@ -52,35 +54,37 @@ const FilesPage = () => {
 
   return (
     <div className="file-page-container">
-      {loadingState ? (
-        <div>Loading . . .</div>
-      ) : (
-        <div className="file-page">
-          <Link className="file-upload-upper" to="../">
-            <img src="/assets/arrow-left.png" alt="Back" />
-            <span>Back to overview</span>
-          </Link>
+      <div className="file-page">
+        <Link className="file-upload-upper" to="../">
+          <img src="/assets/arrow-left.png" alt="Back" />
+          <span>Back to overview</span>
+        </Link>
 
-          <span className="file-page-text">
-            Files from "<strong>{folderName}</strong>" folder
-          </span>
+        <span className="file-page-text">
+          Files from "<strong>{folderName}</strong>" folder
+        </span>
 
-          <div className="file-page-bottom">
-            <div className="file-page-table-header">
-              <span>File name</span>
-              <span>Uploaded By</span>
-              <span>Size</span>
-              <span>Last Modified</span>
+        <div className="file-page-bottom">
+          <div className="file-page-table-header">
+            <span>File name</span>
+            <span>Uploaded By</span>
+            <span>Size</span>
+            <span>Last Modified</span>
+          </div>
+
+          {loadingState ? (
+            <div className="loading-div">
+              <div className="spinner"></div>
             </div>
-
+          ) : (
             <div className="file-page-table-content">
               {fetchedFolderFiles?.map((file: FileData, index: number) => (
                 <File file={file} key={index} onDelete={handleFileDelete} />
               ))}
             </div>
-          </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

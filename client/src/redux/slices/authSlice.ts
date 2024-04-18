@@ -55,6 +55,9 @@ export const authSlice: any = createSlice({
     removeUserToBeEdited: (state) => {
       state.userPermissionToBeEdited = null;
     },
+    logout: (state) => {
+      state.user = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -69,6 +72,6 @@ export const authSlice: any = createSlice({
   },
 });
 
-export const { setUserToBeEdited, removeUserToBeEdited } = authSlice.actions;
+export const { setUserToBeEdited, removeUserToBeEdited, logout } = authSlice.actions;
 
 export default authSlice.reducer;

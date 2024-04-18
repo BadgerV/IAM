@@ -100,7 +100,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       token,
       role,
       is_active,
+      id: user.id,
     });
+    
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
