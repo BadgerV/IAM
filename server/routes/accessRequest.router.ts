@@ -12,7 +12,7 @@ const accessRequestRouter = express.Router();
 
 // Routes for access requests
 accessRequestRouter.post('/', authMiddleware, createAccessRequestController);
-accessRequestRouter.get('/', getAccessRequestsController);
+accessRequestRouter.get('/', authMiddleware, getAccessRequestsController);
 accessRequestRouter.get('/:id', authMiddleware, getAccessRequestByIdController);
 accessRequestRouter.put('/:id', requireSuperAdmin, updateAccessRequestController);
 accessRequestRouter.delete('/:id', requireSuperAdmin, deleteAccessRequestByIdController);

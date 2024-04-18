@@ -8,6 +8,7 @@ import {
   updateFolder,
   deleteFolderById,
 } from '../services/folder.service';
+import { getAccessRequestByUserFileId } from '../services/accessRequest.service';
 
 // Controller function to create a new folder
 const createFolderController = async (req: Request, res: Response) => {
@@ -38,20 +39,45 @@ const createFolderController = async (req: Request, res: Response) => {
 
 // Controller function to get a folder by ID
 const getFoldersController = async (req: Request, res: Response) => {
-    try {
-      // Call the service function to get the folder by ID
-      const folders = await getFolders();
-  
-      if (!folders) {
-        return res.status(404).json({ message: 'Folders not found' });
-      }
-  
-      res.status(200).json(folders);
-    } catch (error) {
-      console.error('Error fetching folders:', error);
-      res.status(500).json({ message: 'Internal server error' });
+  try {
+    // Call the service function to get the folders
+    const folders = await getFolders();
+    const user_id = Number(req.user_id);
+
+    if (!folders) {
+      return res.status(404).json({ message: 'Folders not found' });
     }
-  };
+
+    // Iterate through each folder
+    for (const folder of folders) {
+      // Iterate through each file in the folder
+      for (const file of folder.files) {
+        // Check if access_type is 'org_wide'
+        if (file.access_type === 'org_wide') {
+          // Set can_access to true
+          file.can_access = true;
+        } else {
+          const access_request = await getAccessRequestByUserFileId(user_id, file.id);
+          let can_access = false;
+
+          // Check if access request exists and if it's approved
+          if (access_request && access_request.status === true) {
+            can_access = true;
+          }
+
+          // Set can_access for the file
+          file.can_access = can_access;
+        }
+      }
+    }
+
+    res.status(200).json(folders);
+  } catch (error) {
+    console.error('Error fetching folders:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 
 // Controller function to get a folder by ID
 const getFolderController = async (req: Request, res: Response) => {
