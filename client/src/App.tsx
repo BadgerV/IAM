@@ -23,6 +23,7 @@ import AddUserPage from "./pages/AddUserPage/AddUserPage";
 import SuperAdminOnly from "./HOCs/SuperAdminOnly";
 import ManagerOrAdminOnly from "./HOCs/ManagerOrAdminOnly";
 import RequestAccessPage from "./pages/RequestAccessPage/RequestAccessPage";
+import VerificationPage from "./pages/VerificationPage/VerificationPage";
 
 const App = () => {
   //secure routes usingg HOCs
@@ -75,6 +76,7 @@ const App = () => {
           element={<SecureEditPermissions />}
         />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/verify" element={<VerificationPage />} />
         <Route path="*" element={<SecureNotFoundPage />} />
       </Routes>
     </>

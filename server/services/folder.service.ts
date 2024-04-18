@@ -40,7 +40,6 @@ WHERE
   folders.id = $1
 GROUP BY
   folders.id;
-
     `;
     const { rows } = await client.query(query, [id]);
 

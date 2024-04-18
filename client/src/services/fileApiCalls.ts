@@ -8,6 +8,7 @@ const createFileCall = async (
   { file_name, file_size, folder_id, description, file, permission_type }: any,
   token: string
 ) => {
+  console.log("woeeking in the api service");
   const formData = new FormData();
   formData.append("file", file);
   formData.append("file_name", file_name);
