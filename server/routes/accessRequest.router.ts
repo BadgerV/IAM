@@ -3,6 +3,7 @@ import {
   createAccessRequestController,
   getAccessRequestByIdController,
   getAccessRequestsController,
+  getAccessRequestByUserIdController,
   updateAccessRequestController,
   deleteAccessRequestByIdController,
 } from '../controllers/accessRequest.controller';
@@ -14,6 +15,7 @@ const accessRequestRouter = express.Router();
 accessRequestRouter.post('/', authMiddleware, createAccessRequestController);
 accessRequestRouter.get('/', authMiddleware, getAccessRequestsController);
 accessRequestRouter.get('/:id', authMiddleware, getAccessRequestByIdController);
+accessRequestRouter.get('user/:id', authMiddleware, getAccessRequestByUserIdController);
 accessRequestRouter.put('/:id', requireSuperAdmin, updateAccessRequestController);
 accessRequestRouter.delete('/:id', requireSuperAdmin, deleteAccessRequestByIdController);
 
