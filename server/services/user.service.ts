@@ -14,8 +14,6 @@ const createUser = async (user: User): Promise<void> => {
       user.username,
       user.email,
       user.password,
-      user.role,
-      user.is_active,
       user.is_admin,
     ];
      await client.query(query, values);
@@ -55,8 +53,6 @@ const getUsers = async (): Promise<User[] | undefined> => {
         users.id,
         users.username,
         users.email,
-        users.role,
-        users.is_active,
         users.is_admin,
         permissions.* 
       FROM 

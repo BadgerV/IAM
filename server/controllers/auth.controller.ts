@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import { User } from "../models/User";
 import { Permission } from "../models/Permission";
 import { createUser, getUserByEmail, getUsers } from "../services/user.service";
-import { createPermission } from "../services/permission.service";
+import { createPermission, getPermissionByUserId } from "../services/permission.service";
 import { defaultConfig } from "../config/config";
 import { createLog } from "../services/log.service";
 
@@ -14,7 +14,7 @@ const secretKey = defaultConfig.SECRET_KEY;
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { username, email, password, role, is_active, is_admin } = req.body;
+    const { username, email, password, role } = req.body;
     if (!username || !email || !password || !role) {
       res
         .status(400)
@@ -27,9 +27,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       username,
       email,
       password: hashedPassword,
-      role,
-      is_active,
-      is_admin,
+      is_admin:false,
+   
     };
     await createUser(newUser);
 
@@ -39,8 +38,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       can_read: false,
       can_write: false,
       can_delete: false,
-    };
-    await createPermission(newPermission);
+      role,
+      is_active:true,
+
+    }
+    await createPermission(newPermission)
 
     await createLog({
       id: 1,
@@ -60,12 +62,10 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
     const user = await getUserByEmail(email);
+    const permission=await getPermissionByUserId(Number(user?.id));
 
-    const role = user?.role;
-    const is_active = user?.is_active;
-    // const can_read = user?.can_read;
-    // const can_write = user?.can_write;
-    // const can_delete = user?.can_delete;
+    const role = permission?.role;
+    const is_active = permission?.is_active;
 
     const username = user?.username;
     if (!user) {

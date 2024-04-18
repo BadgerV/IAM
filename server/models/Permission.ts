@@ -3,6 +3,8 @@ export interface Permission {
     can_read: boolean;
     can_write: boolean;
     can_delete: boolean;
+    role:string;
+    is_active:boolean;
   }
   
  
