@@ -38,7 +38,7 @@ const getAllFilesCall = async (token: string) => {
   return response;
 };
 
-const getFileCall = async (id: number, token: string) => {
+const getFileCall = async (id: any, token: string) => {
   const response = await axios.get(`${url}/file/${id}`, {
     headers: {
       authorization: `authorization ${token}`,

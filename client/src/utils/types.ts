@@ -143,6 +143,7 @@ export interface FileData {
   created_at: string;
   updated_at: string;
   file?: File | null;
+  file_id?: number;
 
   access_type?: string;
   can_access: boolean;

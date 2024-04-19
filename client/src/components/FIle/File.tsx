@@ -48,14 +48,18 @@ const File: React.FC<{ file: FileData; onDelete?: any }> = ({
   }, []);
 
   const handleDownload = async () => {
-    fileApiCalls.getFileCall(file.id, token).then((res) => {
+    const file_id = id || file.file_id;
+
+    fileApiCalls.getFileCall(file_id, token).then((res) => {
       console.log(res.data);
       downloadFileFromUrl(res.data.filePath, file_name);
     });
   };
 
   const handleOpenInAnotherTab = () => {
-    fileApiCalls.getFileCall(file.id, token).then((res) => {
+    const file_id = id || file.file_id;
+
+    fileApiCalls.getFileCall(file_id, token).then((res) => {
       console.log(res.data);
       openInBrowser(res.data.filePath, file_name);
     });
@@ -159,12 +163,15 @@ const File: React.FC<{ file: FileData; onDelete?: any }> = ({
               </span>
             </div>
 
-            {can_access && (
+            {(can_access ||
+              userRole === "super_admin" ||
+              userRole === "admin") && (
               <div onClick={handleOpenInAnotherTab}>
                 <img src="/assets/link-square.png" alt="" />
                 <span>Open in browser</span>
               </div>
             )}
+
             {/* <div>
               <img src="/assets/wifi-disconnected.png" alt="" />
               <span>Make available offline</span>
