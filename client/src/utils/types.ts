@@ -12,9 +12,9 @@ export interface User {
 export interface AuthInitialState {
   user: User | null;
   loginError: any;
-
   //other
   userPermissionToBeEdited: any;
+  hasToVerify: boolean;
 }
 
 export interface CategoryInitialState {

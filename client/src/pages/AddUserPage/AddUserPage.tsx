@@ -17,6 +17,10 @@ const options = [
   { value: "admin", label: "Administrator" },
   { value: "manager", label: "Manager" },
   { value: "employee", label: "Employee" },
+  { value: "cyber_security_analyst", label: "CyberSecurity Analyst" },
+  { value: "customer_service", label: "Customer Service" },
+  { value: "chief_finance_officer", label: "Chief Finance Officer" },
+  { value: "business_administrator", label: "Business Administrator" },
   // { value: "sha256", label: "sha256" },
 ];
 

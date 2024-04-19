@@ -141,6 +141,14 @@ export const reviseRole = (role: string) => {
     return "Manager";
   } else if (role === "admin") {
     return "Admin";
+  } else if (role === "cyber_security_analyst") {
+    return "CyberSecurity Analyst";
+  } else if (role === "customer_service") {
+    return "Customer Service";
+  } else if (role === "chief_finance_officer") {
+    return "Chief Finance Officer";
+  } else if (role === "business_administrator") {
+    return "Business Administrator";
   } else {
     return "Employee";
   }

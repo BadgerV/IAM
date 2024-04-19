@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { Data, FileData } from "../../utils/types";
 
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store";
 
 //import from react-toastify
 import { toast } from "react-toastify";
@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
 
 import fileApiCalls from "../../services/fileApiCalls";
 import folderApiCalls from "../../services/folderApiCalls";
+import { removeHasToVerify } from "../../redux/slices/authSlice";
 
 const Dashboard = () => {
   //loading states
@@ -113,6 +114,12 @@ const Dashboard = () => {
       handleSearch(searchQuery, files);
     }
   }, [searchQuery]);
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(removeHasToVerify());
+  }, []);
 
   return (
     <div className="dashboard">

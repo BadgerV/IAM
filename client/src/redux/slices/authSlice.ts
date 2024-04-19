@@ -13,6 +13,7 @@ const initialState: AuthInitialState = {
   user: null,
   loginError: null,
   userPermissionToBeEdited: null,
+  hasToVerify: false,
 };
 
 export const LoginUser = createAsyncThunk(
@@ -58,6 +59,12 @@ export const authSlice: any = createSlice({
     logout: (state) => {
       state.user = null;
     },
+    setUserHasToVerify: (state) => {
+      state.hasToVerify = true;
+    },
+    removeHasToVerify: (state) => {
+      state.hasToVerify = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -72,6 +79,12 @@ export const authSlice: any = createSlice({
   },
 });
 
-export const { setUserToBeEdited, removeUserToBeEdited, logout } = authSlice.actions;
+export const {
+  setUserToBeEdited,
+  removeUserToBeEdited,
+  logout,
+  setUserHasToVerify,
+  removeHasToVerify,
+} = authSlice.actions;
 
 export default authSlice.reducer;
