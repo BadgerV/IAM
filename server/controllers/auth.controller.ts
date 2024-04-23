@@ -9,13 +9,18 @@ import {
   getUserByEmail,
   getUserById,
   getUsers,
+  sendEmailVerification,
+  verifyEmailVerification
 } from "../services/user.service";
 import {
   createPermission,
   getPermissionByUserId,
 } from "../services/permission.service";
-import { defaultConfig } from "../config/config";
+import { defaultConfig, verificationConfig } from "../config/config";
 import { createLog } from "../services/log.service";
+import { v4 } from "uuid";
+import nodemailer from 'nodemailer';
+
 
 const saltRounds = 10;
 const secretKey = defaultConfig.SECRET_KEY;
@@ -88,26 +93,68 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
     const token = jwt.sign({ userId: user.id }, secretKey);
 
-    await createLog({
-      id: 1,
-      user_id: Number(user.id),
-      action_taken: "Logged In",
-      file_id: null,
+    const verificationCode = v4().substring(0, 5);
+    let code = await sendEmailVerification(verificationCode, email);
+
+
+    // send a messsage
+    const transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: verificationConfig?.username,
+        pass: verificationConfig?.password
+      }
     });
 
-    res.json({
-      username,
-      token,
-      role,
-      is_active,
-      id: user.id,
-    });
-    
+    // construct the email
+    let sender = 'noreply@gmail.com'
+    const mailOptions = {
+      from: sender,
+      to: email,
+      subject: "Verify your Staff Account to be secure.",
+      html: `Here is your verification code - ${token}`
+    }
+    transport.sendMail(mailOptions, async (err, resp) => {
+      if (err) {
+        console.log(err)
+        return res.status(200).json({
+          message: 'Error sending message'
+        }
+        );
+      } else {
+        await createLog({
+          id: 1,
+          user_id: Number(user.id),
+          action_taken: "Logged In",
+          file_id: null,
+        });
+        return res.json({
+          username,
+          token,
+          email,
+          role,
+          is_active,
+          id: user.id,
+        });
+      }
+    }
+    )
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const verifyEmail = async (req: Request , res: Response) => {
+  const { code } = req.body;
+  const user = await verifyEmailVerification(code);
+  if (!user) {
+    return res.status(401).json({ message: "Invalid token", data : null});
+  } else {
+    return res.status(200).json({ message: "Email Verified", data : code });
+  }
+}
 
 // Controller function to get a folder by ID
 export const getUsersController = async (req: Request, res: Response) => {

@@ -17,6 +17,34 @@ const createUser = async (user: User): Promise<void> => {
   }
 };
 
+const sendEmailVerification = async (token : string, email: string) => {
+  const client = await pool.connect();
+  try {
+     const query = "UPDATE users SET verification_code = $1 WHERE email = $2 RETURNING *";
+      const values = [token, email];
+      await client.query(query, values);
+  } catch (error) {
+    console.error(error);
+  }
+  finally {
+    client.release();
+  }
+}
+
+const verifyEmailVerification = async (token : string) => {
+  const client = await pool.connect();
+  try {
+    const query = "SELECT * FROM users WHERE verification_code = $1";
+    const { rows } = await client.query(query, [token]);
+    return rows[0];
+  } catch (error) {
+    console.error(error);
+  }
+  finally {
+    client.release();
+  }
+}
+
 const getUserByEmail = async (email: string): Promise<User | undefined> => {
   const client = await pool.connect();
   try {
@@ -68,4 +96,4 @@ const getUsers = async (): Promise<User[] | undefined> => {
   }
 };
 
-export { createUser, getUserByEmail, getUsers, getUserById };
+export { createUser, getUserByEmail, getUsers, getUserById, sendEmailVerification, verifyEmailVerification};
