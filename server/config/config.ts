@@ -5,7 +5,7 @@ const envPath=path.resolve(__dirname, '../.env');
 dotenv.config({ path: envPath});
 
 // import relevant types
-import { defaultConfigTypes, AWSConfigTypes, DBConfigTypes, FirebaseConfigTypes } from "../types/config.types";
+import { defaultConfigTypes, AWSConfigTypes, DBConfigTypes, FirebaseConfigTypes, verificationTypes } from "../types/config.types";
 
 export const isProd: boolean = process.env.ENGINE_ENV === "production";
 export const isDevelopment: boolean = process.env.ENGINE_ENV === "development";
@@ -66,4 +66,10 @@ export const DBConfig: DBConfigTypes={
 }
 export const FirebaseConfig: FirebaseConfigTypes = {
   FIREBASE_STORAGE_BUCKET:process.env.FIREBASE_STORAGE_BUCKET? String(process.env.FIREBASE_STORAGE_BUCKET): "",
+}
+
+export const verificationConfig : verificationTypes = {
+  VERIFICATION_CODE_LENGTH : 4,
+  username : (process.env.mailuser),
+  password : (process.env.mailpass)
 }

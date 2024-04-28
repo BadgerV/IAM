@@ -36,6 +36,16 @@ const signupApiCall = async (
   return response;
 };
 
+
+const verifyUser = async (code: string) => {
+  const response = await axios.post(
+    `${url}/auth/verify`,
+    {
+      code
+    });
+
+  return response;
+}
 const loginApiCall = async ({ email, password }: LoginCredentials) => {
   const response = await axios.post(`${url}/auth/signin`, {
     email,
@@ -62,4 +72,5 @@ export default {
   loginApiCall,
   getUsersCall,
   getUserCall,
+  verifyUser,
 };
