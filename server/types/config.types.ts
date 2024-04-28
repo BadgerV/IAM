@@ -22,7 +22,7 @@ export interface FirebaseConfigTypes {
 }
 
 export interface verificationTypes {
-    VERIFICATION_CODE_LENGTH: number,
-    username?: string,
-    password?: string
+    VERIFICATION_CODE_LENGTH: number;
+    username?: string;
+    password?: string;
 }

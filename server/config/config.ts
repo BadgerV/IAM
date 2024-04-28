@@ -70,6 +70,6 @@ export const FirebaseConfig: FirebaseConfigTypes = {
 
 export const verificationConfig : verificationTypes = {
   VERIFICATION_CODE_LENGTH : 4,
-  username : (process.env.mailuser)?.toString(),
-  password : (process.env.mailpass)?.toString
+  username : (process.env.mailuser),
+  password : (process.env.mailpass)
 }
