@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Folder from "../Folder/Folder";
 import "./overviewDashboard.css";
 import OverviewFile from "../OverviewFile/OverviewFile";
@@ -28,29 +28,6 @@ const OverviewDashboard = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
   const [folders, setFolders] = useState<any[]>([]);
-
-  const recentActivitiesData = [
-    {
-      image: "/assets/avatar-mini.png",
-      activityText: "Emily Radiance was made administrator",
-      timeAgo: "2 mins",
-    },
-    {
-      image: "/assets/avatar-mini.png",
-      activityText: "Emily Radiance was made administrator",
-      timeAgo: "2 mins",
-    },
-    {
-      image: "/assets/avatar-mini.png",
-      activityText: "Emily Radiance was made administrator",
-      timeAgo: "2 mins",
-    },
-    {
-      image: "/assets/avatar-mini.png",
-      activityText: "Emily Radiance was made administrator",
-      timeAgo: "2 mins",
-    },
-  ];
 
   const fetchUsers = async () => {
     try {
@@ -86,7 +63,7 @@ const OverviewDashboard = () => {
 
   const fetchFolders = async () => {
     try {
-      const res = await folderApiCalls.getFoldersCall();
+      const res = await folderApiCalls.getFoldersCall(token);
       const shortenedData = res.data.slice(0, 3); // Shorten the array to the first 3 elements
       setFolders(shortenedData);
       setFolderLoadingState(false);
@@ -123,7 +100,7 @@ const OverviewDashboard = () => {
     <div className="overview-dashboard">
       <div className="overview-dashboard-top">
         {folderLoadingState ? (
-          <>Loading . . . .</>
+          <div className="spinner"></div>
         ) : (
           folders.map((box, index) => {
             let fileSize = "0 Kb";
@@ -188,7 +165,9 @@ const OverviewDashboard = () => {
           </div>
           <div className="overview-dashboard-table-content">
             {userLoadingState ? (
-              <>Loading . . . .</>
+              <div className="loading-div">
+                <div className="spinner"></div>
+              </div>
             ) : selectedCategory === 1 ? (
               users.map((user: OverviewData, index) => (
                 <OverviewFile data={user} key={index} />
@@ -219,7 +198,9 @@ const OverviewDashboard = () => {
 
           <div className="recent-activities">
             {logLoadingState ? (
-              <>Loading . . . .</>
+              <div className="loading-div">
+                <div className="spinner"></div>
+              </div>
             ) : (
               logs
                 .slice()

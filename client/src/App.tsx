@@ -1,6 +1,6 @@
 import "./App.css";
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import Layout from "./layouts/Layout";
 import Home from "./pages/Home/Home";
@@ -23,6 +23,9 @@ import AddUserPage from "./pages/AddUserPage/AddUserPage";
 import SuperAdminOnly from "./HOCs/SuperAdminOnly";
 import ManagerOrAdminOnly from "./HOCs/ManagerOrAdminOnly";
 import RequestAccessPage from "./pages/RequestAccessPage/RequestAccessPage";
+import VerificationPage from "./pages/VerificationPage/VerificationPage";
+import { useSelector } from "react-redux";
+import { RootState } from "./redux/store";
 
 const App = () => {
   //secure routes usingg HOCs
@@ -38,6 +41,8 @@ const App = () => {
   const SecureAddFolderPage = ManagerOrAdminOnly(AddFolderPage);
   const SecureAddFilePage = ManagerOrAdminOnly(UploadFiles);
 
+  const hasToVerify = useSelector((state: RootState) => state.auth.hasToVerify);
+
   return (
     <>
       <ToastContainer />
@@ -48,10 +53,6 @@ const App = () => {
           <Route path="/overview" element={<Overview />} />
           <Route path="/manage-access/" element={<ManageAccess />} />
           <Route path="/file-upload" element={<SecureAddFilePage />} />
-
-          {/* category routes */}
-          {/* <Route path="/categories" element={<CategoryDashboard />} />
-          <Route path="/categories/create" element={<CreateCategoryPage />} /> */}
 
           {/* folder routes */}
           <Route path="/folder" element={<FolderPage />} />
@@ -75,6 +76,10 @@ const App = () => {
           element={<SecureEditPermissions />}
         />
         <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/verify"
+          element={hasToVerify ? <VerificationPage /> : <Navigate to="/" />}
+        />
         <Route path="*" element={<SecureNotFoundPage />} />
       </Routes>
     </>

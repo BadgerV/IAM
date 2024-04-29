@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { uploadToFirebase, fetchFileFromFirebase } from "./cloud/cloud";
 import fs from "fs";
 import axios from "axios";
+import path from "path";
 
 import { File } from "../models/File";
 import {
@@ -13,11 +14,17 @@ import {
 } from "../services/file.service";
 import { createLog } from "../services/log.service";
 import { defaultConfig } from "../config/config";
+<<<<<<< HEAD
 import path from "path";
 import { getAccessRequestByUserFileId } from "../services/accessRequest.service";
+=======
+import { getAccessRequestByUserFileId } from "../services/accessRequest.service";
+import { getUserById } from "../services/user.service";
+>>>>>>> d8c8dd04958ff7bfc3360b8b7c4d3c19d2eb48f8
 
 // Controller function to create a new file
 const createFileController = async (req: Request, res: Response) => {
+  console.log("it is working");
   try {
     const { file_name, file_size, folder_id, permission_type, description } =
       req.body;
@@ -43,8 +50,6 @@ const createFileController = async (req: Request, res: Response) => {
 
     const firebaseUrl = await uploadToFirebase(file.path, file_name);
     cloudUrl = firebaseUrl;
-
-    console.log(file_name);
 
     const newFile: File = {
       id: 1,
@@ -84,7 +89,9 @@ const getAllFilesController = async (
   res: Response
 ): Promise<void> => {
   try {
+    const user_id = Number(req.user_id);
     const files = await getAllFiles();
+<<<<<<< HEAD
     const user_id=Number(req.user_id)
 
         // Iterate through each file in the folder
@@ -108,6 +115,37 @@ const getAllFilesController = async (
             file.can_access = can_access;
           }
         }
+=======
+
+    const user = await getUserById(user_id);
+
+    for (const file of files as any) {
+      // Check if access_type is 'org_wide'
+      if (file.access_type === "org_wide") {
+        // Set can_access to true
+        file.can_access = true;
+      } else {
+        const access_request = await getAccessRequestByUserFileId(
+          user_id,
+          file.id
+        );
+
+        let can_access = false;
+
+        // Check if access request exists and if it's approved
+        if (access_request && access_request.status === true) {
+          can_access = true;
+        }
+
+        if (user?.is_admin) {
+          can_access = true;
+        }
+
+        // Set can_access for the file
+        file.can_access = can_access;
+      }
+    }
+>>>>>>> d8c8dd04958ff7bfc3360b8b7c4d3c19d2eb48f8
     res.status(200).json(files);
   } catch (error) {
     console.error("Error fetching all files:", error);
@@ -134,9 +172,10 @@ const getFileController = async (req: Request, res: Response) => {
 
     // Fetch the file from Firebase Storage
     const filePath = await fetchFileFromFirebase(file.file_name);
-    const serverFilePath = `http://localhost:8000/uploads/${path.basename(filePath)}`;
+    const serverFilePath = `http://localhost:8000/uploads/${path.basename(
+      filePath
+    )}`;
     res.json({ file, filePath: serverFilePath });
-    
   } catch (error) {
     console.error("Error fetching file:", error);
     res.status(500).json({ message: "Internal server error" });

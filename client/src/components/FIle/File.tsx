@@ -1,7 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import "./file.css";
 import { FileData } from "../../utils/types";
-import { formatDate } from "../../utils/helpers";
+import {
+  downloadFileFromUrl,
+  formatDate,
+  openInBrowser,
+} from "../../utils/helpers";
 import React from "react";
 
 import fileApiCalls from "../../services/fileApiCalls";
@@ -15,13 +19,13 @@ import { useNavigate } from "react-router-dom";
 
 const File: React.FC<{ file: FileData; onDelete?: any }> = ({
   file,
-
   onDelete,
 }) => {
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   const optionsRef = useRef<HTMLDivElement>(null);
+
   const token = useSelector((state: RootState) => state.auth.user.token);
   const userRole = useSelector((state: RootState) => state.auth.user.role);
   const dispatch = useDispatch<AppDispatch>();
@@ -44,8 +48,20 @@ const File: React.FC<{ file: FileData; onDelete?: any }> = ({
   }, []);
 
   const handleDownload = async () => {
-    fileApiCalls.getFileCall(file.id, token).then((res) => {
+    const file_id = id || file.file_id;
+
+    fileApiCalls.getFileCall(file_id, token).then((res) => {
       console.log(res.data);
+      downloadFileFromUrl(res.data.filePath, file_name);
+    });
+  };
+
+  const handleOpenInAnotherTab = () => {
+    const file_id = id || file.file_id;
+
+    fileApiCalls.getFileCall(file_id, token).then((res) => {
+      console.log(res.data);
+      openInBrowser(res.data.filePath, file_name);
     });
   };
 
@@ -83,8 +99,15 @@ const File: React.FC<{ file: FileData; onDelete?: any }> = ({
     return null; // Return null if file is undefined
   }
 
-  const { file_name, owner_username, file_size, updated_at, access_type, id } =
-    file;
+  const {
+    file_name,
+    owner_username,
+    file_size,
+    created_at,
+    access_type,
+    id,
+    can_access,
+  } = file;
 
   const handReqeustHandle = async () => {
     navigate(`/request-access/${id}`);
@@ -94,12 +117,11 @@ const File: React.FC<{ file: FileData; onDelete?: any }> = ({
     <div className="file">
       <div className="filename-container">
         <img src="/assets/file.png" alt="File" />
-        <span> {file_name} </span>
+        <span>{file_name}</span>
       </div>
 
       <div className="uploaded-by-cont">
         <div>
-          {/* <span className="file-name-text">{file_name}</span> */}
           <span className="file-email-text">{owner_username}</span>
         </div>
       </div>
@@ -108,7 +130,7 @@ const File: React.FC<{ file: FileData; onDelete?: any }> = ({
 
       <div className="last-modified-and-options">
         <span className="file-last-modified-text">
-          {formatDate(updated_at)}
+          {formatDate(created_at)}
         </span>
         <div className="file-options">
           <img
@@ -124,24 +146,32 @@ const File: React.FC<{ file: FileData; onDelete?: any }> = ({
           >
             <div
               onClick={
-                access_type === "request_only"
+                can_access
+                  ? handleDownload
+                  : access_type === "request_only"
                   ? handReqeustHandle
                   : handleDownload
               }
             >
               <img src="/assets/file-download.png" alt="" />
               <span>
-                {access_type === "request_only" ? "Request Access" : "Download"}
+                {can_access
+                  ? "Download"
+                  : access_type === "request_only"
+                  ? "Request Access"
+                  : "Download"}
               </span>
             </div>
-            <div>
-              <img src="/assets/file-edit.png" alt="" />
-              <span>Rename</span>
-            </div>
-            <div>
-              <img src="/assets/link-square.png" alt="" />
-              <span>Open in browser</span>
-            </div>
+
+            {(can_access ||
+              userRole === "super_admin" ||
+              userRole === "admin") && (
+              <div onClick={handleOpenInAnotherTab}>
+                <img src="/assets/link-square.png" alt="" />
+                <span>Open in browser</span>
+              </div>
+            )}
+
             {/* <div>
               <img src="/assets/wifi-disconnected.png" alt="" />
               <span>Make available offline</span>

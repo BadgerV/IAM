@@ -59,6 +59,7 @@ const UploadFiles = () => {
 
   useEffect(() => {
     getFolders().then((res: any) => {
+      console.log(res);
       setLoadingState(false);
 
       const updatedOptions = res.payload.map((item: any) => ({
@@ -87,16 +88,12 @@ const UploadFiles = () => {
     try {
       setLoadingButton(true);
       const res = await fileApiCalls.createFileCall(formData, token);
-      if (res.data.message === "File created Successfully") {
-        navigate("/");
-        setLoadingButton(false);
-        toast.success(res.data.message, {
-          position: "top-right",
-        });
-      } else {
-        setLoadingButton(false);
-        throw new Error("Something went wrong");
-      }
+
+      navigate("/");
+      setLoadingButton(false);
+      toast.success(res.data.message, {
+        position: "top-right",
+      });
     } catch (error) {
       console.error("Error:", error);
       setLoadingButton(false);
@@ -138,11 +135,6 @@ const UploadFiles = () => {
       permission_type: selectedOption.value,
     }));
   };
-
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
-
   return (
     <>
       {loadingState ? (

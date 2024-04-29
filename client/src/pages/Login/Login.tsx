@@ -6,7 +6,7 @@ import InputField from "../../components/inputField/inputField.tsx";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AppDispatch } from "../../redux/store.ts";
-import { LoginUser } from "../../redux/slices/authSlice.ts";
+import { LoginUser, setUserHasToVerify } from "../../redux/slices/authSlice.ts";
 
 //import from react-toastify
 import { toast } from "react-toastify";
@@ -40,10 +40,11 @@ const Login = () => {
     e.preventDefault();
     setLoadingState(true);
     const result: any = await dispatch(LoginUser(credentials));
-    
+
     if (result.type === "auth/login/fulfilled") {
       setLoadingState(false);
-      navigate("/");
+      dispatch(setUserHasToVerify(true));
+      navigate("/verify");
     } else {
       console.log(result.payload);
       setLoadingState(false);

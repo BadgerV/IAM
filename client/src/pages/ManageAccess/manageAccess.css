@@ -4,6 +4,10 @@
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
+
+  min-height: 15rem;
+  align-items: center;
+  justify-content: center;
 }
 
 .manage-access-top {

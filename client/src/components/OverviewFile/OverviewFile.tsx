@@ -24,7 +24,7 @@ const OverviewFile: React.FC<{ data: OverviewData }> = ({ data }) => {
           <span>{reviseRole(role)}</span>
         </div>
 
-        <img src="/assets/options-dark.png" alt="Options" />
+        {/* <img src="/assets/options-dark.png" alt="Options" /> */}
       </div>
     </div>
   );

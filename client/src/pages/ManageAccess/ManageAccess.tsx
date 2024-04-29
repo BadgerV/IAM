@@ -6,68 +6,53 @@ import { useSelector } from "react-redux";
 import requestAccessApiCalls from "../../services/requestAccessApiCalls";
 
 const ManageAccess = () => {
-  const [selectetdCategory, setSelectedCategory] = useState(1);
-
   const [requests, setRequests] = useState<any[]>([]);
   const [loadingState, setLoadingState] = useState<boolean>(true);
 
   const role = useSelector((state: RootState) => state.auth.user.role);
   const token = useSelector((state: RootState) => state.auth.user.token);
 
-  const [getrequestAgain, setGetRequestAgain] = useState(0);
+  // const [getrequestAgain, setGetRequestAgain] = useState(0);
+  const id = useSelector((state: RootState) => state.auth.user.id);
 
   const getAllRequests = async () => {
     setLoadingState(true);
-    const res = requestAccessApiCalls.getAllAccessRequests(token);
+    const res = await requestAccessApiCalls.getAllAccessRequests(token);
 
-    setRequests((await res).data);
+    setRequests(res.data);
 
     setLoadingState(false);
   };
 
-  useEffect(() => {
-    getAllRequests();
-  }, [getrequestAgain]);
+  const getRequestsById = async () => {
+    setLoadingState(true);
+
+    const res = await requestAccessApiCalls.getRequestAccessesByID(id, token);
+
+    setRequests(res.data);
+    setLoadingState(false);
+  };
+  // useEffect(() => {
+  //   getAllRequests();
+  // }, [getrequestAgain]);
 
   useEffect(() => {
     if (role === "super_admin" || role === "admin") {
       getAllRequests();
+    } else {
+      getRequestsById();
     }
   }, []);
 
   return (
     <div className="manage-access">
       {loadingState ? (
-        <>Loading . . . . </>
+        <div className="loading-div">
+          <div className="spinner"></div>
+        </div>
       ) : (
         <div className="manage-access-bottom">
           <span className="manage-access-bottom-title">Request History</span>
-          {/* <div className="manage-access-nav">
-          <span
-            className={
-              selectetdCategory === 1 ? "manage-access-nav-selected" : ""
-            }
-            onClick={() => setSelectedCategory(1)}
-          >
-            All
-          </span>
-          <span
-            className={
-              selectetdCategory === 2 ? "manage-access-nav-selected" : ""
-            }
-            onClick={() => setSelectedCategory(2)}
-          >
-            Files
-          </span>
-          <span
-            className={
-              selectetdCategory === 3 ? "manage-access-nav-selected" : ""
-            }
-            onClick={() => setSelectedCategory(3)}
-          >
-            Folders
-          </span>
-        </div> */}
 
           <div className="manage-access-table">
             <div className="manage-access-table-header">
@@ -82,7 +67,7 @@ const ManageAccess = () => {
                   <ManageAccessFile
                     {...data}
                     key={index}
-                    setGetRequestAgain={setGetRequestAgain}
+                    // setGetRequestAgain={setGetRequestAgain}
                     setLoading={setLoadingState}
                   />
                 );

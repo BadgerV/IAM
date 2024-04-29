@@ -1,15 +1,13 @@
 import Folder from "../Folder/Folder";
 import File from "../FIle/File";
-import Select from "react-select";
 
 import "./dashboard.css";
-import { ChangeEvent, useEffect, useState } from "react";
-import { Data, FileData, Options } from "../../utils/types";
-import { customStyles } from "../../utils/helpers";
+import { useEffect, useState } from "react";
+import { Data, FileData } from "../../utils/types";
 
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store";
 
 //import from react-toastify
 import { toast } from "react-toastify";
@@ -17,12 +15,7 @@ import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
 
 import fileApiCalls from "../../services/fileApiCalls";
 import folderApiCalls from "../../services/folderApiCalls";
-
-const options: Options[] = [
-  { value: "option1", label: "Option 1" },
-  { value: "option2", label: "Option 2" },
-  { value: "option3", label: "Option 3" },
-];
+import { removeHasToVerify } from "../../redux/slices/authSlice";
 
 const Dashboard = () => {
   //loading states
@@ -61,7 +54,7 @@ const Dashboard = () => {
 
   const getFolders = async () => {
     try {
-      const res = await folderApiCalls.getFoldersCall();
+      const res = await folderApiCalls.getFoldersCall(token);
       setFolders(res.data);
       setFolderLoadingState(false);
     } catch (error) {
@@ -78,10 +71,6 @@ const Dashboard = () => {
     getAllFiles();
     getFolders();
   }, []);
-
-  useEffect(() => {
-    console.log(files);
-  }, [files]);
 
   //correct the loading state
   useEffect(() => {
@@ -126,6 +115,12 @@ const Dashboard = () => {
     }
   }, [searchQuery]);
 
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(removeHasToVerify());
+  }, []);
+
   return (
     <div className="dashboard">
       <div className="dashboard-top">
@@ -163,7 +158,9 @@ const Dashboard = () => {
 
           <div className="dashboard-folders">
             {folderLoadingState ? (
-              <>Loading . . . . </>
+              <div className="loading-div">
+                <div className="spinner"></div>
+              </div>
             ) : (
               folders.map((box, index) => {
                 return <Folder {...box} key={index} />;
@@ -235,8 +232,10 @@ const Dashboard = () => {
           <span>Last Modified</span>
         </div>
 
-        {loadingState ? (
-          <>Loading . . .</>
+        {loadingState || folderLoadingState ? (
+          <div className="loading-div">
+            <div className="spinner"></div>
+          </div>
         ) : (
           <div className="dashboard-table-content">
             {searchQuery.length > 0 ? (

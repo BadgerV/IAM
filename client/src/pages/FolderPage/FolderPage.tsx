@@ -20,6 +20,7 @@ const FolderPage = () => {
   );
 
   useEffect(() => {
+    console.log(folders);
     if (folders) {
       setLoadingState(false);
     }
@@ -34,7 +35,9 @@ const FolderPage = () => {
   return (
     <div className="folder-page">
       {loadingState ? (
-        <div>Loading...</div>
+        <div className="loading-div">
+          <div className="spinner"></div>
+        </div>
       ) : (
         <div className="folder-page-folders">
           {folders?.map((folder: FolderType) => {

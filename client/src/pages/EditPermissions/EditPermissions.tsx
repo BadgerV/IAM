@@ -16,7 +16,7 @@ const EditPermissions = () => {
   const [assignedRole, setAssignedRole] = useState("manager");
 
   const [canRead, setCanRead] = useState(false);
-  const [canWrite, setCanWrite] = useState(false);
+  const [canWrite, setCanWrite] = useState(true);
   const [canDelete, setCanDelete] = useState(false);
   const [is_active, setIsActive] = useState(false);
 
@@ -32,15 +32,11 @@ const EditPermissions = () => {
     if (userToBeEdited) {
       setLoadingState(false);
       setCanRead(userToBeEdited.can_read);
-      setCanWrite(userToBeEdited.can_write);
+      setCanWrite(true);
       setCanDelete(userToBeEdited.can_delete);
-      setIsActive(userToBeEdited.is_active);
+      setIsActive(!userToBeEdited.is_active);
     }
   }, [userToBeEdited]);
-
-  useEffect(() => {
-    console.log(canRead, canWrite, canDelete);
-  }, [canRead, canWrite, canDelete]);
 
   const navigate = useNavigate();
 
@@ -72,6 +68,8 @@ const EditPermissions = () => {
       can_read: canRead,
       can_write: canWrite,
       can_delete: canDelete,
+      is_active: !is_active,
+      role: assignedRole,
     };
     return permissionApiCalls.updatePermission(data, token);
   };
@@ -174,20 +172,25 @@ const EditPermissions = () => {
                     "Makes user able to download and read files",
                   ]}
                 />
-                <EditPermissionFile
+                {/* <EditPermissionFile
                   state={canWrite}
                   setState={setCanWrite}
                   texts={["Can Read", "Makes user able to write files"]}
-                />
+                /> */}
                 <EditPermissionFile
                   state={canDelete}
                   setState={setCanDelete}
                   texts={["Can Delete", "Makes user able to delete files"]}
                 />
+                <EditPermissionFile
+                  state={is_active}
+                  setState={setIsActive}
+                  texts={["Disable User", "Disable this user"]}
+                />
               </div>
 
               <div className="edit-permissions-bottom">
-                <button onClick={handleEditPermission}>Save Chnages</button>
+                <button onClick={handleEditPermission}>Save Changes</button>
               </div>
             </div>
           </div>

@@ -1,16 +1,21 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { FolderInitialState } from "../../utils/types";
 import folderApiCalls from "../../services/folderApiCalls";
+import { RootState } from "../store";
 
 const initialState: FolderInitialState = {
   fetchedFolders: null,
 };
 
-export const GetFolders = createAsyncThunk("folder/get-folders", async () => {
-  const response = await folderApiCalls.getFoldersCall();
+export const GetFolders = createAsyncThunk(
+  "folder/get-folders",
+  async (_, { getState }) => {
+    const token = (getState() as RootState).auth.user.token;
+    const response = await folderApiCalls.getFoldersCall(token);
 
-  return response.data;
-});
+    return response.data;
+  }
+);
 
 export const CreateFolder = createAsyncThunk(
   "folder/create-folders",

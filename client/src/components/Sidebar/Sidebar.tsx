@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import "./sidebar.css";
 import { Link } from "react-router-dom";
-import { RootState } from "../../redux/store";
-import { useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../redux/slices/authSlice";
 
 const Sidebar = ({ setIsSidebarOpen }: any) => {
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
@@ -29,6 +30,12 @@ const Sidebar = ({ setIsSidebarOpen }: any) => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
   return (
     <div className="sidebar">
@@ -105,7 +112,7 @@ const Sidebar = ({ setIsSidebarOpen }: any) => {
         </ul>
 
         <div className="nav-bottom">
-          <ul className="navigation-bottom-links">
+          {/* <ul className="navigation-bottom-links">
             <span className="support-text">Support</span>
             <li>
               <img src="/assets/help-circle.svg" alt="Help" />
@@ -115,7 +122,7 @@ const Sidebar = ({ setIsSidebarOpen }: any) => {
               <img src="/assets/elements.svg" alt="Help" />
               <span>Settings</span>
             </li>
-          </ul>
+          </ul> */}
 
           <div className="avatar-cont">
             <div className="avatar-cont-left">
@@ -124,7 +131,11 @@ const Sidebar = ({ setIsSidebarOpen }: any) => {
             </div>
 
             <div className="avatar-cont-right">
-              <img src="/assets/arrow-down-icon.png" alt="Arrow down" />
+              <img
+                src="/assets/logout-03.png"
+                alt="Arrow down"
+                onClick={handleLogout}
+              />
             </div>
           </div>
         </div>
