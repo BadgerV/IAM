@@ -9,6 +9,7 @@ const Sidebar = ({ setIsSidebarOpen }: any) => {
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   const username = useSelector((state: RootState) => state.auth.user.username);
+  const role = useSelector((state: RootState) => state.auth.user.role);
 
   useEffect(() => {
     const handleResize = () => {
@@ -83,17 +84,20 @@ const Sidebar = ({ setIsSidebarOpen }: any) => {
               <span>Permissions</span>
             </li>
           </Link>
-
-          <Link
-            to="/manage-access/"
-            className="nav-link"
-            onClick={() => windowWidth <= 1130 && setIsSidebarOpen(false)}
-          >
-            <li>
-              <img src="/assets/user-icon.svg" alt="Dashboard" />
-              <span>Manage Access</span>
-            </li>
-          </Link>
+           {
+            role === "super_admin" && (
+              <Link
+              to="/manage-access/"
+              className="nav-link"
+              onClick={() => windowWidth <= 1130 && setIsSidebarOpen(false)}
+            >
+              <li>
+                <img src="/assets/user-icon.svg" alt="Dashboard" />
+                <span>Manage Access</span>
+              </li>
+            </Link>
+            )
+           }
           <Link
             to="/folder"
             className="nav-link"

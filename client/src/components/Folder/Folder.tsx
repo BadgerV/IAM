@@ -8,10 +8,16 @@ const Folder = (folder: FolderType) => {
   const { name, id, files, fileSize } = folder;
 
   let len;
+  console.log(files, "files")
+
 
   if (files && files.length > 0) {
     console.log(files);
-    len = countNonNullValues(files);
+    if(files[0].file_id === null){
+      len = 0;
+    } else {
+      len = countNonNullValues(files);
+    }
   }
 
   const folderRef = useRef(null);
@@ -30,7 +36,7 @@ const Folder = (folder: FolderType) => {
   };
 
   const navigate = useNavigate();
-
+  console.log(files, "file")
   return (
     <div
       className="folder"
@@ -54,7 +60,9 @@ const Folder = (folder: FolderType) => {
       <div className="folder-middle">{name}</div>
       <div className="folder-bottom">
         <span> {len} file(s)</span>
-        <span>{fileSize}</span>
+        { fileSize !== undefined &&
+          <span>{fileSize}</span>
+          }
       </div>
     </div>
   );

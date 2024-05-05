@@ -5,6 +5,7 @@ import fs from "fs";
 import * as path from "path";
 import Blowfish from 'blowfish-node';
 import * as crypto from 'crypto';
+// import CryptoJS from "crypto-js";
 import axios from "axios"
 
 
@@ -25,15 +26,16 @@ async function encryptFile(filePath: string, password: string) {
     // console.log('d', data.toString("base64"))
     
     const iv = crypto.randomBytes(8);
+    console.log(iv, "iv");
     const cipher = new Blowfish(password);
     cipher.setIv(iv)
 
     const encryptedData = cipher.encode(data.toString("base64"));
     // console.log('e', encryptedData)
-    const decryptedData= cipher.decode(encryptedData)
+    // const decryptedData= cipher.decode(encryptedData)
     // console.log('d', decryptedData)
 
-     const encryptedString=Buffer.from(encryptedData).toString("base64");
+     const encryptedString=Buffer.from(iv).toString("base64") + Buffer.from(encryptedData).toString("base64");
    
 
     const finalOutputPath =`${filePath}.encrypted`;
@@ -41,17 +43,38 @@ async function encryptFile(filePath: string, password: string) {
     fs.writeFileSync(finalOutputPath, encryptedString);
   
     return finalOutputPath;
+    
+  //   const readerBlowfish = new FileReader();
+
+  //   readerBlowfish.onload = async () => {
+  //     const fileContent: any = readerBlowfish.result;
+  //     const encryptedContent = await CryptoJS.Blowfish.encrypt(
+  //       fileContent,
+  //       password
+  //     ).toString();
+  //     // resolve(encryptedContent);
+  //   };
+
+  //   readerBlowfish.onerror = async (error) => {
+  //    throw error;
+  //   };
+
+  //   readerBlowfish.readAsBinaryString(acceptedFile);
+
   } catch (error) {
     console.error("Error encrypting file:", error);
   }
 }
 
 // Function to decrypt content with Blowfish
-const decryptFile = (encryptedData: Uint8Array, key: string) => {
+const decryptFile = (encryptedData: Uint8Array, iv: string | Buffer | Uint8Array,  key: string) => {
     try {
     const cipher = new Blowfish(key);
+    cipher.setIv(iv);
     const decryptedData= cipher.decode(encryptedData)
-    return decryptedData;
+    console.log('d', decryptedData);
+    //@ts-ignore
+    return Buffer.from(decryptedData, 'base64').toString() ;
   
     } catch (error) {
       throw error;
@@ -113,10 +136,13 @@ export const fetchFileFromFirebase = async (fileName: string) => {
     const response = await axios.get(signedUrl, { responseType: 'text' });
 
     const encryptedString=response.data
-    const decryptedBuffer = Buffer.from(encryptedString, 'base64');
-    const encryptedData= new Uint8Array(decryptedBuffer)
+    // const decryptedBuffer = Buffer.from(encryptedString, 'base64');
+    const iv = Buffer.from(encryptedString.slice(0, 12), 'base64');
+    const encryptedData=  Buffer.from(encryptedString.slice(12), 'base64');
+
+    console.log(defaultConfig.ENCRYPTION_KEY);
    
-     const decryptedContent = decryptFile(encryptedData, defaultConfig.ENCRYPTION_KEY);
+     const decryptedContent = decryptFile(encryptedData, iv,  defaultConfig.ENCRYPTION_KEY);
     
 
     // Define the final output path

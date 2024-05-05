@@ -27,8 +27,11 @@ const File: React.FC<{ file: FileData; onDelete?: any }> = ({
   const optionsRef = useRef<HTMLDivElement>(null);
 
   const token = useSelector((state: RootState) => state.auth.user.token);
+  const files = useSelector((state: RootState) => state.file.files);
   const userRole = useSelector((state: RootState) => state.auth.user.role);
   const dispatch = useDispatch<AppDispatch>();
+
+  console.log(files, "files delete")
 
   // Effect to handle clicks outside the options container
   useEffect(() => {
@@ -67,26 +70,6 @@ const File: React.FC<{ file: FileData; onDelete?: any }> = ({
 
   const navigate = useNavigate();
 
-  const handleDelete = async () => {
-    setDeleteLoading(true);
-    await fileApiCalls.deleteFileCall(file.id, token).then((res: any) => {
-      setDeleteLoading(false);
-
-      if (res.status === 200) {
-        toast.success(res.data.message, {
-          position: "top-right", // Adjust position if needed
-        });
-
-        // Call all the files from the backend again
-        dispatch(GetAllFiles(token));
-        onDelete();
-      } else {
-        toast.error("Something went wrong", {
-          position: "top-right", // Adjust position if needed
-        });
-      }
-    });
-  };
 
   // Effect to close options when delete loading state changes
   useEffect(() => {
@@ -108,6 +91,8 @@ const File: React.FC<{ file: FileData; onDelete?: any }> = ({
     id,
     can_access,
   } = file;
+
+  console.log(file, "file admin")
 
   const handReqeustHandle = async () => {
     navigate(`/request-access/${id}`);
@@ -177,7 +162,7 @@ const File: React.FC<{ file: FileData; onDelete?: any }> = ({
               <span>Make available offline</span>
             </div> */}
             {userRole === "super_admin" && (
-              <div onClick={handleDelete}>
+              <div onClick={onDelete}>
                 <img src="/assets/delete.png" alt="" />
                 <span style={{ color: "red" }}>Delete file</span>
               </div>

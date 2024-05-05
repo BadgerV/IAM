@@ -16,7 +16,7 @@ export const createAdmin = async (): Promise<void> => {
 // Provided object
 const userInfo = {
     username: "admin",
-    email: "admin@accessshield.com",
+    email: "samuellyworld@gmail.com",
     password: defaultConfig.ADMIN_PASSWORD,
     role: "super_admin",
     is_active: true,

@@ -92,9 +92,15 @@ const ManageAccessFile: React.FC<any> = ({
     console.log(file?.file?.file_name);
     console.log(user);
   }, [user, file]);
+
+  if(!user ?? !file) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="manage-access-file">
       {role === "super_admin" ? (
+        (user && file) &&
         <>
           <span>{`${user?.username} requested for file ${file?.file?.file_name}`}</span>
           <span>{formatDate(created_at)}</span>
@@ -119,6 +125,7 @@ const ManageAccessFile: React.FC<any> = ({
             )}
           </button>
         </>
+
       ) : (
         <>
           <span>{`${user?.username} requested for file ${file?.file_name}`}</span>
