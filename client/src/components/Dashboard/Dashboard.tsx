@@ -16,6 +16,8 @@ import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
 import fileApiCalls from "../../services/fileApiCalls";
 import folderApiCalls from "../../services/folderApiCalls";
 import { removeHasToVerify } from "../../redux/slices/authSlice";
+import { GetAllFiles } from "../../redux/slices/fileSlice";
+import { calculateTotalFileSize, countNonNullValues } from "../../utils/helpers";
 
 const Dashboard = () => {
   //loading states
@@ -82,11 +84,16 @@ const Dashboard = () => {
   const [sortedArray, setSortedArray] = useState<Data[]>([]);
 
   const [selectedCategory, setSelectedCategory] = useState(1);
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   const handleSortBasedOnType = (type: string) => {
-    const filteredArray = files.filter((data: Data) => {
-      return data.type === type;
+    const filteredArray = files.filter((file: any) => {
+      // Extracting the file extension
+      const fileExtension = file.file_name.split('.').pop();
+      // Checking if the file extension matches the provided fileType
+      return fileExtension === type;
     });
+    console.log(filteredArray, "filteredArray");
     setSortedArray(filteredArray);
   };
 
@@ -109,6 +116,8 @@ const Dashboard = () => {
     setSearchedFiles(searchResults);
   };
 
+
+
   useEffect(() => {
     if (searchQuery.length > 0) {
       handleSearch(searchQuery, files);
@@ -120,6 +129,30 @@ const Dashboard = () => {
   useEffect(() => {
     dispatch(removeHasToVerify());
   }, []);
+
+  const handleDelete = async (file: { id: number; }) => {
+    setDeleteLoading(true);
+    await fileApiCalls.deleteFileCall(file.id, token).then((res: any) => {
+      setDeleteLoading(false);
+
+      if (res.status === 200) {
+        toast.success(res.data.message, {
+          position: "top-right", // Adjust position if needed
+        });
+        const updatedFiles = files.filter((currentFile : {id: number}) => currentFile.id !== file.id);
+
+        setFiles(updatedFiles);
+        // Call all the files from the backend again
+        // dispatch(GetAllFiles(token));
+        
+      } else {
+        toast.error("Something went wrong", {
+          position: "top-right", // Adjust position if needed
+        });
+      }
+    });
+  };
+
 
   return (
     <div className="dashboard">
@@ -163,7 +196,12 @@ const Dashboard = () => {
               </div>
             ) : (
               folders.map((box, index) => {
-                return <Folder {...box} key={index} />;
+                let fileSize = "0 Kb";
+                if (countNonNullValues(box.files) > 0) {
+                  fileSize = calculateTotalFileSize(box.files);
+                  if(fileSize === "NaNKB") fileSize = "0.00 KB";
+                }
+                return <Folder {...box} key={index} fileSize={fileSize} />;
               })
             )}
           </div>
@@ -240,23 +278,23 @@ const Dashboard = () => {
           <div className="dashboard-table-content">
             {searchQuery.length > 0 ? (
               searchedFiles.map((file, index) => {
-                return <File file={file} key={index} />;
+                return <File file={file} key={index} onDelete={() => handleDelete(file)} />;
               })
             ) : selectedCategory === 1 ? (
               files?.map((file: FileData, index: number) => (
-                <File file={file} key={index} />
+                <File file={file} key={index} onDelete={() => handleDelete(file)}/>
               ))
             ) : selectedCategory === 2 && files!.length > 0 ? (
               files?.map((file: FileData, index: number) => (
-                <File file={file} key={index} />
+                <File file={file} key={index}  onDelete={() => handleDelete(file)}/>
               ))
             ) : selectedCategory === 3 && files!.length > 0 ? (
               files?.map((file: FileData, index: number) => (
-                <File file={file} key={index} />
+                <File file={file} key={index} onDelete={() => handleDelete(file)}/>
               ))
             ) : selectedCategory === 4 && files!.length > 0 ? (
               files?.map((file: FileData, index: number) => (
-                <File file={file} key={index} />
+                <File file={file} key={index} onDelete={() => handleDelete(file)}/>
               ))
             ) : selectedCategory === 2 ? (
               <span className="decline-span">There are no documents</span>

@@ -62,6 +62,14 @@ const ManageAccess = () => {
               <span>Status of Request</span>
             </div>
             <div className="manage-access-table-content">
+              {
+                requests.length === 0 && (
+                  <div className="no-requests" style={{
+                    textAlign: "center",
+                    marginTop: "20px",
+                  }}>No requests found</div>
+                )
+              }
               {requests.map((data, index) => {
                 return (
                   <ManageAccessFile

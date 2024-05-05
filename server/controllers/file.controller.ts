@@ -144,7 +144,15 @@ const getFileController = async (req: Request, res: Response) => {
     const serverFilePath = `http://localhost:8000/uploads/${path.basename(
       filePath
     )}`;
+    await createLog({
+      id: 1,
+      user_id: Number(user_id),
+      action_taken: `Downloaded File ${file.file_name}`,
+      file_id: null,
+    });
+
     res.json({ file, filePath: serverFilePath });
+
   } catch (error) {
     console.error("Error fetching file:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -181,7 +189,14 @@ const deleteFileController = async (
 ): Promise<void> => {
   try {
     const fileId: number = parseInt(req.params.id, 10);
-    await deleteFileById(fileId);
+    const file = await getFileById(Number(fileId));
+     await deleteFileById(fileId);
+      await createLog({
+        id: 1,
+        user_id: Number(req.user_id),
+        action_taken: `Deleted File ${file?.file_name}`,
+        file_id: null,
+      });
     res.status(200).json({ message: "File deleted successfully" });
   } catch (error) {
     console.error("Error deleting file:", error);

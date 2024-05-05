@@ -15,7 +15,7 @@ const folderRouter = express.Router();
 // Routes for folders
 folderRouter.post("/", requireAdminOrManager, createFolderController);
 folderRouter.get("/", authMiddleware, getFoldersController);
-folderRouter.get("/:id", getFolderController);
+folderRouter.get("/:id", authMiddleware, getFolderController);
 folderRouter.put("/:id", requireSuperAdmin, updateFolderController);
 folderRouter.delete("/:id", requireSuperAdmin, deleteFolderController);
 

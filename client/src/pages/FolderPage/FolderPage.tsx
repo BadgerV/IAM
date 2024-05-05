@@ -40,10 +40,14 @@ const FolderPage = () => {
         </div>
       ) : (
         <div className="folder-page-folders">
+          {
+            folders?.length === 0 && <div className="no-folders">No folders found</div>
+          }
           {folders?.map((folder: FolderType) => {
             let fileSize = "0 Kb";
             if (countNonNullValues(folder.files) > 0) {
-              fileSize = calculateTotalFileSize(folder.files);
+              fileSize = calculateTotalFileSize(folder.files) 
+              if(fileSize === "NaNKB") fileSize = "0.00 KB";
             }
             return <Folder key={folder.id} {...folder} fileSize={fileSize} />;
           })}

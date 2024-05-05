@@ -112,7 +112,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       from: sender,
       to: email,
       subject: "Verify your Staff Account to be secure.",
-      html: `Here is your verification code - ${token}`
+      html: `Here is your verification code - ${verificationCode}`
     }
     transport.sendMail(mailOptions, async (err, resp) => {
       if (err) {

@@ -128,7 +128,7 @@ export const calculateTotalFileSize = (files: any[]) => {
   }
 
   // Round the size to two decimal places
-  const stringSize = size.toFixed(2);
+  const stringSize : any = size.toFixed(2);
 
   // Return the total size with the appropriate unit
   return `${stringSize}${sizeUnit}`;

@@ -20,6 +20,9 @@ import {
 
 const OverviewDashboard = () => {
   const token = useSelector((state: RootState) => state.auth.user.token);
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  console.log(user);
 
   const [logLoadingState, setLogLoadingState] = useState<boolean>(true);
   const [userLoadingState, setUserLoadingState] = useState<boolean>(true);
@@ -107,6 +110,7 @@ const OverviewDashboard = () => {
 
             if (countNonNullValues(box.files) > 0) {
               fileSize = calculateTotalFileSize(box.files);
+              if(fileSize === "NaNKB") fileSize = "0.00 KB";
             }
             return <Folder {...box} key={index} fileSize={fileSize} />;
           })
@@ -193,24 +197,29 @@ const OverviewDashboard = () => {
             ) : null}
           </div>
         </div>
-        <div className="overview-dashboard-bottom-right">
-          <span className="recent-activities-text">Recent Activites</span>
+        {
+          user.role === "super_admin" &&
+          <div className="overview-dashboard-bottom-right">
+            <span className="recent-activities-text">Recent Activites</span>
 
-          <div className="recent-activities">
-            {logLoadingState ? (
-              <div className="loading-div">
-                <div className="spinner"></div>
-              </div>
-            ) : (
-              logs
-                .slice()
-                .reverse()
-                .map((activity, index) => {
-                  return <RecentActivity {...activity} key={index} />;
-                })
-            )}
+            <div className="recent-activities">
+              {logLoadingState ? (
+                <div className="loading-div">
+                  <div className="spinner"></div>
+                </div>
+              ) : (
+                logs
+                  .slice()
+                  .reverse()
+                  .map((activity, index) => {
+                    return <RecentActivity {...activity} key={index} />;
+                  })
+              )}
+            </div>
+
           </div>
-        </div>
+        }
+
       </div>
     </div>
   );

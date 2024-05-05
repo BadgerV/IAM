@@ -26,6 +26,7 @@ const getFolderById = async (id: number) => {
   json_agg(json_build_object(
     'file_id', files.id, 
     'file_name', files.file_name, 
+    'access_type', files.access_type,
     'user_id', files.user_id,
     'owner_username', users.username,
     'file_size', files.file_size
@@ -71,6 +72,7 @@ const getFolders = async () => {
   json_agg(json_build_object(
     'file_id', files.id, 
     'file_name', files.file_name, 
+    'access_type', files.access_type,
     'owner_username', users.username,
     'file_size', files.file_size
   )) as files
