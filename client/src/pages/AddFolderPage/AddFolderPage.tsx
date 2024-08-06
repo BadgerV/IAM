@@ -40,7 +40,7 @@ const AddFolderPage = () => {
     setLoadingState(true);
     const result = await dispatch(CreateFolder(formData));
 
-    console.log(result);
+    console.log("this is the stuff", result);
 
     if (result.type === "folder/create-folders/fulfilled") {
       navigate("/folder");
@@ -49,7 +49,7 @@ const AddFolderPage = () => {
       });
       setLoadingState(false);
     } else {
-      toast.error("Something went wrong", {
+      toast.error(result.payload.response.data?.message || "Something wen wrong", {
         position: "top-right", // Adjust position if needed
       });
       setLoadingState(false);

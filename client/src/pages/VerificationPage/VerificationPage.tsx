@@ -11,20 +11,22 @@ import { setUserHasToVerify } from "../../redux/slices/authSlice.ts";
 
 const VerificationPage = () => {
   const [verificationCode, setVerificationCode] = useState("");
-  const email = useSelector((state : RootState) => state.auth.user.email);
+  const email = useSelector((state: RootState) => state.auth.user.email);
   const Navigate = useNavigate()
 
   const handleVerification = async () => {
-    const res = await  apiCalls.verifyUser(verificationCode)
-    if(!res.data) {
-      toast.error("Error verifying user", {
-        position: "top-right",
-      });
-    } else {
-      toast.success("user verified");
-      setUserHasToVerify(false);
-      Navigate("/");
-    }
+    // const res = await  apiCalls.verifyUser(verificationCode)
+    // if(!res.data) {
+    //   toast.error("Error verifying user", {
+    //     position: "top-right",
+    //   });
+    // } else {
+    //   toast.success("user verified");
+    //   setUserHasToVerify(false);
+    //   Navigate("/");
+    // }
+    Navigate("/");
+
   }
 
   return (

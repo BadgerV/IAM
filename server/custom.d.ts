@@ -1,4 +1,4 @@
-declare module 'bcrypt'
+// declare module 'bcrypt'
 declare module 'helmet'
 declare module 'pg'
 declare module 'jsonwebtoken'

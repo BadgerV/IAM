@@ -93,9 +93,9 @@ const ManageAccessFile: React.FC<any> = ({
     console.log(user);
   }, [user, file]);
 
-  if(!user ?? !file) {
-    return <div>Loading...</div>;
-  }
+  // if(!user ?? !file) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <div className="manage-access-file">

@@ -26,6 +26,7 @@ import RequestAccessPage from "./pages/RequestAccessPage/RequestAccessPage";
 import VerificationPage from "./pages/VerificationPage/VerificationPage";
 import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
+import { useEffect } from "react";
 
 const App = () => {
   //secure routes usingg HOCs
@@ -42,6 +43,10 @@ const App = () => {
   const SecureAddFilePage = ManagerOrAdminOnly(UploadFiles);
 
   const hasToVerify = useSelector((state: RootState) => state.auth.hasToVerify);
+
+  useEffect(() => {
+    console.log(hasToVerify)
+  }, [hasToVerify])
 
   return (
     <>

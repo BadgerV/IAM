@@ -30,10 +30,11 @@ export const CreateFolder = createAsyncThunk(
         getState
       );
 
+      console.log(response)
+
       return response.data;
     } catch (error) {
-      console.log(error);
-      rejectWithValue(error);
+      return rejectWithValue(error);
     }
   }
 );

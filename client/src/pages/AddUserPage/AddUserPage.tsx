@@ -92,6 +92,7 @@ const AddUserPage = () => {
           value={formData.username}
           onChange={handleInputChange}
         />
+        
         <InputField
           name="password"
           type="password"

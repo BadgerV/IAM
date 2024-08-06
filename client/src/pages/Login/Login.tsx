@@ -43,8 +43,8 @@ const Login = () => {
 
     if (result.type === "auth/login/fulfilled") {
       setLoadingState(false);
-      dispatch(setUserHasToVerify(true));
-      navigate("/verify");
+      // dispatch(setUserHasToVerify(true));
+      navigate("/");
     } else {
       console.log(result.payload);
       setLoadingState(false);

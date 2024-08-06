@@ -1,0 +1,31 @@
+# Ignore the node_modules directory (for Node.js projects)
+node_modules
+
+# Ignore log files
+*.log
+
+# Ignore environment configuration files
+.env
+
+# Ignore temporary and build files
+tmp
+build
+*.tmp
+*.bak
+
+# Ignore version control directories
+.git
+.gitignore
+
+# Ignore Dockerfile itself (optional, if you don't need it in the build context)
+Dockerfile
+
+# Ignore editor and IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# Ignore operating system specific files
+.DS_Store
+Thumbs.db

@@ -1,7 +1,7 @@
 // middleware/authMiddleware.ts
 import { Request, Response, NextFunction, request } from "express";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
 import { User } from "../models/User";
 import { Permission } from "../models/Permission";
 import {
@@ -25,7 +25,7 @@ import nodemailer from 'nodemailer';
 const saltRounds = 10;
 const secretKey = defaultConfig.SECRET_KEY;
 
-export const register = async (req: Request, res: Response): Promise<void> => {
+export const register = async (req: any, res: Response): Promise<void> => {
   try {
     const { username, email, password, role } = req.body;
     if (!username || !email || !password || !role) {
@@ -34,12 +34,12 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         .json({ message: "username, email, password, role are required" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    // const hashedPassword = await bcrypt.hash(password, saltRounds);
     const newUser: User = {
       id: 1, // Generate unique ID
       username,
       email,
-      password: hashedPassword,
+      password: password,
       is_admin: false,
     };
     await createUser(newUser);
@@ -86,7 +86,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = password === user.password;
     if (!isPasswordValid) {
       res.status(401).json({ message: "Invalid email or password" });
       return;
@@ -94,51 +94,62 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign({ userId: user.id }, secretKey);
 
     const verificationCode = v4().substring(0, 5);
-    let code = await sendEmailVerification(verificationCode, email);
+    // let code = await sendEmailVerification(verificationCode, email);
 
 
-    // send a messsage
-    const transport = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: verificationConfig?.username,
-        pass: verificationConfig?.password
-      }
-    });
+    // // send a messsage
+    // const transport = nodemailer.createTransport({
+    //   service: "gmail",
+    //   auth: {
+    //     user: verificationConfig?.username,
+    //     pass: verificationConfig?.password
+    //   }
+    // });
 
-    // construct the email
-    let sender = 'noreply@gmail.com'
-    const mailOptions = {
-      from: sender,
-      to: email,
-      subject: "Verify your Staff Account to be secure.",
-      html: `Here is your verification code - ${verificationCode}`
+    // // construct the email
+    // let sender = 'noreply@gmail.com'
+    // const mailOptions = {
+    //   from: sender,
+    //   to: email,
+    //   subject: "Verify your Staff Account to be secure.",
+    //   html: `Here is your verification code - ${verificationCode}`
+    // }
+    // transport.sendMail(mailOptions, async (err, resp) => {
+    //   if (err) {
+    //     console.log(err)
+    //     return res.status(200).json({
+    //       message: 'Error sending message'
+    //     }
+    //     );
+    //   } else {
+    //     await createLog({
+    //       id: 1,
+    //       user_id: Number(user.id),
+    //       action_taken: "Logged In",
+    //       file_id: null,
+    //     });
+    //     return res.json({
+    //       username,
+    //       token,
+    //       email,
+    //       role,
+    //       is_active,
+    //       id: user.id,
+    //     });
+    //   }
+    // }
+    // )
+
+    //simply becuase the mailer isnt working --temp solution
+    const userDTO = {
+      username: user.username,
+      email: user.email,
+      token: token,
+      role: role,
+      is_active: is_active
     }
-    transport.sendMail(mailOptions, async (err, resp) => {
-      if (err) {
-        console.log(err)
-        return res.status(200).json({
-          message: 'Error sending message'
-        }
-        );
-      } else {
-        await createLog({
-          id: 1,
-          user_id: Number(user.id),
-          action_taken: "Logged In",
-          file_id: null,
-        });
-        return res.json({
-          username,
-          token,
-          email,
-          role,
-          is_active,
-          id: user.id,
-        });
-      }
-    }
-    )
+    res.status(200).send(userDTO);
+
 
   } catch (error) {
     console.error(error);
@@ -146,13 +157,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const verifyEmail = async (req: Request , res: Response) => {
+export const verifyEmail = async (req: Request, res: Response) => {
   const { code } = req.body;
   const user = await verifyEmailVerification(code);
   if (!user) {
-    return res.status(401).json({ message: "Invalid token", data : null});
+    return res.status(401).json({ message: "Invalid token", data: null });
   } else {
-    return res.status(200).json({ message: "Email Verified", data : code });
+    return res.status(200).json({ message: "Email Verified", data: code });
   }
 }
 

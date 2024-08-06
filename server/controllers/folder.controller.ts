@@ -11,12 +11,12 @@ import {
 import { getAccessRequestByUserFileId } from "../services/accessRequest.service";
 import { createLog } from "../services/log.service";
 import { getUserById } from "../services/user.service";
+import { getPermissionByUserId } from "../services/permission.service";
 
 // Controller function to create a new folder
 const createFolderController = async (req: Request, res: Response) => {
   try {
     const { name, description } = req.body;
-    console.log(name, description);
 
     // Check if name and description are provided
     if (!name || !description) {
@@ -31,6 +31,19 @@ const createFolderController = async (req: Request, res: Response) => {
       name,
       description,
     };
+
+    const user = getUserById(Number(req.user_id));
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const permission = await getPermissionByUserId(Number(req.user_id));
+
+    if (permission?.is_active === false) {
+      res.status(401).json({ message: "You are not authorized to carry out this transaction" })
+      return;
+    }
 
     await createLog({
       id: 1,
@@ -116,7 +129,7 @@ const getFolderController = async (req: Request, res: Response) => {
           file.file_id
         );
         let can_access = false;
-        
+
         // Check if access request exists and if it's approved
         if (access_request && access_request.status === true) {
           can_access = true;

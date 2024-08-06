@@ -18,8 +18,7 @@ import { getAccessRequestByUserFileId } from "../services/accessRequest.service"
 import { getUserById } from "../services/user.service";
 
 // Controller function to create a new file
-const createFileController = async (req: Request, res: Response) => {
-  console.log("it is working");
+const createFileController = async (req: any, res: Response) => {
   try {
     const { file_name, file_size, folder_id, permission_type, description } =
       req.body;
@@ -80,7 +79,7 @@ const createFileController = async (req: Request, res: Response) => {
 
 // Controller function to get all files
 const getAllFilesController = async (
-  req: Request,
+  req: any,
   res: Response
 ): Promise<void> => {
   try {
@@ -123,7 +122,7 @@ const getAllFilesController = async (
 };
 
 // Controller function to get a file by ID
-const getFileController = async (req: Request, res: Response) => {
+const getFileController = async (req: any, res: Response) => {
   try {
     const { id } = req.params;
     const user_id = req.user_id;
@@ -161,7 +160,7 @@ const getFileController = async (req: Request, res: Response) => {
 
 // Controller function to update a file
 const updateFileController = async (
-  req: Request,
+  req: any,
   res: Response
 ): Promise<void> => {
   try {
@@ -184,7 +183,7 @@ const updateFileController = async (
 
 // Controller function to delete a file by ID
 const deleteFileController = async (
-  req: Request,
+  req: any,
   res: Response
 ): Promise<void> => {
   try {

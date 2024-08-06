@@ -1,0 +1,65 @@
+services:
+  web:
+    build: ./client
+    # container_name: web
+    depends_on: 
+      - server
+    ports: 
+      - "5173:5173"
+    volumes:
+      - ./client:/app/client
+      - node_modules:/app/client/node_modules
+    # networks:
+    #   - app-network
+
+  server:
+    build: ./server
+    # container_name: server
+    depends_on: 
+      - db
+    ports: 
+      - "8000:8000"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      NODE_ENV: production
+      ENGINE_ENV: production
+      DB_USER: postgres
+      DB_HOST: db
+      DB_NAME: accessshield
+      DB_PASSWORD: Z$r$tr$st
+      DB_PORT: 5432
+      FIREBASE_ACCESS_KEY: AKIA2UC27DGI67SIQYNL
+      FIREBASE_SECRET_KEY: 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
+      FIREBASE_STORAGE_BUCKET: access-shield-jagah.appspot.com
+      SECRET_KEY: jagah
+      ADMIN_PASSWORD: Z$r$tr$st 
+      ENCRYPTION_KEY: Z$r$tr$st
+    volumes:
+      - ./server:/app/server
+      # - ./node_modules:/app/server/node_modules
+    # networks:
+    #   - app-network
+    # links:
+    #   - db
+   
+  db:
+    image: postgres:16
+    restart: always
+    # container_name: db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Z$r$tr$st
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
+  node_modules:
+
+# networks:
+#   app-network:
+#     driver: bridge
+    

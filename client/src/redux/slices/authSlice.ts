@@ -22,7 +22,6 @@ export const LoginUser = createAsyncThunk(
     try {
       const response = await apiCalls.loginApiCall(cred);
 
-      console.log(response.data);
 
       return response.data;
     } catch (error: any) {
@@ -60,6 +59,7 @@ export const authSlice: any = createSlice({
       state.user = null;
     },
     setUserHasToVerify: (state) => {
+      console.log("Help I am being called")
       state.hasToVerify = true;
     },
     removeHasToVerify: (state) => {
@@ -69,9 +69,8 @@ export const authSlice: any = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(LoginUser.fulfilled, (state, action) => {
-        state.user = action.payload;
         console.log(action.payload);
-        console.log(state.user);
+        state.user = action.payload;
       })
       .addCase(LoginUser.rejected, (state, action) => {
         state.loginError = action.payload;

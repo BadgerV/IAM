@@ -7,6 +7,7 @@ export interface User {
 
   role?: string;
   is_active?: boolean;
+  id: number;
 }
 
 export interface AuthInitialState {
