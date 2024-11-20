@@ -1,7 +1,6 @@
 services:
   web:
     build: ./client
-    # container_name: web
     depends_on: 
       - server
     ports: 
@@ -9,12 +8,9 @@ services:
     volumes:
       - ./client:/app/client
       - node_modules:/app/client/node_modules
-    # networks:
-    #   - app-network
 
   server:
     build: ./server
-    # container_name: server
     depends_on: 
       - db
     ports: 
@@ -37,16 +33,18 @@ services:
       ENCRYPTION_KEY: Z$r$tr$st
     volumes:
       - ./server:/app/server
-      # - ./node_modules:/app/server/node_modules
-    # networks:
-    #   - app-network
-    # links:
-    #   - db
-   
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"           
+          memory: "2G"           
+        reservations:
+          cpus: "0.5"           
+          memory: "1G" 
+
   db:
     image: postgres:16
     restart: always
-    # container_name: db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Z$r$tr$st
@@ -55,11 +53,22 @@ services:
     ports:
       - "5432:5432"
 
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: rootpassword
+    volumes:
+      - ./minio_data:/data
+      - ./minio_config:/root/.minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    restart: always
+
 volumes:
   postgres_data:
   node_modules:
 
-# networks:
-#   app-network:
-#     driver: bridge
-    

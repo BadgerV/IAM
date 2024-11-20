@@ -1,0 +1,35 @@
+
+services:  
+  web:  
+    image: nginx:latest  
+    ports:  
+      - "8080:80"  
+    networks:  
+      - my-network
+    volumes:  
+      - web-data:/usr/share/nginx/html  
+
+  api:  
+    image: myapi:latest  
+    networks:  
+      - my-network
+    environment:  
+      - DATABASE_URL=postgres://user:password@db:5432/mydb
+
+  db:  
+    image: postgres:alpine  
+    environment:  
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=mydb
+    networks:  
+      - my-network
+    volumes:  
+      - db-data:/var/lib/postgresql/data  
+
+networks:  
+  my-network:  
+
+volumes:  
+  web-data: 
+  db-data: 

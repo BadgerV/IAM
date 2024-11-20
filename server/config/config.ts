@@ -26,7 +26,7 @@ export const corsSettings: CorsSettings = isProd
         "http://localhost:8000",
         "http://localhost:3000",
         "http://localhost:5174",
-        "http://localhost:517",
+        "http://localhost:5173",
         "https://storage.googleapis.com"
       ],
       methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"]

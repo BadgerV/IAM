@@ -5,14 +5,20 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install" : "npm run client && npm run server",
-    "client" : "cd client && npm install",
-    "server" : "cd server && npm install",
+    "install": "npm run client && npm run server",
+    "client": "cd client && npm install",
+    "server": "cd server && npm install",
     "start": "npm run start-client && npm run start-server",
     "start-client": "cd client && npm run dev",
     "start-server": "cd server && npm run dev",
-    "seed" : "cd server && npm run seed"
+    "seed": "cd server && npm run seed"
   },
   "author": "Anthony",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/npm": "^12.0.1",
+    "semantic-release": "^24.1.0"
+  }
 }

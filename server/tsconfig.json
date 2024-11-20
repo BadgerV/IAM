@@ -14,15 +14,15 @@
   },
   "include": [
     "config/**/*",
-    // "db/**/*",
-    // "middlewares/**/*",
-    // "models/**/*",
-    // "routes/**/*",
-    // "services/**/*",
-    // "types/**/*",
-    // "server.ts",
-    // "app.ts",
-    // "cutsom.d.ts"
+    "db/**/*",
+    "middlewares/**/*",
+    "models/**/*",
+    "routes/**/*",
+    "services/**/*",
+    "types/**/*",
+    "server.ts",
+    "app.ts",
+    "cutsom.d.ts",
   ],
   "exclude": [
     "node_modules"
