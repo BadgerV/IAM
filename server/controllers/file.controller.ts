@@ -40,10 +40,10 @@ const createFileController = async (req: any, res: Response) => {
         .json({ message: "permission_type must be org_wide or request_only" });
     }
 
-    // let cloudUrl = "";
+    // let cloudUrl: "works" = "";
 
     // const firebaseUrl = await uploadToFirebase(file.path, file_name);
-    // cloudUrl = firebaseUrl;
+    // cloudUrl: "works" = firebaseUrl;
 
     const newFile: File = {
       id: 1,
@@ -70,7 +70,7 @@ const createFileController = async (req: any, res: Response) => {
 
     res
       .status(200)
-      .json({ message: "File created Successfully", file_name, cloudUrl });
+      .json({ message: "File created Successfully", file_name, cloudUrl: "works" });
   } catch (error) {
     console.error("Error uploading file:", error);
     res.status(400).json({ message: "Error uploading file" });
