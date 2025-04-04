@@ -94,6 +94,8 @@ export interface PermissionsDataType {
   is_active: boolean;
   // status: string;
 
+  is_admin: boolean;
+
   id: number;
 
   role: Role;

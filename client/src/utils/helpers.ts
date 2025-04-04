@@ -172,7 +172,7 @@ export const reviseRole = (role: string) => {
 
 export const calculateTimePassed = (dateString: string) => {
   const date = new Date(dateString);
-  return formatDistanceToNow(date);
+  return `${formatDistanceToNow(date)} ago`;
 };
 
 export const openInBrowser = (url: any, filename: any) => {

@@ -18,6 +18,7 @@ const PermissionsData: React.FC<{
     role,
     is_active,
     id,
+    is_admin,
     // can_read,
     // can_delete,
     // can_write,
@@ -92,11 +93,13 @@ const PermissionsData: React.FC<{
             className="permission-options-icon"
             onClick={() => setIsOptionsOpen(!isOptionsOpen)}
           >
-            <img
-              src="/assets/options-dark.png"
-              alt="Options"
-              className="options-icon"
-            />
+            {!is_admin && (
+              <img
+                src="/assets/options-dark.png"
+                alt="Options"
+                className="options-icon"
+              />
+            )}
 
             <div
               className="permissions-file-options-absolute-container"
@@ -118,20 +121,20 @@ const PermissionsData: React.FC<{
               <img src="/assets/file-edit.png" alt="" />
               <span>Add to a group</span>
             </Link> */}
-              <Link
+              {/* <Link
                 to="/edit-permissions"
                 className="permissions-file-options-absolute-container-file"
               >
                 <img src="/assets/link-square.png" alt="" />
                 <span>Assign role</span>
-              </Link>
-              <Link
+              </Link> */}
+              {/* <Link
                 to="/edit-permissions"
                 className="permissions-file-options-absolute-container-file"
               >
                 <img src="/assets/wifi-disconnected.png" alt="" />
                 <span>Disable user</span>
-              </Link>
+              </Link> */}
               <Link
                 to="/edit-permissions"
                 className="permissions-file-options-absolute-container-file"

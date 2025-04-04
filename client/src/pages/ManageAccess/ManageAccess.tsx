@@ -57,8 +57,8 @@ const ManageAccess = () => {
           <div className="manage-access-table">
             <div className="manage-access-table-header">
               <span>Request</span>
-              <span>Reason for request</span>
               <span>Date of Request</span>
+              <span>Reason for request</span>
               <span>Status of Request</span>
             </div>
             <div className="manage-access-table-content">
