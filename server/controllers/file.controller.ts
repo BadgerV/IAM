@@ -140,7 +140,7 @@ const getFileController = async (req: any, res: Response) => {
 
     // Fetch the file from Firebase Storage
     const filePath = await fetchFileFromFirebase(file.file_name);
-    const serverFilePath = `http://localhost:8000/uploads/${path.basename(
+    const serverFilePath = `https://iam-d2jr.onrender.com/uploads/${path.basename(
       filePath
     )}`;
     await createLog({
