@@ -89,6 +89,7 @@ exports.DBConfig = {
     DB_PASSWORD: process.env.DB_PASSWORD ? String(process.env.DB_PASSWORD) : "",
     DB_PORT: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432,
     DB_URL: process.env.DB_URL ? String(process.env.DB_URL) : "",
+    DB_SSL_CA: process.env.DB_SSL_CA ? String(process.env.DB_SSL_CA) : "",
 };
 exports.FirebaseConfig = {
     FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET

@@ -10,9 +10,7 @@ const caCert = fs.readFileSync(caCertPath).toString();
 
 const pool = new Pool({
   connectionString: DBConfig.DB_URL,
-  ssl: {
-    rejectUnauthorized: true,
-  },
+  ssl: false
 });
 
 export default pool;
