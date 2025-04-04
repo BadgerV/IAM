@@ -95,3 +95,7 @@ export const verificationConfig: verificationTypes = {
   username: process.env.mailuser,
   password: process.env.mailpass,
 };
+
+export const firebaseProps: any = {
+  firebase: process.env.firebase ? String(process.env.firebase) : "",
+};

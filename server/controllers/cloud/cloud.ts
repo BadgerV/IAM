@@ -9,7 +9,7 @@ import * as crypto from 'crypto';
 import axios from "axios"
 
 
-import { AWSConfig, defaultConfig } from "../../config/config";
+import { AWSConfig, defaultConfig, firebaseProps } from "../../config/config";
 import { FirebaseConfig } from "../../config/config";
 const filePath = path.resolve(__dirname, "../../uploads");
 
@@ -85,8 +85,10 @@ const decryptFile = (encryptedData: Uint8Array, iv: string | Buffer | Uint8Array
 try {
   const serviceAccountRaw = fs.readFileSync(firebaseJSON, "utf8");
   // Parse the JSON string into the correct type
-  const firebaseServiceAccount: firebaseAdmin.ServiceAccount =
-    JSON.parse(serviceAccountRaw);
+  // const firebaseServiceAccount: firebaseAdmin.ServiceAccount =
+  //   JSON.parse(serviceAccountRaw);
+
+  const firebaseServiceAccount = JSON.parse(firebaseProps.firebase as string);
 
   // Initialize Firebase Admin SDK
   firebaseAdmin.initializeApp({
