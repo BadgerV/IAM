@@ -3,40 +3,50 @@ import pool from "./connect";
 import { Client } from "pg";
 // import bcrypt from "bcrypt";
 import { getUserByEmail } from "../services/user.service";
+import fs from "fs";
+import path from "path";
+
+// Path to your saved CA certificate
+const caCertPath = path.join(__dirname, "../config", "ca.pem");
+// Read the CA certificate file
+const caCert = fs.readFileSync(caCertPath).toString();
+
+console.log(caCert)
 
 const clientConfig = {
-    connectionString: DBConfig.DB_URL,
-    ssl: {
-        ca: DBConfig.DB_SSL_CA,
-      }
-}
+  connectionString: DBConfig.DB_URL,
+  ssl: {
+    ca: caCert,
+    rejectUnauthorized: true,
+  },
+};
 
 const clientConfigWithoutDB = {
-    connectionString: DBConfig.DB_URL,
-    ssl: {
-        ca: DBConfig.DB_SSL_CA,
-      }
-}
-
+  connectionString: DBConfig.DB_URL,
+  ssl: {
+    ca: caCert,
+    rejectUnauthorized: true,
+  },
+};
 
 //create the database
 const createDatabase = async () => {
-    const client = new Client(clientConfigWithoutDB);
-    try {
-        await client.connect()
-        await client.query(`CREATE DATABASE ${'accessshield'}`)
-        console.log("Database created successfully")
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-//create tables 
-const createTables = async () => {
-    const client = new Client(clientConfig);
+  const client = new Client(clientConfigWithoutDB);
+  try {
     await client.connect();
-    try {
-        await client.query(`-- Create users table
+    await client.query(`CREATE DATABASE ${"accessshield"}`);
+    console.log("Database created successfully");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//create tables
+const createTables = async () => {
+  const client = new Client(clientConfig);
+  await client.connect();
+  try {
+    await client.query(`-- Create users table
             CREATE TABLE IF NOT EXISTS users (
               id SERIAL PRIMARY KEY,
               username VARCHAR(50) UNIQUE NOT NULL,
@@ -102,87 +112,90 @@ const createTables = async () => {
               file_id INT REFERENCES files(id) ON DELETE CASCADE,
               action_taken TEXT,
               created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-            );`)
+            );`);
 
-        console.log("Tables created successfully")
-    } catch (error) {
-        console.log(error)
-    }
-}
+    console.log("Tables created successfully");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 //seeding the admin
 const seedAdmin = async () => {
-    const userInfo = {
-        username: "admin",
-        email: "segunfaozan112@gmail.com",
-        password: defaultConfig.ADMIN_PASSWORD,
-        role: "super_admin",
-        is_active: true,
-        is_admin: true
-    };
+  const userInfo = {
+    username: "admin",
+    email: "segunfaozan112@gmail.com",
+    password: defaultConfig.ADMIN_PASSWORD,
+    role: "super_admin",
+    is_active: true,
+    is_admin: true,
+  };
 
-    //hash the password
-    const hashedPassword = userInfo.password;
+  //hash the password
+  const hashedPassword = userInfo.password;
 
+  //config all
+  const client = new Client(clientConfig);
+  await client.connect();
 
-    //config all
-    const client = new Client(clientConfig)
-    await client.connect();
+  //checks if admin exists
+  const adminAlreadyExists = await client.query(
+    `SELECT * FROM users WHERE username = $1`,
+    ["admin"]
+  );
 
-    //checks if admin exists
-    const adminAlreadyExists = await client.query(`SELECT * FROM users WHERE username = $1`, ['admin']);
-
-    if (adminAlreadyExists.rows.length === 1) {
-        console.log("Admin already exists")
-        console.log("Proceeding")
-        return
-    } else {
-        try {
-
-            //creates admin into the users and permissions table
-            const query = `
+  if (adminAlreadyExists.rows.length === 1) {
+    console.log("Admin already exists");
+    console.log("Proceeding");
+    return;
+  } else {
+    try {
+      //creates admin into the users and permissions table
+      const query = `
                 INSERT INTO users (username, email, password, is_admin) 
                 VALUES ($1, $2, $3, $4)
-            `
+            `;
 
-            const values = [userInfo.username, userInfo.email, hashedPassword, userInfo.is_admin];
+      const values = [
+        userInfo.username,
+        userInfo.email,
+        hashedPassword,
+        userInfo.is_admin,
+      ];
 
-            const query2 = `
+      const query2 = `
                 INSERT INTO permissions (user_id, can_read, can_write, can_delete, is_active, role) 
                 VALUES ($1, $2, $3, $4, $5, $6)
-            `
+            `;
 
-            await client.query(query, values);
+      await client.query(query, values);
 
+      const adminUser = await getUserByEmail(userInfo.email);
 
-            const adminUser = await getUserByEmail(userInfo.email);
+      const values2: any[] = [
+        Number(adminUser?.id),
+        true,
+        true,
+        true,
+        true,
+        userInfo.role,
+      ];
 
-
-            const values2: any[] = [
-                Number(adminUser?.id),
-                true,
-                true,
-                true,
-                true,
-                userInfo.role
-            ]
-
-            await client.query(query2, values2);
-            console.log("admin seeded successfully")
-        } catch (error) {
-            console.log(error)
-        }
+      await client.query(query2, values2);
+      console.log("admin seeded successfully");
+    } catch (error) {
+      console.log(error);
     }
-}
+  }
+};
 
 //TO INITIALIZE THE DB
 const initDB = async () => {
-    // const client = await pool.connect();
+  // const client = await pool.connect();
 
-    await createDatabase()
-    await createTables()
-    await seedAdmin()
-
-}
+  await createDatabase();
+  await createTables();
+  await seedAdmin();
+};
 
 export default initDB;
