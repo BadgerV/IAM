@@ -16,9 +16,5 @@ const server = http_1.default.createServer(app_1.app);
 //server listen
 server.listen(config_1.PORT, () => {
     console.log(`Listening on port ${config_1.PORT}`);
-    console.log(config_1.isProd);
-    //checks if development environment is production
-    if (config_1.isProd) {
-        (0, init_db_1.default)();
-    }
+    (0, init_db_1.default)();
 });

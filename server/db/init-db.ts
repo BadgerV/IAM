@@ -6,25 +6,20 @@ import { getUserByEmail } from "../services/user.service";
 import fs from "fs";
 import path from "path";
 
-// Path to your saved CA certificate
-const caCertPath = path.join(__dirname, "../config", "ca.pem");
-// Read the CA certificate file
-const caCert = fs.readFileSync(caCertPath).toString();
-
-console.log(caCert)
-
 const clientConfig = {
-  connectionString: DBConfig.DB_URL,
-   ssl: {
-    rejectUnauthorized: false // Set to true in production if using valid certificates
-  }
+  connectionString:
+    "postgresql://iam_kiyy_user:Btq2xkGFg66dXcGM19nCiXuC7yhlJEyh@dpg-cvo0b17gi27c73bq0btg-a.oregon-postgres.render.com/iam_kiyy",
+  ssl: {
+    rejectUnauthorized: false, // Set to true to enforce certificate validation
+  },
 };
 
 const clientConfigWithoutDB = {
-  connectionString: DBConfig.DB_URL,
-   ssl: {
-    rejectUnauthorized: false // Set to true in production if using valid certificates
-  }
+  connectionString:
+    "postgresql://iam_kiyy_user:Btq2xkGFg66dXcGM19nCiXuC7yhlJEyh@dpg-cvo0b17gi27c73bq0btg-a.oregon-postgres.render.com/iam_kiyy",
+  ssl: {
+    rejectUnauthorized: false, // Set to true to enforce certificate validation
+  },
 };
 
 //create the database

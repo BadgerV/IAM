@@ -14,32 +14,30 @@ const pg_1 = require("pg");
 // import bcrypt from "bcrypt";
 const user_service_1 = require("../services/user.service");
 const clientConfig = {
-    user: config_1.DBConfig.DB_USER,
-    host: config_1.DBConfig.DB_HOST,
-    database: config_1.DBConfig.DB_NAME,
-    password: config_1.DBConfig.DB_PASSWORD,
-    port: config_1.DBConfig.DB_PORT,
+    connectionString: "postgresql://iam_kiyy_user:Btq2xkGFg66dXcGM19nCiXuC7yhlJEyh@dpg-cvo0b17gi27c73bq0btg-a.oregon-postgres.render.com/iam_kiyy",
+    ssl: {
+        rejectUnauthorized: false, // Set to true to enforce certificate validation
+    },
 };
 const clientConfigWithoutDB = {
-    user: config_1.DBConfig.DB_USER,
-    host: config_1.DBConfig.DB_HOST,
-    // database: DBConfig.DB_NAME,
-    password: config_1.DBConfig.DB_PASSWORD,
-    port: config_1.DBConfig.DB_PORT,
+    connectionString: "postgresql://iam_kiyy_user:Btq2xkGFg66dXcGM19nCiXuC7yhlJEyh@dpg-cvo0b17gi27c73bq0btg-a.oregon-postgres.render.com/iam_kiyy",
+    ssl: {
+        rejectUnauthorized: false, // Set to true to enforce certificate validation
+    },
 };
 //create the database
 const createDatabase = () => __awaiter(void 0, void 0, void 0, function* () {
     const client = new pg_1.Client(clientConfigWithoutDB);
-    yield client.connect();
     try {
-        yield client.query(`CREATE DATABASE ${'accessshield'}`);
+        yield client.connect();
+        yield client.query(`CREATE DATABASE ${"accessshield"}`);
         console.log("Database created successfully");
     }
     catch (error) {
         console.log(error);
     }
 });
-//create tables 
+//create tables
 const createTables = () => __awaiter(void 0, void 0, void 0, function* () {
     const client = new pg_1.Client(clientConfig);
     yield client.connect();
@@ -125,7 +123,7 @@ const seedAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
         password: config_1.defaultConfig.ADMIN_PASSWORD,
         role: "super_admin",
         is_active: true,
-        is_admin: true
+        is_admin: true,
     };
     //hash the password
     const hashedPassword = userInfo.password;
@@ -133,7 +131,7 @@ const seedAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
     const client = new pg_1.Client(clientConfig);
     yield client.connect();
     //checks if admin exists
-    const adminAlreadyExists = yield client.query(`SELECT * FROM users WHERE username = $1`, ['admin']);
+    const adminAlreadyExists = yield client.query(`SELECT * FROM users WHERE username = $1`, ["admin"]);
     if (adminAlreadyExists.rows.length === 1) {
         console.log("Admin already exists");
         console.log("Proceeding");
@@ -146,7 +144,12 @@ const seedAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
                 INSERT INTO users (username, email, password, is_admin) 
                 VALUES ($1, $2, $3, $4)
             `;
-            const values = [userInfo.username, userInfo.email, hashedPassword, userInfo.is_admin];
+            const values = [
+                userInfo.username,
+                userInfo.email,
+                hashedPassword,
+                userInfo.is_admin,
+            ];
             const query2 = `
                 INSERT INTO permissions (user_id, can_read, can_write, can_delete, is_active, role) 
                 VALUES ($1, $2, $3, $4, $5, $6)
@@ -159,7 +162,7 @@ const seedAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
                 true,
                 true,
                 true,
-                userInfo.role
+                userInfo.role,
             ];
             yield client.query(query2, values2);
             console.log("admin seeded successfully");
