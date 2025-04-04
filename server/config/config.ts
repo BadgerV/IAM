@@ -33,6 +33,7 @@ export const corsSettings: CorsSettings = isProd
         "http://localhost:5174",
         "http://localhost:5173",
         "https://storage.googleapis.com",
+        "https://iam-access.netlify.app",
       ],
       methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
     }
@@ -48,6 +49,7 @@ export const corsSettings: CorsSettings = isProd
         "https://www.test.google.com",
         "http://localhost:8080",
         "https://storage.googleapis.com",
+        "https://iam-access.netlify.app",
       ],
       methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
     };
