@@ -16,7 +16,6 @@ console.log(caCert)
 const clientConfig = {
   connectionString: DBConfig.DB_URL,
   ssl: {
-    ca: caCert,
     rejectUnauthorized: true,
   },
 };
@@ -24,8 +23,7 @@ const clientConfig = {
 const clientConfigWithoutDB = {
   connectionString: DBConfig.DB_URL,
   ssl: {
-    ca: caCert,
-    rejectUnauthorized: true,
+    rejectUnauthorized: false,
   },
 };
 

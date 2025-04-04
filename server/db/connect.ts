@@ -11,7 +11,6 @@ const caCert = fs.readFileSync(caCertPath).toString();
 const pool = new Pool({
   connectionString: DBConfig.DB_URL,
   ssl: {
-    ca: caCert,
     rejectUnauthorized: true,
   },
 });
