@@ -40,10 +40,10 @@ const createFileController = async (req: any, res: Response) => {
         .json({ message: "permission_type must be org_wide or request_only" });
     }
 
-    // let cloudUrl: "works" = "";
+    let cloudUrl = "";
 
-    // const firebaseUrl = await uploadToFirebase(file.path, file_name);
-    // cloudUrl: "works" = firebaseUrl;
+    const firebaseUrl = await uploadToFirebase(file.path, file_name);
+    cloudUrl = firebaseUrl;
 
     const newFile: File = {
       id: 1,
@@ -53,7 +53,7 @@ const createFileController = async (req: any, res: Response) => {
       file_size: file_size,
       access_type: permission_type,
       description: description,
-      cloud_url: "works",
+      cloud_url: cloudUrl,
     };
 
     await createFile(newFile);
@@ -70,7 +70,7 @@ const createFileController = async (req: any, res: Response) => {
 
     res
       .status(200)
-      .json({ message: "File created Successfully", file_name, cloudUrl: "works" });
+      .json({ message: "File created Successfully", file_name, cloudUrl });
   } catch (error) {
     console.error("Error uploading file:", error);
     res.status(400).json({ message: "Error uploading file" });
@@ -140,7 +140,7 @@ const getFileController = async (req: any, res: Response) => {
 
     // Fetch the file from Firebase Storage
     const filePath = await fetchFileFromFirebase(file.file_name);
-    const serverFilePath = `https://iam-d2jr.onrender.com/uploads/${path.basename(
+    const serverFilePath = `https://iam-d2jr.onrender.com/files/${path.basename(
       filePath
     )}`;
     await createLog({

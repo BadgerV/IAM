@@ -3,11 +3,10 @@ import * as firebaseAdmin from "firebase-admin";
 import fs from "fs";
 
 import * as path from "path";
-import Blowfish from 'blowfish-node';
-import * as crypto from 'crypto';
+import Blowfish from "blowfish-node";
+import * as crypto from "crypto";
 // import CryptoJS from "crypto-js";
-import axios from "axios"
-
+import axios from "axios";
 
 import { AWSConfig, defaultConfig, firebaseProps } from "../../config/config";
 import { FirebaseConfig } from "../../config/config";
@@ -18,69 +17,69 @@ const firebaseJSON = path.resolve(
   "../../access-shield-jagah-firebase.json"
 );
 
-
-
 async function encryptFile(filePath: string, password: string) {
   try {
     const data = fs.readFileSync(filePath);
     // console.log('d', data.toString("base64"))
-    
+
     const iv = crypto.randomBytes(8);
     console.log(iv, "iv");
     const cipher = new Blowfish(password);
-    cipher.setIv(iv)
+    cipher.setIv(iv);
 
     const encryptedData = cipher.encode(data.toString("base64"));
     // console.log('e', encryptedData)
     // const decryptedData= cipher.decode(encryptedData)
     // console.log('d', decryptedData)
 
-     const encryptedString=Buffer.from(iv).toString("base64") + Buffer.from(encryptedData).toString("base64");
-   
+    const encryptedString =
+      Buffer.from(iv).toString("base64") +
+      Buffer.from(encryptedData).toString("base64");
 
-    const finalOutputPath =`${filePath}.encrypted`;
-    console.log('path',finalOutputPath)
+    const finalOutputPath = `${filePath}.encrypted`;
+    console.log("path", finalOutputPath);
     fs.writeFileSync(finalOutputPath, encryptedString);
-  
+
     return finalOutputPath;
-    
-  //   const readerBlowfish = new FileReader();
 
-  //   readerBlowfish.onload = async () => {
-  //     const fileContent: any = readerBlowfish.result;
-  //     const encryptedContent = await CryptoJS.Blowfish.encrypt(
-  //       fileContent,
-  //       password
-  //     ).toString();
-  //     // resolve(encryptedContent);
-  //   };
+    //   const readerBlowfish = new FileReader();
 
-  //   readerBlowfish.onerror = async (error) => {
-  //    throw error;
-  //   };
+    //   readerBlowfish.onload = async () => {
+    //     const fileContent: any = readerBlowfish.result;
+    //     const encryptedContent = await CryptoJS.Blowfish.encrypt(
+    //       fileContent,
+    //       password
+    //     ).toString();
+    //     // resolve(encryptedContent);
+    //   };
 
-  //   readerBlowfish.readAsBinaryString(acceptedFile);
+    //   readerBlowfish.onerror = async (error) => {
+    //    throw error;
+    //   };
 
+    //   readerBlowfish.readAsBinaryString(acceptedFile);
   } catch (error) {
     console.error("Error encrypting file:", error);
   }
 }
 
 // Function to decrypt content with Blowfish
-const decryptFile = (encryptedData: Uint8Array, iv: string | Buffer | Uint8Array,  key: string) => {
-    try {
+const decryptFile = (
+  encryptedData: Uint8Array,
+  iv: string | Buffer | Uint8Array,
+  key: string
+) => {
+  try {
     const cipher = new Blowfish(key);
     cipher.setIv(iv);
-    const decryptedData= cipher.decode(encryptedData)
-    console.log('d', decryptedData);
+    const decryptedData = cipher.decode(encryptedData);
+    console.log("d", decryptedData);
     //@ts-ignore
-    return Buffer.from(decryptedData, 'base64').toString() ;
-  
-    } catch (error) {
-      throw error;
-    }
-  };
-
+    return Buffer.from(decryptedData, "base64").toString();
+  } catch (error) {
+    throw error;
+  }
+};
 
 try {
   const serviceAccountRaw = fs.readFileSync(firebaseJSON, "utf8");
@@ -88,7 +87,9 @@ try {
   // const firebaseServiceAccount: firebaseAdmin.ServiceAccount =
   //   JSON.parse(serviceAccountRaw);
 
-  const firebaseServiceAccount = JSON.parse(firebaseProps.firebase as string);
+  console.log(firebaseProps.firebase)
+  const firebaseServiceAccount = JSON.parse(firebaseProps.firebase);
+  console.log(firebaseServiceAccount)
 
   // Initialize Firebase Admin SDK
   firebaseAdmin.initializeApp({
@@ -99,18 +100,19 @@ try {
   console.error("Error reading file:", error);
 }
 
-
-
 export const uploadToFirebase = async (
   filePath: string,
-  fileName: string,
+  fileName: string
 ): Promise<string> => {
   const bucket = firebaseAdmin.storage().bucket();
   const file = bucket.file(fileName);
 
   try {
-    const encryptedFilePath = await encryptFile(filePath, defaultConfig.ENCRYPTION_KEY);
-    console.log(encryptedFilePath)
+    const encryptedFilePath = await encryptFile(
+      filePath,
+      defaultConfig.ENCRYPTION_KEY
+    );
+    console.log(encryptedFilePath);
     await file.save(fs.createReadStream(String(encryptedFilePath)));
     return `gs://${bucket.name}/${file.name}`;
   } catch (error) {
@@ -124,7 +126,6 @@ export const fetchFileFromFirebase = async (fileName: string) => {
     const storage = firebaseAdmin.storage();
     const bucket = storage.bucket();
     const fileRef = bucket.file(fileName);
-    
 
     // Get a signed URL for the file
     const expiryDate = new Date();
@@ -134,43 +135,45 @@ export const fetchFileFromFirebase = async (fileName: string) => {
       expires: expiryDate,
     });
 
-     // Fetch the file content using Axios
-    const response = await axios.get(signedUrl, { responseType: 'text' });
+    // Fetch the file content using Axios
+    const response = await axios.get(signedUrl, { responseType: "text" });
 
-    const encryptedString=response.data
+    const encryptedString = response.data;
     // const decryptedBuffer = Buffer.from(encryptedString, 'base64');
-    const iv = Buffer.from(encryptedString.slice(0, 12), 'base64');
-    const encryptedData=  Buffer.from(encryptedString.slice(12), 'base64');
+    const iv = Buffer.from(encryptedString.slice(0, 12), "base64");
+    const encryptedData = Buffer.from(encryptedString.slice(12), "base64");
 
     console.log(defaultConfig.ENCRYPTION_KEY);
-   
-     const decryptedContent = decryptFile(encryptedData, iv,  defaultConfig.ENCRYPTION_KEY);
-    
+
+    const decryptedContent = decryptFile(
+      encryptedData,
+      iv,
+      defaultConfig.ENCRYPTION_KEY
+    );
 
     // Define the final output path
     const finalOutputPath = path.resolve(filePath, fileName); // Adjust the file path as needed
 
-   // Write the decrypted content to the file
-    const writeStream = fs.createWriteStream(finalOutputPath, { flags: 'w' });
+    // Write the decrypted content to the file
+    const writeStream = fs.createWriteStream(finalOutputPath, { flags: "w" });
     writeStream.write(Buffer.from(decryptedContent));
     writeStream.end();
     // Handle events for errors and successful completion
-    writeStream.on('error', (error) => {
-      console.error('Error writing file:', error);
+    writeStream.on("error", (error) => {
+      console.error("Error writing file:", error);
     });
 
-    writeStream.on('finish', () => {
+    writeStream.on("finish", () => {
       console.log(`File "${finalOutputPath}" written successfully.`);
     });
 
-    console.log(`File "${fileName}" decrypted and saved to "${finalOutputPath}" successfully.`);
+    console.log(
+      `File "${fileName}" decrypted and saved to "${finalOutputPath}" successfully.`
+    );
 
     return finalOutputPath;
   } catch (error) {
-    console.error('Error fetching and decrypting file from Firebase:', error);
+    console.error("Error fetching and decrypting file from Firebase:", error);
     throw error;
   }
 };
-
-
-

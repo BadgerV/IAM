@@ -23,6 +23,9 @@ app.use(express.urlencoded({ extended: true }));
 // Middleware to enable CORS
 app.use(cors(corsSettings));
 
+app.use('/files', express.static(path.join(__dirname, "./uploads")));
+
+
 // Your routes
 app.use("/", router);
 
