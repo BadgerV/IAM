@@ -4,7 +4,7 @@ export interface defaultConfigTypes {
     SECRET_KEY: string;
     ADMIN_PASSWORD: string;
     ENCRYPTION_KEY: string;
-
+    ADMIN_EMAIL: string;
 }
 export interface DBConfigTypes {
     DB_USER: string;
@@ -12,6 +12,8 @@ export interface DBConfigTypes {
     DB_NAME: string;
     DB_PASSWORD: string;
     DB_PORT: number;
+    DB_URL: string;
+    DB_SSL_CA: string;
 }
 export interface AWSConfigTypes {
     AWS_ACCESS_KEY: string;

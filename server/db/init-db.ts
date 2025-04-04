@@ -5,27 +5,25 @@ import { Client } from "pg";
 import { getUserByEmail } from "../services/user.service";
 
 const clientConfig = {
-    user: DBConfig.DB_USER,
-    host: DBConfig.DB_HOST,
-    database: DBConfig.DB_NAME,
-    password: DBConfig.DB_PASSWORD,
-    port: DBConfig.DB_PORT,
+    connectionString: DBConfig.DB_URL,
+    ssl: {
+        ca: DBConfig.DB_SSL_CA,
+      }
 }
 
 const clientConfigWithoutDB = {
-    user: DBConfig.DB_USER,
-    host: DBConfig.DB_HOST,
-    // database: DBConfig.DB_NAME,
-    password: DBConfig.DB_PASSWORD,
-    port: DBConfig.DB_PORT,
+    connectionString: DBConfig.DB_URL,
+    ssl: {
+        ca: DBConfig.DB_SSL_CA,
+      }
 }
 
 
 //create the database
 const createDatabase = async () => {
     const client = new Client(clientConfigWithoutDB);
-    await client.connect()
     try {
+        await client.connect()
         await client.query(`CREATE DATABASE ${'accessshield'}`)
         console.log("Database created successfully")
     } catch (error) {
