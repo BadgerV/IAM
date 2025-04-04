@@ -11,22 +11,20 @@ const caCertPath = path.join(__dirname, "../config", "ca.pem");
 // Read the CA certificate file
 const caCert = fs.readFileSync(caCertPath).toString();
 
-console.log(caCert);
+console.log(caCert)
 
 const clientConfig = {
   connectionString: DBConfig.DB_URL,
-  ssl: {
-    ca: DBConfig.DB_SSL_CA,
-    rejectUnauthorized: true,
-  },
+   ssl: {
+    rejectUnauthorized: false // Set to true in production if using valid certificates
+  }
 };
 
 const clientConfigWithoutDB = {
   connectionString: DBConfig.DB_URL,
-  ssl: {
-    ca: DBConfig.DB_SSL_CA,
-    rejectUnauthorized: true,
-  },
+   ssl: {
+    rejectUnauthorized: false // Set to true in production if using valid certificates
+  }
 };
 
 //create the database

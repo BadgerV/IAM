@@ -2,11 +2,11 @@ import { Pool } from "pg";
 import { DBConfig } from "../config/config";
 
 
+
 const pool = new Pool({
   connectionString: DBConfig.DB_URL,
   ssl: {
-    ca: DBConfig.DB_SSL_CA,
-    rejectUnauthorized: true
+    rejectUnauthorized: false // Set to true in production if using valid certificates
   }
 });
 
