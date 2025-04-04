@@ -40,10 +40,10 @@ const createFileController = async (req: any, res: Response) => {
         .json({ message: "permission_type must be org_wide or request_only" });
     }
 
-    let cloudUrl = "";
+    // let cloudUrl = "";
 
-    const firebaseUrl = await uploadToFirebase(file.path, file_name);
-    cloudUrl = firebaseUrl;
+    // const firebaseUrl = await uploadToFirebase(file.path, file_name);
+    // cloudUrl = firebaseUrl;
 
     const newFile: File = {
       id: 1,
@@ -53,7 +53,7 @@ const createFileController = async (req: any, res: Response) => {
       file_size: file_size,
       access_type: permission_type,
       description: description,
-      cloud_url: cloudUrl,
+      cloud_url: "works",
     };
 
     await createFile(newFile);
