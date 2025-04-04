@@ -15,12 +15,16 @@ console.log(caCert)
 
 const clientConfig = {
   connectionString: DBConfig.DB_URL,
-  ssl: false
+   ssl: {
+    rejectUnauthorized: false // Set to true in production if using valid certificates
+  }
 };
 
 const clientConfigWithoutDB = {
   connectionString: DBConfig.DB_URL,
-  ssl: false
+   ssl: {
+    rejectUnauthorized: false // Set to true in production if using valid certificates
+  }
 };
 
 //create the database
