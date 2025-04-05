@@ -4,6 +4,9 @@ import http from "http";
 //importing the init db
 import initDB from "./db/init-db";
 
+import initFirebase from "./controllers/cloud/init-firebase";
+
+
 // importing default config
 import { isProd, PORT } from "./config/config";
 
@@ -18,4 +21,6 @@ server.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 
   initDB();
+  initFirebase();
+
 });
